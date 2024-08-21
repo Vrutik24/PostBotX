@@ -1,10 +1,13 @@
 import { Launch } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
+import NavbarStyles from "./navbar-style";
 
 const Navbar = () => {
+  const classes = NavbarStyles();
   return (
     <Box
-      style={{
+      // className={classes.navbar}
+      sx={{
         height: "50px",
         width: "100vw",
         display: "flex",
@@ -13,33 +16,16 @@ const Navbar = () => {
       }}
     >
       <Box
-        style={{
+        // className={classes.navbarContent}
+        sx={{
           display: "flex",
           alignItems: "center",
           gap: "15px",
           marginRight: "20px",
         }}
       >
-        <Typography sx={{ cursor: "pointer" }}>Home</Typography>
-        <Typography sx={{ cursor: "pointer" }}>Features</Typography>
-        <Button
-          variant="contained"
-          endIcon={<Launch />}
-          style={{
-            backgroundColor: "green",
-            color: "white",
-            width: "fit-content",
-            height: "fit-content",
-            padding: "5px",
-            paddingRight: "10px",
-            paddingLeft: "10px",
-            borderRadius: "20px",
-            cursor: "pointer",
-          }}
-        >
-          Get Started
-        </Button>
-        {/* <Typography>Get Started</Typography> */}
+        <Typography sx={{cursor: "pointer"}}>Home</Typography>
+        <Typography sx={{cursor: "pointer"}}>Features</Typography>
       </Box>
     </Box>
   );

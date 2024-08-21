@@ -1,25 +1,29 @@
 import { Box, Button, Paper, Typography } from "@mui/material";
 import Navbar from "../../components/Navbar/Navbar";
 import { Launch } from "@mui/icons-material";
-import apiTestingImage from "./../../images/API Testing.png";
-import errorAnalysisImage from "./../../images/Error Analysis.png";
+import { useNavigate } from "react-router-dom";
+import "./home.css";
 
 const Home = () => {
+  const navigateTo = useNavigate();
   return (
     <>
       <Box
-        style={{ height: "100vh", width: "100vw", backgroundColor: "black" }}
+        className="homePage"
+        sx={{ height: "100vh", width: "100vw", backgroundColor: "black" }}
       >
         <Navbar />
         <Box
-          style={{
+          className="homeBody"
+          sx={{
             width: "100%",
             height: "calc(100% - 50px)",
             display: "flex",
           }}
         >
           <Box
-            style={{
+            className="mainTitle"
+            sx={{
               display: "flex",
               flexDirection: "column",
               gap: "15px",
@@ -29,7 +33,8 @@ const Home = () => {
             }}
           >
             <Typography
-              style={{
+              className="mainTitleTypography"
+               sx={{
                 fontSize: "56px",
                 color: "green",
                 letterSpacing: "10px",
@@ -40,7 +45,9 @@ const Home = () => {
             <Button
               variant="contained"
               endIcon={<Launch />}
-              style={{
+              className="mainButton"
+              onClick={() => navigateTo("/select-testing-mode")}
+              sx={{
                 backgroundColor: "green",
                 color: "white",
                 width: "fit-content",
@@ -56,7 +63,8 @@ const Home = () => {
         </Box>
       </Box>
       <Box
-        style={{
+        className="featurePage"
+        sx={{
           height: "100vh",
           width: "100vw",
           backgroundColor: "black",
@@ -64,6 +72,7 @@ const Home = () => {
         }}
       >
         <Box
+          className="featureContainer"
           sx={{
             display: "flex",
             alignItems: "center",
@@ -73,6 +82,7 @@ const Home = () => {
         >
           <Paper
             variant="outlined"
+            className="featureContent"
             sx={{
               width: "300px",
               height: "170px",
@@ -98,6 +108,7 @@ const Home = () => {
           </Paper>
           <Paper
             variant="outlined"
+            className="featureContent"
             sx={{
               width: "300px",
               height: "170px",
@@ -123,6 +134,7 @@ const Home = () => {
           </Paper>
           <Paper
             variant="outlined"
+            className="featureContent"
             sx={{
               width: "300px",
               height: "170px",
