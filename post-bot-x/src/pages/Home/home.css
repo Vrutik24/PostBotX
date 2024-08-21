@@ -1,0 +1,61 @@
+.homePage {
+  height: 100vh;
+  width: 100vw;
+  background-color: black;
+}
+
+.homeBody {
+  width: 100%;
+  height: calc(100% - 50px);
+  display: flex;
+}
+.mainTitle {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: auto;
+  justify-content: center;
+  align-items: center;
+}
+.mainTitleTypography {
+  font-size: 56px;
+  color: green;
+  letter-spacing: 10px;
+}
+.mainButton {
+  background-color: green;
+  color: white;
+  width: fit-content;
+  height: fit-content;
+  padding: 15px;
+  border-radius: 20px;
+  cursor: pointer;
+}
+.featurePage {
+  height: 100vh;
+  width: 100vw;
+  background-color: black;
+  display: flex;
+}
+.featureContainer {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  margin: auto;
+}
+.featureContent {
+  width: 300px;
+  height: 170px;
+  border-radius: 5px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
+  background-color: inherit;
+  border: 3px solid green;
+  color: green;
+  padding-left: 10px;
+  padding-right: 10px;
+}
