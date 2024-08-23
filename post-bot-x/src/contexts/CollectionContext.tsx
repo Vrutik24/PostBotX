@@ -8,7 +8,7 @@ import {
   where,
   QuerySnapshot,
   DocumentData,
-} from "firebase/firestore";
+} from "@firebase/firestore";
 import { useAuth } from "./AuthContext";
 import { firestore } from "../firebase";
 
