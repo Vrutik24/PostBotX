@@ -12,7 +12,7 @@ import {
   where,
   DocumentData,
   QuerySnapshot,
-} from "firebase/firestore";
+} from "@firebase/firestore";
 import { firestore } from "../firebase";
 
 interface APIContextProps {

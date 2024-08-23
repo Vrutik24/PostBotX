@@ -23,7 +23,7 @@ import {
   where,
   DocumentData,
   QueryDocumentSnapshot,
-} from "firebase/firestore";
+} from "@firebase/firestore";
 import { auth, firestore } from "../firebase";
 
 interface AuthContextType {

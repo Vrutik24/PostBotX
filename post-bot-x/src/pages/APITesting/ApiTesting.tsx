@@ -1,12 +1,12 @@
 import { Box } from "@mui/material";
-import { Outlet } from "react-router-dom";
 import CollectionNavbar from "../../components/Collection/CollectionNavbar";
+import AutomatedTesting from "../AutomatedTesting/AutomatedTesting";
 
 const ApiTesting = () => {
   return (
     <Box display={"flex"}>
       <CollectionNavbar />
-      <Outlet />
+      <AutomatedTesting />
     </Box>
   );
 };
