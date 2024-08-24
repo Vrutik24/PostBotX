@@ -29,7 +29,6 @@ export const HeaderContentBox = styled(Box)(({ theme }) => ({
   margin: "20px auto 20px",
   marginLeft: 'auto',
   marginRight:'auto',
-  // height: 'fit-content',
   height: '50px',
   padding: "5px",
   backgroundColor: "inherit",
@@ -47,4 +46,5 @@ export const BodyContentBox = styled(Box)(({ theme }) => ({
   borderRadius: "10px",
   padding: "5px",
   margin: "0px auto 20px",
+  overflowY: 'auto'
 }));

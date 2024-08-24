@@ -25,8 +25,7 @@ interface FormValues {
 interface FormikContextType {
   formik: FormikProps<FormValues>;
   testingMethod: "Automated" | "Manual";
-  setTestingMethod: (method: "Automated" | "Manual") => void
-
+  setTestingMethod: (method: "Automated" | "Manual") => void;
 }
 // Created a context
 export const APITestFormikContext = createContext<FormikContextType | null>(
@@ -60,13 +59,16 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
 
   const formik = useFormik({
     initialValues: formikInitialValues,
+    validateOnChange: true,
     onSubmit: (values) => {
       console.log("Values", values);
     },
     // validationSchema:
   });
   return (
-    <APITestFormikContext.Provider value={{ formik, testingMethod, setTestingMethod }}>
+    <APITestFormikContext.Provider
+      value={{ formik, testingMethod, setTestingMethod }}
+    >
       {children}
     </APITestFormikContext.Provider>
   );

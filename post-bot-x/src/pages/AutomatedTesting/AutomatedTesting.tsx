@@ -111,7 +111,8 @@ const AutomatedTesting = () => {
               },
               "& .MuiOutlinedInput-root": {
                 "& fieldset": {
-                  borderColor: "transparent",                },
+                  borderColor: "transparent",
+                },
                 "&:hover fieldset": {
                   borderColor: "transparent",
                 },

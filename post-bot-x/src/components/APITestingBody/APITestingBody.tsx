@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Tabs, Tab, Box } from "@mui/material";
-import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
+import ParamsComponent from "../ParamsComponent/ParamsComponent";
+import HeadersComponent from "../HeadersComponent/HeadersComponent";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -19,7 +20,11 @@ function CustomTabPanel(props: TabPanelProps) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+      {value === index && (
+        <Box sx={{ padding: "10px", backgroundColor: "inherit" }}>
+          {children}
+        </Box>
+      )}
     </div>
   );
 }
@@ -32,29 +37,39 @@ function a11yProps(index: number) {
 }
 
 const APITestingBody = () => {
-  const { formik, testingMethod, setTestingMethod } = useAPITestFormikContext();
   const [value, setValue] = React.useState(0);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
   return (
-    <Box sx={{ width: "100%" }}>
+    <Box sx={{ width: "100%", height: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
         <Tabs
           value={value}
           onChange={handleChange}
           aria-label="basic tabs example"
+          sx={{
+            "& .MuiTab-root": {
+              color: "gray",
+              "&.Mui-selected": {
+                color: "white",
+              },
+            },
+            "& .MuiTabs-indicator": {
+              backgroundColor: "gray",
+            },
+          }}
         >
-          <Tab label="Item One" {...a11yProps(0)} />
-          <Tab label="Item Two" {...a11yProps(1)} />
-          <Tab label="Item Three" {...a11yProps(2)} />
+          <Tab label="Params" {...a11yProps(0)} />
+          <Tab label="Headers" {...a11yProps(1)} />
+          <Tab label="Body" {...a11yProps(2)} />
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
-        Item One
+        <ParamsComponent />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
-        Item Two
+        <HeadersComponent />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
         Item Three
