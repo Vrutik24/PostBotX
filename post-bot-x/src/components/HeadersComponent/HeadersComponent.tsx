@@ -20,7 +20,7 @@ const HeadersComponent = () => {
   };
 
   const deleteHeader = (i: number) => {
-    if (formik.values.queryParameters.length === 1) {
+    if (formik.values.headerPairs.length === 1) {
       formik.setFieldValue("headerPairs", formik.initialValues.headerPairs);
       resetRowFlags();
     } else {
