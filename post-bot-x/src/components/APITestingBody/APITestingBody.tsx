@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Tabs, Tab, Box } from "@mui/material";
+import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -31,6 +32,7 @@ function a11yProps(index: number) {
 }
 
 const APITestingBody = () => {
+  const { formik, testingMethod, setTestingMethod } = useAPITestFormikContext();
   const [value, setValue] = React.useState(0);
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);

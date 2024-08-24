@@ -22,47 +22,15 @@ import { ArrowDropDown } from "@mui/icons-material";
 import { RequestTypeList } from "../../dropdown-list/request-type-list";
 import { TestingTypeList } from "../../dropdown-list/testing-type-list";
 import APITestingBody from "../../components/APITestingBody/APITestingBody";
-// import { useFormikContext } from "../../contexts/APITestFormikContext";
+import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
 import { useContext } from "react";
 import { APITestFormikContext } from "../../contexts/APITestFormikContext";
 
 const AutomatedTesting = () => {
-  const [testingMethod, setTestingMethod] = useState<"Automated" | "Manual">(
-    "Automated"
-  );
+  const { formik, testingMethod, setTestingMethod } = useAPITestFormikContext();
   const handleChange = (event: SelectChangeEvent) => {
     setTestingMethod(event.target.value as "Automated" | "Manual");
   };
-
-  const formik = useContext(APITestFormikContext);
-
-  console.log(formik?.formik?.values, "fomrik");
-
-  const formikInitialValues = {
-    apiType: "Get",
-    url: "",
-    payload: "",
-    headerPairs: [
-      {
-        key: "",
-        value: "",
-      },
-    ],
-    queryParameters: [
-      {
-        key: "",
-        value: "",
-      },
-    ],
-  };
-
-  const apiTestFormik = useFormik({
-    initialValues: formikInitialValues,
-    onSubmit: async (values) => {},
-  });
-
-  console.log("testingMethod", testingMethod);
-  console.log("apiFormik", apiTestFormik.values);
 
   return (
     <APITestingPage>
@@ -100,7 +68,7 @@ const AutomatedTesting = () => {
           <Select
             id="apiType"
             name="apiType"
-            value={apiTestFormik.values.apiType}
+            value={formik.values.apiType}
             sx={{
               color: "white",
               borderColor: "transparent",
@@ -114,7 +82,7 @@ const AutomatedTesting = () => {
                 borderColor: "transparent",
               },
             }}
-            onChange={apiTestFormik.handleChange}
+            onChange={formik.handleChange}
             IconComponent={(props) => <ArrowDropDown sx={{ color: "white" }} />}
           >
             {RequestTypeList.map((requestType: any) => (
@@ -132,9 +100,9 @@ const AutomatedTesting = () => {
             id="url"
             name="url"
             placeholder="Enter api url"
-            value={apiTestFormik.values.url}
-            onChange={apiTestFormik.handleChange}
-            onBlur={apiTestFormik.handleBlur}
+            value={formik.values.url}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             fullWidth
             sx={{
               "& .MuiInputBase-input": {
@@ -143,13 +111,12 @@ const AutomatedTesting = () => {
               },
               "& .MuiOutlinedInput-root": {
                 "& fieldset": {
-                  borderColor: "transparent", // Default border color
-                },
+                  borderColor: "transparent",                },
                 "&:hover fieldset": {
-                  borderColor: "transparent", // Border color on hover
+                  borderColor: "transparent",
                 },
                 "&.Mui-focused fieldset": {
-                  borderColor: "transparent", // Border color when focused
+                  borderColor: "transparent",
                 },
               },
             }}

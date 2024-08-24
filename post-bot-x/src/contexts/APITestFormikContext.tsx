@@ -1,33 +1,45 @@
-import React, { createContext, useContext, ReactNode } from "react";
-import { useFormik, FormikConfig, FormikHelpers, FormikContext, FormikProps } from "formik";
+import React, { createContext, useContext, ReactNode, useState } from "react";
+import {
+  useFormik,
+  FormikConfig,
+  FormikHelpers,
+  FormikContext,
+  FormikProps,
+} from "formik";
 import * as Yup from "yup";
 
 interface FormValues {
-    apiType: string,
-    url: string,
-    payload: string,
-    headerPairs: {
-        key: string,
-        value: string
-    }[],
-    queryParameters: 
-      {
-        key: string,
-        value: string,
-      }[]
-    
+  apiType: string;
+  url: string;
+  payload: string;
+  headerPairs: {
+    key: string;
+    value: string;
+  }[];
+  queryParameters: {
+    key: string;
+    value: string;
+  }[];
 }
 
 interface FormikContextType {
-    formik: FormikProps<FormValues> | null;
-  }
+  formik: FormikProps<FormValues>;
+  testingMethod: "Automated" | "Manual";
+  setTestingMethod: (method: "Automated" | "Manual") => void
+
+}
 // Created a context
-export const APITestFormikContext = createContext<FormikContextType | null>(null);
+export const APITestFormikContext = createContext<FormikContextType | null>(
+  null
+);
 
 // Created a Provider
 const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
-  children
+  children,
 }) => {
+  const [testingMethod, setTestingMethod] = useState<"Automated" | "Manual">(
+    "Automated"
+  );
   const formikInitialValues = {
     apiType: "Get",
     url: "",
@@ -54,13 +66,15 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
     // validationSchema:
   });
   return (
-    <FormikContext.Provider value={formik}>{children}</FormikContext.Provider>
+    <APITestFormikContext.Provider value={{ formik, testingMethod, setTestingMethod }}>
+      {children}
+    </APITestFormikContext.Provider>
   );
 };
 
 // Custom hook to use the formik context
 
-const useFormikContext = () => {
+const useAPITestFormikContext = () => {
   const context = useContext(APITestFormikContext);
   console.log("context", context);
   if (!context) {
@@ -69,4 +83,4 @@ const useFormikContext = () => {
   return context;
 };
 
-export { APITestFormikProvider, useFormikContext };
+export { APITestFormikProvider, useAPITestFormikContext };
