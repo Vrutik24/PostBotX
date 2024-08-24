@@ -2,6 +2,7 @@ import * as React from "react";
 import { Tabs, Tab, Box } from "@mui/material";
 import ParamsComponent from "../ParamsComponent/ParamsComponent";
 import HeadersComponent from "../HeadersComponent/HeadersComponent";
+import JSONBody from "../JSONBody/JSONBody";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -72,7 +73,7 @@ const APITestingBody = () => {
         <HeadersComponent />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
-        Item Three
+        <JSONBody />
       </CustomTabPanel>
     </Box>
   );

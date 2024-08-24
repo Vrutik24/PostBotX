@@ -63,7 +63,7 @@ const HeadersComponent = () => {
                       },
                     },
                     "& .MuiInputBase-input": {
-                      color: "white",
+                      color: "#FFA24E",
                     },
                     "& .MuiInputBase-input::placeholder": {
                       color: "gray",

@@ -57,7 +57,7 @@ export const FeatureContainer = styled(Box)(({ theme }) => ({
 }));
 
 export const FeatureContentPaper = styled(Paper)(({ theme }) => ({
-  width: "300px",
+  width: "350px",
   height: "170px",
   borderRadius: "5px",
   display: "flex",

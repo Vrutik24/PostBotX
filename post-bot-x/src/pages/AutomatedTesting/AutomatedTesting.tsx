@@ -16,15 +16,11 @@ import {
   ContentBox,
   HeaderContentBox,
 } from "./AutomatedTestingStyle";
-import { useState } from "react";
-import { Formik, useFormik } from "formik";
 import { ArrowDropDown } from "@mui/icons-material";
 import { RequestTypeList } from "../../dropdown-list/request-type-list";
 import { TestingTypeList } from "../../dropdown-list/testing-type-list";
 import APITestingBody from "../../components/APITestingBody/APITestingBody";
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
-import { useContext } from "react";
-import { APITestFormikContext } from "../../contexts/APITestFormikContext";
 
 const AutomatedTesting = () => {
   const { formik, testingMethod, setTestingMethod } = useAPITestFormikContext();
@@ -42,16 +38,19 @@ const AutomatedTesting = () => {
               value={testingMethod}
               sx={{
                 color: "white",
-                border: "1px solid white",
-                borderColor: "transparent",
+                border: "1px solid gray",
+                height: "50px",
+                backgroundColor: "transparent",
+                borderRadius: "4px",
+
                 "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "white",
+                  borderColor: "gray",
                 },
                 "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "white",
+                  borderColor: "gray",
                 },
                 "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "white",
+                  borderColor: "gray",
                 },
               }}
               onChange={handleChange}
