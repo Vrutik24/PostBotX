@@ -16,10 +16,15 @@ interface FormValues {
     key: string;
     value: string;
   }[];
-  queryParameters: {
-    key: string;
-    value: string;
-  }[];
+  queryParameters:
+    | {
+        key: string;
+        value: string | string;
+      }[]
+    | {
+        key: string;
+        value: string[];
+      }[];
 }
 
 interface FormikContextType {
@@ -49,12 +54,20 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
         value: "",
       },
     ],
-    queryParameters: [
-      {
-        key: "",
-        value: "",
-      },
-    ],
+    queryParameters:
+      testingMethod === "Automated"
+        ? [
+            {
+              key: "",
+              value: "",
+            },
+          ]
+        : [
+            {
+              key: "",
+              value: [""],
+            },
+          ],
   };
 
   const formik = useFormik({

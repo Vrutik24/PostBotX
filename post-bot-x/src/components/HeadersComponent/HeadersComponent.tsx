@@ -44,23 +44,16 @@ const HeadersComponent = () => {
         {formik.values.headerPairs.map(
           (header: { key: string; value: string }, index: number) => (
             <TableRow key={index}>
-              <TableCell>
+              <TableCell sx={{ borderBottom: "none" }}>
                 <OutlinedInput
                   value={`${formik.values.headerPairs[index].key}`}
                   id={`headerPairs.${index}.key`}
                   name={`headerPairs.${index}.key`}
                   sx={{
                     height: "40px",
-                    "& .MuiOutlinedInput-root": {
-                      "& fieldset": {
-                        borderColor: "blue",
-                      },
-                      "&:hover fieldset": {
-                        borderColor: "gray",
-                      },
-                      "&.Mui-focused fieldset": {
-                        borderColor: "red",
-                      },
+                    border: "1px solid gray",
+                    "&.Mui-focused": {
+                      border: "1px solid blue",
                     },
                     "& .MuiInputBase-input": {
                       color: "#FFA24E",
@@ -96,23 +89,16 @@ const HeadersComponent = () => {
                   fullWidth
                 />
               </TableCell>
-              <TableCell>
+              <TableCell sx={{ borderBottom: "none" }}>
                 <OutlinedInput
                   value={`${formik.values.headerPairs[index].value}`}
                   id={`headerPairs.${index}.value`}
                   name={`headerPairs.${index}.value`}
                   sx={{
                     height: "40px",
-                    "& .MuiOutlinedInput-root": {
-                      "& fieldset": {
-                        borderColor: "blue",
-                      },
-                      "&:hover fieldset": {
-                        borderColor: "gray",
-                      },
-                      "&.Mui-focused fieldset": {
-                        borderColor: "red",
-                      },
+                    border: "1px solid gray",
+                    "&.Mui-focused": {
+                      border: "1px solid blue",
                     },
                     "& .MuiInputBase-input": {
                       color: "white",
@@ -147,7 +133,7 @@ const HeadersComponent = () => {
                   fullWidth
                 />
               </TableCell>
-              <TableCell>
+              <TableCell sx={{ borderBottom: "none" }}>
                 {formik.values.headerPairs.length > 1 && (
                   <Delete
                     sx={{ cursor: "pointer", color: "gray" }}

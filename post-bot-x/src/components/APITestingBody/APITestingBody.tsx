@@ -3,6 +3,8 @@ import { Tabs, Tab, Box } from "@mui/material";
 import ParamsComponent from "../ParamsComponent/ParamsComponent";
 import HeadersComponent from "../HeadersComponent/HeadersComponent";
 import JSONBody from "../JSONBody/JSONBody";
+import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
+import ManualParamsComponent from "../ManualParamsComponent/ManualParamsComponent";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -42,6 +44,7 @@ const APITestingBody = () => {
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
+  const { testingMethod } = useAPITestFormikContext();
   return (
     <Box sx={{ width: "100%", height: "100%" }}>
       <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -67,7 +70,11 @@ const APITestingBody = () => {
         </Tabs>
       </Box>
       <CustomTabPanel value={value} index={0}>
-        <ParamsComponent />
+        {testingMethod === "Automated" ? (
+          <ParamsComponent />
+        ) : (
+          <ManualParamsComponent />
+        )}
       </CustomTabPanel>
       <CustomTabPanel value={value} index={1}>
         <HeadersComponent />

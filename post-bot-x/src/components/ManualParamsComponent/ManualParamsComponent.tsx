@@ -9,7 +9,16 @@ import {
 import { Delete } from "@mui/icons-material";
 import { useState } from "react";
 
-const ParamsComponent = () => {
+type QueryParameterWithString = { key: string; value: string };
+type QueryParameterWithStringArray = { key: string; value: string[] };
+
+function isQueryParameterWithStringArray(
+  param: QueryParameterWithString | QueryParameterWithStringArray
+): param is QueryParameterWithStringArray {
+  return Array.isArray(param.value);
+}
+
+const ManualParamsComponent = () => {
   const { formik } = useAPITestFormikContext();
   const [rowAddedFlags, setRowAddedFlags] = useState<boolean[]>([]);
 
@@ -62,7 +71,7 @@ const ParamsComponent = () => {
             <TableRow key={index}>
               <TableCell sx={{ borderBottom: "none" }}>
                 <OutlinedInput
-                  value={`${formik.values.queryParameters[index].key}`}
+                  value={param.key}
                   id={`queryParameters.${index}.key`}
                   name={`queryParameters.${index}.key`}
                   sx={{
@@ -80,7 +89,6 @@ const ParamsComponent = () => {
                     },
                   }}
                   onChange={(e) => {
-                    console.log("e", e.target.value);
                     formik.setFieldValue(
                       `queryParameters.${index}.key`,
                       e.target.value
@@ -97,7 +105,7 @@ const ParamsComponent = () => {
                       });
                       formik.setFieldValue("queryParameters", [
                         ...formik.values.queryParameters,
-                        { key: "", value: "" },
+                        { key: "", value: [""] },
                       ]);
                     }
                   }}
@@ -105,50 +113,56 @@ const ParamsComponent = () => {
                   fullWidth
                 />
               </TableCell>
-              <TableCell sx={{ borderBottom: "none" }}>
-                <OutlinedInput
-                  value={`${formik.values.queryParameters[index].value}`}
-                  id={`queryParameters.${index}.value`}
-                  name={`queryParameters.${index}.value`}
-                  sx={{
-                    height: "40px",
-                    border: "1px solid gray",
-                    "&.Mui-focused": {
-                      border: "1px solid blue",
-                    },
-                    "& .MuiInputBase-input": {
-                      color: "white",
-                    },
-                    "& .MuiInputBase-input::placeholder": {
-                      color: "gray",
-                      opacity: 1,
-                    },
-                  }}
-                  onChange={(e) => {
-                    formik.setFieldValue(
-                      `queryParameters.${index}.value`,
-                      e.target.value
-                    );
-                    if (
-                      index === formik.values.queryParameters.length - 1 &&
-                      !rowAddedFlags[index] &&
-                      e.target.value
-                    ) {
-                      setRowAddedFlags((prevFlags) => {
-                        const updatedFlags = [...prevFlags];
-                        updatedFlags[index] = true;
-                        return updatedFlags;
-                      });
-                      formik.setFieldValue("queryParameters", [
-                        ...formik.values.queryParameters,
-                        { key: "", value: "" },
-                      ]);
-                    }
-                  }}
-                  placeholder="Value"
-                  fullWidth
-                />
-              </TableCell>
+              {isQueryParameterWithStringArray(param) &&
+                param.value.map((val: string, valIndex: number) => (
+                  <TableCell sx={{ borderBottom: "none" }} key={valIndex}>
+                    <OutlinedInput
+                      value={val}
+                      id={`queryParameters.${index}.value.${valIndex}`}
+                      name={`queryParameters.${index}.value.${valIndex}`}
+                      sx={{
+                        height: "40px",
+                        border: "1px solid gray",
+                        "&.Mui-focused": {
+                          border: "1px solid blue",
+                        },
+                        "& .MuiInputBase-input": {
+                          color: "white",
+                        },
+                        "& .MuiInputBase-input::placeholder": {
+                          color: "gray",
+                          opacity: 1,
+                        },
+                      }}
+                      onChange={(e) => {
+                        const newValueArray = [...param.value];
+                        newValueArray[valIndex] = e.target.value;
+                        formik.setFieldValue(
+                          `queryParameters.${index}.value`,
+                          newValueArray
+                        );
+                        if (
+                          valIndex === param.value.length - 1 &&
+                          !rowAddedFlags[index] &&
+                          e.target.value
+                        ) {
+                          setRowAddedFlags((prevFlags) => {
+                            const updatedFlags = [...prevFlags];
+                            updatedFlags[index] = true;
+                            return updatedFlags;
+                          });
+                          /* @ts-ignore */
+                          formik.setFieldValue(
+                            `queryParameters.${index}.value`,
+                            [...param.value, ""]
+                          );
+                        }
+                      }}
+                      placeholder="Value"
+                      fullWidth
+                    />
+                  </TableCell>
+                ))}
               <TableCell sx={{ borderBottom: "none" }}>
                 {formik.values.queryParameters.length > 1 && (
                   <Delete
@@ -167,4 +181,4 @@ const ParamsComponent = () => {
   );
 };
 
-export default ParamsComponent;
+export default ManualParamsComponent;
