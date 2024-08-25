@@ -29,15 +29,10 @@ const ParamsComponent = () => {
     } else {
       const newQueryParameters = formik.values.queryParameters.filter(
         (
-          queryParameter:
-            | {
-                key: string;
-                value: string;
-              }
-            | {
-                key: string;
-                value: string[];
-              },
+          queryParameter: {
+            key: string;
+            value: string;
+          },
           index
         ) => index !== i
       );
@@ -50,15 +45,7 @@ const ParamsComponent = () => {
     <Table>
       <TableBody>
         {formik.values.queryParameters.map(
-          (
-            param:
-              | { key: string; value: string }
-              | {
-                  key: string;
-                  value: string[];
-                },
-            index: number
-          ) => (
+          (param: { key: string; value: string }, index: number) => (
             <TableRow key={index}>
               <TableCell sx={{ borderBottom: "none" }}>
                 <OutlinedInput

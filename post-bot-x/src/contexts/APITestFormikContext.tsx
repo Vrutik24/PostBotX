@@ -11,20 +11,19 @@ import * as Yup from "yup";
 interface FormValues {
   apiType: string;
   url: string;
-  payload: string;
+  payload: string[];
   headerPairs: {
     key: string;
     value: string;
   }[];
-  queryParameters:
-    | {
-        key: string;
-        value: string | string;
-      }[]
-    | {
-        key: string;
-        value: string[];
-      }[];
+  queryParameters: {
+    key: string;
+    value: string | string;
+  }[];
+  manualQueryParameters: {
+    key: string;
+    value: string[];
+  }[];
 }
 
 interface FormikContextType {
@@ -47,27 +46,25 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
   const formikInitialValues = {
     apiType: "Get",
     url: "",
-    payload: "",
+    payload: [""],
     headerPairs: [
       {
         key: "",
         value: "",
       },
     ],
-    queryParameters:
-      testingMethod === "Automated"
-        ? [
-            {
-              key: "",
-              value: "",
-            },
-          ]
-        : [
-            {
-              key: "",
-              value: [""],
-            },
-          ],
+    queryParameters: [
+      {
+        key: "",
+        value: "",
+      },
+    ],
+    manualQueryParameters: [
+      {
+        key: "",
+        value: [""],
+      },
+    ],
   };
 
   const formik = useFormik({
@@ -75,6 +72,14 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
     validateOnChange: true,
     onSubmit: (values) => {
       console.log("Values", values);
+      const apiPayload = {
+        apiType: values.apiType,
+        url: values.url,
+        payload: values.payload,
+        queryParameters: testingMethod === "Automated" ? [values.queryParameters] : values.manualQueryParameters,
+        headerPairs: values.headerPairs
+      }
+      console.log("apiPayload", apiPayload)
     },
     // validationSchema:
   });

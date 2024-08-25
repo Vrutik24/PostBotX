@@ -5,6 +5,7 @@ import HeadersComponent from "../HeadersComponent/HeadersComponent";
 import JSONBody from "../JSONBody/JSONBody";
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
 import ManualParamsComponent from "../ManualParamsComponent/ManualParamsComponent";
+import ManualJsonBody from "../ManualJsonBody/ManualJsonBody";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -80,7 +81,7 @@ const APITestingBody = () => {
         <HeadersComponent />
       </CustomTabPanel>
       <CustomTabPanel value={value} index={2}>
-        <JSONBody />
+        {testingMethod === "Automated" ? <JSONBody /> : <ManualJsonBody />}
       </CustomTabPanel>
     </Box>
   );

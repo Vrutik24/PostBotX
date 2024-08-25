@@ -1,22 +1,16 @@
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
 import {
+  Box,
+  IconButton,
+  InputAdornment,
   OutlinedInput,
   Table,
   TableBody,
   TableCell,
   TableRow,
 } from "@mui/material";
-import { Delete } from "@mui/icons-material";
+import { Delete, AddCircleOutline } from "@mui/icons-material";
 import { useState } from "react";
-
-type QueryParameterWithString = { key: string; value: string };
-type QueryParameterWithStringArray = { key: string; value: string[] };
-
-function isQueryParameterWithStringArray(
-  param: QueryParameterWithString | QueryParameterWithStringArray
-): param is QueryParameterWithStringArray {
-  return Array.isArray(param.value);
-}
 
 const ManualParamsComponent = () => {
   const { formik } = useAPITestFormikContext();
@@ -24,56 +18,63 @@ const ManualParamsComponent = () => {
 
   const resetRowFlags = () => {
     setRowAddedFlags(
-      new Array(formik.values.queryParameters.length).fill(false)
+      new Array(formik.values.manualQueryParameters.length).fill(false)
     );
   };
 
-  const deleteQueryParameter = (i: number) => {
-    if (formik.values.queryParameters.length === 1) {
+  const deleteManualQueryParameter = (i: number) => {
+    if (formik.values.manualQueryParameters.length === 1) {
       formik.setFieldValue(
-        "queryParameters",
-        formik.initialValues.queryParameters
+        "manualQueryParameters",
+        formik.initialValues.manualQueryParameters
       );
       resetRowFlags();
     } else {
-      const newQueryParameters = formik.values.queryParameters.filter(
+      const newQueryParameters = formik.values.manualQueryParameters.filter(
         (
-          queryParameter:
-            | {
-                key: string;
-                value: string;
-              }
-            | {
-                key: string;
-                value: string[];
-              },
+          queryParameter: {
+            key: string;
+            value: string[];
+          },
           index
         ) => index !== i
       );
-      formik.setFieldValue("queryParameters", newQueryParameters);
+      formik.setFieldValue("manualQueryParameters", newQueryParameters);
       resetRowFlags();
     }
+  };
+
+  const addValueTextField = (index: number, valueArray: string[]) => {
+    formik.setFieldValue(`manualQueryParameters.${index}.value`, [
+      ...valueArray,
+      "",
+    ]);
+  };
+
+  const deleteValueTextField = (index: number, valIndex: number) => {
+    const newValueArray = formik.values.manualQueryParameters[
+      index
+    ].value.filter((val: string, i: number) => i !== valIndex);
+    formik.setFieldValue(`manualQueryParameters.${index}.value`, newValueArray);
   };
 
   return (
     <Table>
       <TableBody>
-        {formik.values.queryParameters.map(
+        {formik.values.manualQueryParameters.map(
           (
-            param:
-              | { key: string; value: string }
-              | {
-                  key: string;
-                  value: string[];
-                },
+            param: {
+              key: string;
+              value: string[];
+            },
             index: number
           ) => (
-            <TableRow key={index}>
+            <TableRow key={index} sx={{verticalAlign: 'top'}}>
               <TableCell sx={{ borderBottom: "none" }}>
                 <OutlinedInput
-                  value={param.key}
-                  id={`queryParameters.${index}.key`}
-                  name={`queryParameters.${index}.key`}
+                  value={`${formik.values.manualQueryParameters[index].key}`}
+                  id={`manualQueryParameters.${index}.key`}
+                  name={`manualQueryParameters.${index}.key`}
                   sx={{
                     height: "40px",
                     border: "1px solid gray",
@@ -89,12 +90,14 @@ const ManualParamsComponent = () => {
                     },
                   }}
                   onChange={(e) => {
+                    console.log("e", e.target.value);
                     formik.setFieldValue(
-                      `queryParameters.${index}.key`,
+                      `manualQueryParameters.${index}.key`,
                       e.target.value
                     );
                     if (
-                      index === formik.values.queryParameters.length - 1 &&
+                      index ===
+                        formik.values.manualQueryParameters.length - 1 &&
                       !rowAddedFlags[index] &&
                       e.target.value
                     ) {
@@ -103,9 +106,9 @@ const ManualParamsComponent = () => {
                         updatedFlags[index] = true;
                         return updatedFlags;
                       });
-                      formik.setFieldValue("queryParameters", [
-                        ...formik.values.queryParameters,
-                        { key: "", value: [""] },
+                      formik.setFieldValue("manualQueryParameters", [
+                        ...formik.values.manualQueryParameters,
+                        { key: "", value: [" "] },
                       ]);
                     }
                   }}
@@ -113,13 +116,13 @@ const ManualParamsComponent = () => {
                   fullWidth
                 />
               </TableCell>
-              {isQueryParameterWithStringArray(param) &&
-                param.value.map((val: string, valIndex: number) => (
-                  <TableCell sx={{ borderBottom: "none" }} key={valIndex}>
+              {param.value.map((val: string, valIndex: number) => (
+                <Box display={"flex"} flexDirection={"column"} gap={"20px"}>
+                  <TableCell key={valIndex} sx={{ borderBottom: "none" }}>
                     <OutlinedInput
                       value={val}
-                      id={`queryParameters.${index}.value.${valIndex}`}
-                      name={`queryParameters.${index}.value.${valIndex}`}
+                      id={`manualQueryParameters.${index}.value.${valIndex}`}
+                      name={`manualQueryParameters.${index}.value.${valIndex}`}
                       sx={{
                         height: "40px",
                         border: "1px solid gray",
@@ -135,40 +138,50 @@ const ManualParamsComponent = () => {
                         },
                       }}
                       onChange={(e) => {
-                        const newValueArray = [...param.value];
-                        newValueArray[valIndex] = e.target.value;
                         formik.setFieldValue(
-                          `queryParameters.${index}.value`,
-                          newValueArray
-                        );
-                        if (
-                          valIndex === param.value.length - 1 &&
-                          !rowAddedFlags[index] &&
+                          `manualQueryParameters.${index}.value.${valIndex}`,
                           e.target.value
-                        ) {
-                          setRowAddedFlags((prevFlags) => {
-                            const updatedFlags = [...prevFlags];
-                            updatedFlags[index] = true;
-                            return updatedFlags;
-                          });
-                          /* @ts-ignore */
-                          formik.setFieldValue(
-                            `queryParameters.${index}.value`,
-                            [...param.value, ""]
-                          );
-                        }
+                        );
                       }}
+                      endAdornment={
+                        valIndex === 0 ? (
+                          <InputAdornment position="end">
+                            <IconButton
+                              sx={{ color: "gray" }}
+                              size="small"
+                              onClick={() =>
+                                addValueTextField(index, param.value)
+                              }
+                            >
+                              <AddCircleOutline />
+                            </IconButton>
+                          </InputAdornment>
+                        ) : (
+                          <InputAdornment position="end">
+                            <IconButton
+                              sx={{ color: "gray" }}
+                              size="small"
+                              onClick={() =>
+                                deleteValueTextField(index, valIndex)
+                              }
+                            >
+                              <Delete />
+                            </IconButton>
+                          </InputAdornment>
+                        )
+                      }
                       placeholder="Value"
                       fullWidth
                     />
                   </TableCell>
-                ))}
+                </Box>
+              ))}
               <TableCell sx={{ borderBottom: "none" }}>
-                {formik.values.queryParameters.length > 1 && (
+                {formik.values.manualQueryParameters.length > 1 && (
                   <Delete
                     sx={{ cursor: "pointer", color: "gray" }}
                     onClick={() => {
-                      deleteQueryParameter(index);
+                      deleteManualQueryParameter(index);
                     }}
                   />
                 )}

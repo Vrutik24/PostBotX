@@ -123,6 +123,7 @@ const AutomatedTesting = () => {
           />
           <Button
             sx={{ backgroundColor: "green", color: "white", width: "100px" }}
+            onClick={() => formik.handleSubmit()}
           >
             Send
           </Button>
