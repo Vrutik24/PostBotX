@@ -4,9 +4,13 @@ import { Box, Button, Typography } from "@mui/material";
 export const CollectionNavbarBox = styled(Box)(({ theme }) => ({
   height: "100vh",
   width: "350px",
-  padding: "20px",
+  // padding: "20px",
   backgroundColor: "black",
   borderRight: "2px solid grey",
+}));
+
+export const CollectionNavbarContainer = styled(Box)(({ theme }) => ({
+  padding: "20px",
 }));
 
 export const CollectionNavbarTitle = styled(Typography)(({ theme }) => ({
@@ -15,9 +19,11 @@ export const CollectionNavbarTitle = styled(Typography)(({ theme }) => ({
   color: "green",
   letterSpacing: "5px",
   textAlign: "center",
-  cursor: 'pointer'
+  cursor: "pointer",
 }));
 
 export const AddCollectionButton = styled(Button)(({ theme }) => ({
-  marginTop: "20px", backgroundColor: "green", width: "100%"
+  marginTop: "20px",
+  backgroundColor: "green",
+  width: "100%",
 }));

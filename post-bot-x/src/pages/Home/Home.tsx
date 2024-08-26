@@ -39,13 +39,21 @@ const Home = () => {
             <Typography variant="h6" fontWeight={900}>
               API Testing
             </Typography>
-            <Typography color={"white"}>AI enabled API Testing</Typography>
+            <Typography
+              color={"white"}
+              sx={{ paddingX: "20px", textAlign: "center" }}
+            >
+              AI enabled API Testing
+            </Typography>
           </FeatureContentPaper>
           <FeatureContentPaper variant="outlined">
             <Typography variant="h6" fontWeight={900}>
               Error Analysis
             </Typography>
-            <Typography color={"white"} display={'flex'}>
+            <Typography
+              color={"white"}
+              sx={{ paddingX: "20px", textAlign: "center" }}
+            >
               Will give you detailed analysis of errors found in API Testing
             </Typography>
           </FeatureContentPaper>
@@ -53,7 +61,10 @@ const Home = () => {
             <Typography variant="h6" fontWeight={900}>
               Report Generation
             </Typography>
-            <Typography color={"white"}>
+            <Typography
+              color={"white"}
+              sx={{ paddingX: "20px", textAlign: "center" }}
+            >
               Will generate API Testing result report.
             </Typography>
           </FeatureContentPaper>

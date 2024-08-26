@@ -1,0 +1,1 @@
+export const TestingTypeList = ["Automated", "Manual"]
