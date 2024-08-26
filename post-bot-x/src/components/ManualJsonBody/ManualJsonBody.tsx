@@ -1,8 +1,28 @@
-import { Box, Button, IconButton, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  IconButton,
+  InputAdornment,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
-import { Delete, AddCircle } from "@mui/icons-material";
+import { Delete, AddCircle, Edit } from "@mui/icons-material";
+import { useState } from "react";
+import PayloadRequestModal from "../../modals/PayloadRequestModal/PayloadRequestModal";
+
+interface requestModalProps {
+  index: number;
+  isOpen: boolean;
+  request: string;
+}
 
 const ManualJsonBody = () => {
+  const [requestModal, setRequestmodal] = useState<requestModalProps>({
+    index: 0,
+    isOpen: false,
+    request: "",
+  });
   const { formik } = useAPITestFormikContext();
 
   const deleteJsonBody = (index: number) => {
@@ -12,12 +32,22 @@ const ManualJsonBody = () => {
     formik.setFieldValue("payload", newJsonBodyArray);
   };
 
-  const addNewPayload = () => {
-    formik.setFieldValue("payload", [...formik.values.payload, ""])
-  }
+  const addNewPayload = (index: number) => {
+    formik.setFieldValue("payload", [...formik.values.payload, formik.values.payload[index]]);
+  };
+
+  const viewAndEditRequest = (index: number, request: string) => {
+    setRequestmodal({
+      index: index,
+      isOpen: true,
+      request: request,
+    });
+  };
+
+  console.log("requestModal", requestModal)
 
   return (
-    <Box >
+    <Box>
       {formik.values.payload.map((payload: string, index: number) => (
         <Box key={index} display={"flex"} gap={"40px"} marginTop={"30px"}>
           <Typography color={"gray"} width={"200px"}>
@@ -28,6 +58,7 @@ const ManualJsonBody = () => {
             flexDirection={"column"}
             gap={"20px"}
             width={"100%"}
+            position={"relative"}
           >
             <TextField
               multiline
@@ -64,6 +95,28 @@ const ManualJsonBody = () => {
                 },
                 overflowY: "auto",
               }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment
+                    position="end"
+                    sx={{
+                      position: "absolute",
+                      top: 0,
+                      right: 0,
+                      paddingTop: "30px",
+                      paddingRight: "30px",
+                    }}
+                  >
+                    <IconButton
+                      sx={{ color: "white" }}
+                      size="small"
+                      onClick={() => viewAndEditRequest(index, payload)}
+                    >
+                      <Edit />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
             {index === formik.values.payload.length - 1 && (
               <Button
@@ -71,7 +124,7 @@ const ManualJsonBody = () => {
                 color="success"
                 sx={{ width: "100px" }}
                 endIcon={<AddCircle />}
-                onClick={() => addNewPayload()}
+                onClick={() => addNewPayload(index)}
               >
                 Add
               </Button>
@@ -88,6 +141,7 @@ const ManualJsonBody = () => {
           )}
         </Box>
       ))}
+      <PayloadRequestModal requestModal = {requestModal} setRequestmodal = {setRequestmodal}/>
     </Box>
   );
 };
