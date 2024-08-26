@@ -1,6 +1,6 @@
 import React from "react";
 import post_botX from "../../assets/PostBot_X_image.png";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Navbar from "../../components/Navbar/Navbar";
 import { Launch } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +11,9 @@ import {
   MainButton,
   Title,
   Description,
+  FeaturePage,
+  FeatureContainer,
+  FeatureContentPaper,
 } from "./HomeStyle";
 
 const Home = () => {
@@ -45,6 +48,43 @@ const Home = () => {
           </HomeTitleBox>
         </HomeContent>
       </HomePage>
+      <FeaturePage>
+        <FeatureContainer>
+          <FeatureContentPaper variant="outlined">
+            <Typography variant="h6" fontWeight={900}>
+              API Testing
+            </Typography>
+            <Typography
+              color={"white"}
+              sx={{ paddingX: "20px", textAlign: "center" }}
+            >
+              AI enabled API Testing
+            </Typography>
+          </FeatureContentPaper>
+          <FeatureContentPaper variant="outlined">
+            <Typography variant="h6" fontWeight={900}>
+              Error Analysis
+            </Typography>
+            <Typography
+              color={"white"}
+              sx={{ paddingX: "20px", textAlign: "center" }}
+            >
+              Will give you detailed analysis of errors found in API Testing
+            </Typography>
+          </FeatureContentPaper>
+          <FeatureContentPaper variant="outlined">
+            <Typography variant="h6" fontWeight={900}>
+              Report Generation
+            </Typography>
+            <Typography
+              color={"white"}
+              sx={{ paddingX: "20px", textAlign: "center" }}
+            >
+              Will generate API Testing result report.
+            </Typography>
+          </FeatureContentPaper>
+        </FeatureContainer>
+      </FeaturePage>
     </>
   );
 };
