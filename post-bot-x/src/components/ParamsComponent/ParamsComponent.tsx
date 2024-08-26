@@ -68,10 +68,6 @@ const ParamsComponent = () => {
                   }}
                   onChange={(e) => {
                     console.log("e", e.target.value);
-                    formik.setFieldValue(
-                      `queryParameters.${index}.key`,
-                      e.target.value
-                    );
                     if (
                       index === formik.values.queryParameters.length - 1 &&
                       !rowAddedFlags[index] &&
@@ -87,6 +83,10 @@ const ParamsComponent = () => {
                         { key: "", value: "" },
                       ]);
                     }
+                    formik.setFieldValue(
+                      `queryParameters.${index}.key`,
+                      e.target.value
+                    );
                   }}
                   placeholder="Key"
                   fullWidth
@@ -112,10 +112,6 @@ const ParamsComponent = () => {
                     },
                   }}
                   onChange={(e) => {
-                    formik.setFieldValue(
-                      `queryParameters.${index}.value`,
-                      e.target.value
-                    );
                     if (
                       index === formik.values.queryParameters.length - 1 &&
                       !rowAddedFlags[index] &&
@@ -131,6 +127,10 @@ const ParamsComponent = () => {
                         { key: "", value: "" },
                       ]);
                     }
+                    formik.setFieldValue(
+                      `queryParameters.${index}.value`,
+                      e.target.value
+                    );
                   }}
                   placeholder="Value"
                   fullWidth
