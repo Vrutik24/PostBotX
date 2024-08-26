@@ -64,10 +64,6 @@ const HeadersComponent = () => {
                     },
                   }}
                   onChange={(e) => {
-                    formik.setFieldValue(
-                      `headerPairs.${index}.key`,
-                      e.target.value
-                    );
                     if (
                       index === formik.values.headerPairs.length - 1 &&
                       !rowAddedFlags[index] &&
@@ -84,6 +80,10 @@ const HeadersComponent = () => {
                         { key: "", value: "" },
                       ]);
                     }
+                    formik.setFieldValue(
+                      `headerPairs.${index}.key`,
+                      e.target.value
+                    );
                   }}
                   placeholder="Key"
                   fullWidth
@@ -109,10 +109,6 @@ const HeadersComponent = () => {
                     },
                   }}
                   onChange={(e) => {
-                    formik.setFieldValue(
-                      `headerPairs.${index}.value`,
-                      e.target.value
-                    );
                     if (
                       index === formik.values.headerPairs.length - 1 &&
                       !rowAddedFlags[index] &&
@@ -128,6 +124,10 @@ const HeadersComponent = () => {
                         { key: "", value: "" },
                       ]);
                     }
+                    formik.setFieldValue(
+                      `headerPairs.${index}.value`,
+                      e.target.value
+                    );
                   }}
                   placeholder="Value"
                   fullWidth

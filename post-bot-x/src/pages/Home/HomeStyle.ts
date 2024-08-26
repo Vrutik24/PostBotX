@@ -4,7 +4,8 @@ import { Box, Button, Paper, Typography } from "@mui/material";
 export const HomePage = styled(Box)(({ theme }) => ({
   height: "100vh",
   width: "100vw",
-  backgroundColor: "#040719", 
+  // backgroundColor: "#040719", 
+  backgroundColor: '#000000'
 }));
 
 export const HomeContent = styled(Box)(({ theme }) => ({
@@ -53,7 +54,8 @@ export const Description = styled(Typography)(({ theme }) => ({
 export const FeaturePage = styled(Box)(({ theme }) => ({
   height: "100vh",
   width: "100vw",
-  backgroundColor: "#040719", // Updated color
+  backgroundColor: '#000000',
+  // backgroundColor: "#040719", // Updated color
   display: "flex",
 }));
 
@@ -73,7 +75,8 @@ export const FeatureContentPaper = styled(Paper)(({ theme }) => ({
   gap: "5px",
   alignItems: "center",
   justifyContent: "center",
-  backgroundColor: "#040719", // Updated color
+  backgroundColor: 'inherit',
+  // backgroundColor: "#040719", // Updated color
   border: `3px solid #63a626`, // Updated color
   color: "#63a626", // Updated color
   paddingX: "10px",
