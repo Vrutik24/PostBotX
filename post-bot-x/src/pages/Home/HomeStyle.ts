@@ -3,9 +3,9 @@ import { Box, Button, Paper, Typography } from "@mui/material";
 
 export const HomePage = styled(Box)(({ theme }) => ({
   height: "100vh",
-  width: "100vw",
-  // backgroundColor: "#040719", 
-  backgroundColor: '#000000'
+  width: "100%", // Changed from 100vw to 100%
+  backgroundColor: '#000000',
+  overflowX: "hidden", // Prevents horizontal scrolling if needed
 }));
 
 export const HomeContent = styled(Box)(({ theme }) => ({
@@ -25,12 +25,12 @@ export const HomeTitleBox = styled(Box)(({ theme }) => ({
 
 export const Title = styled(Typography)(({ theme }) => ({
   fontSize: "56px",
-  color: "#63a626", // Updated color
+  color: "#63a626",
   letterSpacing: "10px",
 }));
 
 export const MainButton = styled(Button)(({ theme }) => ({
-  backgroundColor: "#63a626", // Updated color
+  backgroundColor: "#63a626",
   color: "white",
   width: "fit-content",
   height: "fit-content",
@@ -43,7 +43,7 @@ export const Description = styled(Typography)(({ theme }) => ({
   color: "#63a626",
   fontSize: "22px",
   textAlign: "center",
-  marginTop: "30px", // Added space between button and description
+  marginTop: "30px",
   maxWidth: "80%",
   margin: "auto",
   lineHeight: "1.5",
@@ -53,9 +53,8 @@ export const Description = styled(Typography)(({ theme }) => ({
 
 export const FeaturePage = styled(Box)(({ theme }) => ({
   height: "100vh",
-  width: "100vw",
+  width: "100%", // Changed from 100vw to 100%
   backgroundColor: '#000000',
-  // backgroundColor: "#040719", // Updated color
   display: "flex",
 }));
 
@@ -76,9 +75,8 @@ export const FeatureContentPaper = styled(Paper)(({ theme }) => ({
   alignItems: "center",
   justifyContent: "center",
   backgroundColor: 'inherit',
-  // backgroundColor: "#040719", // Updated color
-  border: `3px solid #63a626`, // Updated color
-  color: "#63a626", // Updated color
+  border: `3px solid #63a626`,
+  color: "#63a626",
   paddingX: "10px",
   margin: 'auto'
 }));
