@@ -1,7 +1,7 @@
 import React from "react";
 import post_botX from "../../assets/PostBot_X_image.png";
-import { Box, Typography } from "@mui/material";
-import Navbar from "../../components/Navbar/Navbar";
+import { Typography } from "@mui/material";
+import Userbar from "../../components/User/User";
 import { Launch } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import {
@@ -22,7 +22,7 @@ const Home = () => {
   return (
     <>
       <HomePage>
-        <Navbar />
+        <Userbar />
         <HomeContent>
           <HomeTitleBox>
             <img
