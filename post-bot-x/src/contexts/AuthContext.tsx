@@ -15,16 +15,10 @@ import {
   sendSignInLinkToEmail,
   sendPasswordResetEmail,
 } from "firebase/auth";
-import {
-  addDoc,
-  collection,
-  getDocs,
-  query,
-  where,
-  DocumentData,
-  QueryDocumentSnapshot,
-} from "@firebase/firestore";
+import { addDoc, collection, getDocs, query, where } from "@firebase/firestore";
 import { auth, firestore } from "../firebase";
+import generateUniqueId from "./GenerateUniqueId";
+import { User } from "../types";
 
 interface AuthContextType {
   currentUser: any;
@@ -32,9 +26,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>;
   passwordlessLogin: (email: string) => Promise<void>;
   logOut: () => Promise<void>;
-  getUserByEmailAsync: (
-    email: string
-  ) => Promise<QueryDocumentSnapshot<DocumentData> | null>;
+  getUserByEmailAsync: (email: string) => Promise<User | null>;
   resetPassword: (email: string) => Promise<void>;
 }
 
@@ -67,14 +59,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       // Update display name
       await updateProfile(user, { displayName: name });
-
-      await addDoc(collection(firestore, "User"), {
+      const existingAnonymousUserId = localStorage.getItem("anonymousUserId");
+      const id = existingAnonymousUserId
+        ? existingAnonymousUserId
+        : generateUniqueId();
+      const newUser: User = {
+        id,
         name,
         email,
         createdOn: new Date(),
-      });
+      };
+      await addDoc(collection(firestore, "User"), newUser);
     } catch (error: unknown) {
-      console.log(error)
+      console.log(error);
       if (error instanceof Error) {
         throw new Error(error.message);
       } else {
@@ -99,9 +96,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     await signOut(auth);
   };
 
-  async function getUserByEmailAsync(
-    email: string
-  ): Promise<QueryDocumentSnapshot<DocumentData> | null> {
+  async function getUserByEmailAsync(email: string): Promise<User | null> {
     try {
       const userQuery = query(
         collection(firestore, "User"),
@@ -109,7 +104,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       );
       const querySnapshot = await getDocs(userQuery);
       if (!querySnapshot.empty) {
-        return querySnapshot.docs[0];
+        const userDoc = querySnapshot.docs[0];
+        const userData = userDoc.data() as User; // Type assertion to User
+        return userData;
       } else {
         return null;
       }

@@ -1,74 +1,97 @@
 import React, { createContext, useContext, ReactNode } from "react";
 import {
   addDoc,
+  updateDoc,
   collection,
   deleteDoc,
   getDocs,
   query,
   where,
-  QuerySnapshot,
-  DocumentData,
 } from "@firebase/firestore";
 import { useAuth } from "./AuthContext";
 import { firestore } from "../firebase";
+import generateUniqueId from "./GenerateUniqueId";
+import { Collection, Header } from "../types";
 
 interface CollectionContextProps {
   createCollection: (name: string) => Promise<void>;
-  getCollections: () => Promise<QuerySnapshot<DocumentData> | null>;
+  getCollections: () => Promise<Collection[] | null>;
   deleteCollection: (collectionId: string) => Promise<void>;
+  renameCollection: (collectionId: string, newName: string) => Promise<void>;
+  updateCollectionHeaders: (
+    collectionId: string,
+    newHeaders: Header[]
+  ) => Promise<void>;
 }
 
-const CollectionContext = createContext<CollectionContextProps | undefined>(undefined);
+const CollectionContext = createContext<CollectionContextProps | undefined>(
+  undefined
+);
 
 export function useCollection() {
   const context = useContext(CollectionContext);
   if (!context) {
-    throw new Error("useCollection must be used within a CollectionContextProvider");
+    throw new Error(
+      "useCollection must be used within a CollectionContextProvider"
+    );
   }
   return context;
 }
-
-// Function to generate a unique ID using a timestamp and a random number
-const generateUniqueId = (): string => {
-  const timestamp = new Date().getTime();
-  const randomNumber = Math.floor(Math.random() * 10000);
-  return `${timestamp}${randomNumber}`;
-};
 
 interface CollectionContextProviderProps {
   children: ReactNode;
 }
 
-export const CollectionContextProvider: React.FC<CollectionContextProviderProps> = ({ children }) => {
+export const CollectionContextProvider: React.FC<
+  CollectionContextProviderProps
+> = ({ children }) => {
   const { currentUser } = useAuth();
+
+  const createAnonymousUser = () => {
+    const existingAnonymousUser = localStorage.getItem("anonymousUserId");
+    if (existingAnonymousUser) {
+      return existingAnonymousUser;
+    } else {
+      const anonymousUserId = generateUniqueId();
+      localStorage.setItem("anonymousUserId", anonymousUserId);
+      return anonymousUserId;
+    }
+  };
 
   const createCollection = async (name: string): Promise<void> => {
     const collectionId = generateUniqueId();
-    await addDoc(collection(firestore, "Collection"), {
+    const anonymousUserId = createAnonymousUser();
+
+    const userId = currentUser?.id || anonymousUserId;
+    const newCollection: Collection = {
       name,
-      createdBy: currentUser?.displayName,
-      createdById: currentUser?.uid,
+      createdById: userId,
       createdOn: new Date(),
       collectionId,
-    });
+      headers: [],
+    };
+    await addDoc(collection(firestore, "Collection"), newCollection);
 
     await addDoc(collection(firestore, "UserCollection"), {
-      userName: currentUser?.displayName,
-      userId: currentUser?.uid,
+      userId: userId,
       collectionId,
       createdOn: new Date(),
     });
   };
 
-  const getCollections = async (): Promise<QuerySnapshot<DocumentData> | null> => {
+  const getCollections = async (): Promise<Collection[] | null> => {
     try {
+      const existingAnonymousUserId = localStorage.getItem("anonymousUserId");
+      const userId = currentUser ? currentUser.id : existingAnonymousUserId;
       const userCollectionQuery = query(
         collection(firestore, "UserCollection"),
-        where("userId", "==", currentUser?.uid)
+        where("userId", "==", userId)
       );
       const userCollections = await getDocs(userCollectionQuery);
 
-      const collectionIds = userCollections.docs.map((doc) => doc.data().collectionId);
+      const collectionIds = userCollections.docs.map(
+        (doc) => doc.data().collectionId
+      );
 
       if (collectionIds.length > 0) {
         const collectionsQuery = query(
@@ -76,12 +99,56 @@ export const CollectionContextProvider: React.FC<CollectionContextProviderProps>
           where("collectionId", "in", collectionIds)
         );
         const collectionsSnapshot = await getDocs(collectionsQuery);
-        return collectionsSnapshot;
+
+        const collections: Collection[] = collectionsSnapshot.docs.map(
+          (doc) => {
+            const data = doc.data();
+            return {
+              name: data.name,
+              createdById: data.createdById,
+              createdOn: data.createdOn.toDate(),
+              collectionId: data.collectionId,
+              headers: data.headers as Header[],
+            } as Collection;
+          }
+        );
+
+        return collections;
       }
 
       return null;
     } catch (err: any) {
       throw new Error(err.message);
+    }
+  };
+
+  const renameCollection = async (
+    collectionId: string,
+    newName: string
+  ): Promise<void> => {
+    try {
+      // Find the collection document by collectionId
+      const collectionQuery = query(
+        collection(firestore, "Collection"),
+        where("collectionId", "==", collectionId)
+      );
+      const querySnapshot = await getDocs(collectionQuery);
+
+      if (!querySnapshot.empty) {
+        // Get the document reference for the collection
+        const collectionDocRef = querySnapshot.docs[0].ref;
+
+        // Update the name of the collection
+        await updateDoc(collectionDocRef, {
+          name: newName,
+        });
+
+        console.log(`Collection ${collectionId} renamed to ${newName}`);
+      } else {
+        console.error(`Collection with ID ${collectionId} not found`);
+      }
+    } catch (err: any) {
+      throw new Error(`Failed to rename collection: ${err.message}`);
     }
   };
 
@@ -103,10 +170,44 @@ export const CollectionContextProvider: React.FC<CollectionContextProviderProps>
     }
   };
 
+  const updateCollectionHeaders = async (
+    collectionId: string,
+    newHeaders: Header[]
+  ): Promise<void> => {
+    try {
+      // Find the collection document by collectionId
+      const collectionQuery = query(
+        collection(firestore, "Collection"),
+        where("collectionId", "==", collectionId)
+      );
+      const querySnapshot = await getDocs(collectionQuery);
+
+      if (!querySnapshot.empty) {
+        // Get the document reference for the collection
+        const collectionDocRef = querySnapshot.docs[0].ref;
+
+        // Update the headerPair field of the collection
+        await updateDoc(collectionDocRef, {
+          headers: newHeaders,
+        });
+
+        console.log(
+          `Headers for Collection ${collectionId} updated successfully`
+        );
+      } else {
+        console.error(`Collection with ID ${collectionId} not found`);
+      }
+    } catch (err: any) {
+      throw new Error(`Failed to update headers: ${err.message}`);
+    }
+  };
+
   const value: CollectionContextProps = {
     createCollection,
     getCollections,
+    renameCollection,
     deleteCollection,
+    updateCollectionHeaders,
   };
 
   return (
