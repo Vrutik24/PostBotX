@@ -66,7 +66,9 @@ export const CollectionContextProvider: React.FC<
     const newCollection: Collection = {
       name,
       createdById: userId,
+      updatedById: userId,
       createdOn: new Date(),
+      updatedOn: new Date(),
       collectionId,
       headers: [],
     };
@@ -135,12 +137,14 @@ export const CollectionContextProvider: React.FC<
       const querySnapshot = await getDocs(collectionQuery);
 
       if (!querySnapshot.empty) {
-        // Get the document reference for the collection
         const collectionDocRef = querySnapshot.docs[0].ref;
 
-        // Update the name of the collection
+        const existingAnonymousUser = localStorage.getItem("anonymousUserId");
+        const userId = currentUser?.id || existingAnonymousUser;
         await updateDoc(collectionDocRef, {
           name: newName,
+          updatedById: userId,
+          updatedOn: new Date(),
         });
 
         console.log(`Collection ${collectionId} renamed to ${newName}`);
@@ -183,12 +187,14 @@ export const CollectionContextProvider: React.FC<
       const querySnapshot = await getDocs(collectionQuery);
 
       if (!querySnapshot.empty) {
-        // Get the document reference for the collection
         const collectionDocRef = querySnapshot.docs[0].ref;
 
-        // Update the headerPair field of the collection
+        const existingAnonymousUser = localStorage.getItem("anonymousUserId");
+        const userId = currentUser?.id || existingAnonymousUser;
         await updateDoc(collectionDocRef, {
           headers: newHeaders,
+          updatedById: userId,
+          updatedOn: new Date(),
         });
 
         console.log(
