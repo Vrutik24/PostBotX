@@ -11,19 +11,7 @@ import {
 import { useAuth } from "./AuthContext";
 import { firestore } from "../firebase";
 import generateUniqueId from "./GenerateUniqueId";
-
-export interface Header {
-  key: string;
-  value: string;
-}
-
-export interface Collection {
-  name: string;
-  createdById: string;
-  createdOn: Date;
-  collectionId: string;
-  headers: Header[];
-}
+import { Collection, Header } from "../types";
 
 interface CollectionContextProps {
   createCollection: (name: string) => Promise<void>;

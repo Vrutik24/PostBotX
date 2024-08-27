@@ -15,22 +15,10 @@ import {
   sendSignInLinkToEmail,
   sendPasswordResetEmail,
 } from "firebase/auth";
-import {
-  addDoc,
-  collection,
-  getDocs,
-  query,
-  where,
-} from "@firebase/firestore";
+import { addDoc, collection, getDocs, query, where } from "@firebase/firestore";
 import { auth, firestore } from "../firebase";
 import generateUniqueId from "./GenerateUniqueId";
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  createdOn: Date;
-}
+import { User } from "../types";
 
 interface AuthContextType {
   currentUser: any;
