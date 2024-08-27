@@ -18,7 +18,7 @@ import { API } from "../types";
 interface APIContextProps {
   createAPI: (apiDetail: API, collectionId: string) => Promise<string>;
   updateAPI: (
-    apiId: string,
+    id: string,
     apiDetail: API,
     collectionId: string
   ) => Promise<void>;
@@ -70,19 +70,21 @@ export const APIContextProvider: React.FC<APIContextProviderProps> = ({
   };
 
   const updateAPI = async (
-    apiId: string,
+    id: string,
     apiDetail: API,
     collectionId: string
   ): Promise<void> => {
+    const existingAnonymousUser = localStorage.getItem("anonymousUserId");
+    const userId = currentUser?.id || existingAnonymousUser;
     const updatedAPIObj: API = {
       ...apiDetail,
       collectionId,
-      createdById: currentUser?.id,
-      createdOn: new Date(),
+      updatedById: userId,
+      updatedOn: new Date(),
     };
 
     try {
-      await setDoc(doc(firestore, "API", apiId), updatedAPIObj);
+      await setDoc(doc(firestore, "API", id), updatedAPIObj);
     } catch (err: any) {
       throw new Error(err.message);
     }
