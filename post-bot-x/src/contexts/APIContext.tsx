@@ -55,17 +55,14 @@ export const APIContextProvider: React.FC<APIContextProviderProps> = ({
 }) => {
   const { currentUser } = useAuth();
 
-  const createAPI = async (
-    apiDetail: DocumentData,
-    apiType: string,
-    collectionId: string
-  ): Promise<string> => {
+  const createAPI = async (apiDetail: DocumentData, apiType: string, collectionId: string): Promise<string> => {
+    const existingAnonymousUser = localStorage.getItem("anonymousUserId");
+    const userId = currentUser?.id || existingAnonymousUser;
     const newAPIObj = {
       ...apiDetail,
       apiType,
       collectionId,
-      createdBy: currentUser?.displayName,
-      createdById: currentUser?.uid,
+      createdById: userId,
       createdOn: new Date(),
     };
 
