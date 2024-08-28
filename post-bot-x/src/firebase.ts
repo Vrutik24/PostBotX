@@ -2,14 +2,15 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "@firebase/firestore";
 import { getAuth } from "firebase/auth";
 
+// Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyAqf5aduLH296i7ODLVmnFengZEW3ma0Ko",
-    authDomain: "post-bot-x.firebaseapp.com",
-    projectId: "post-bot-x",
-    storageBucket: "post-bot-x.appspot.com",
-    messagingSenderId: "338170475838",
-    appId: "1:338170475838:web:20c5a3b9aea23a41bda86f"
-  };
+  apiKey: "AIzaSyCK6Pi5dxTG4lxWvRSulZksx5jyHLV2SlM",
+  authDomain: "post-bot-x-2e5ec.firebaseapp.com",
+  projectId: "post-bot-x-2e5ec",
+  storageBucket: "post-bot-x-2e5ec.appspot.com",
+  messagingSenderId: "137470613298",
+  appId: "1:137470613298:web:2353dff5375bf8a330692b"
+};
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);

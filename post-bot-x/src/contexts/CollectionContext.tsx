@@ -311,7 +311,7 @@ export const CollectionContextProvider: React.FC<
     updateCollectionHeaders,
     shareCollection,
     acceptCollectionRequest,
-    denyCollectionRequest
+    denyCollectionRequest,
   };
 
   return (

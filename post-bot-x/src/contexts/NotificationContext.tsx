@@ -6,7 +6,7 @@ import { Notification } from "../types";
 
 // Define the structure of the NotificationContext value
 interface NotificationContextType {
-  getAllNotification: () => Promise<Notification[] | null>;
+  getAllNotification: () => Promise<Notification[]>;
 }
 
 const NotificationContext = createContext<NotificationContextType | undefined>(
@@ -27,12 +27,12 @@ interface NotificationProviderProps {
   children: ReactNode;
 }
 
-export function NotificationProvider({
+export function NotificationContextProvider({
   children,
 }: NotificationProviderProps): JSX.Element {
   const { currentUser } = useAuth();
 
-  const getAllNotification = async (): Promise<Notification[] | null> => {
+  const getAllNotification = async (): Promise<Notification[]> => {
     try {
       if (!currentUser) {
         throw new Error("Login to see your notifications");
@@ -43,10 +43,11 @@ export function NotificationProvider({
       );
       const notificationsSnapshot = await getDocs(notificationQuery);
 
-      const collections: Notification[] = notificationsSnapshot.docs.map(
+      const notifications: Notification[] = notificationsSnapshot.docs.map(
         (doc) => {
           const data = doc.data();
           return {
+            id : doc.id,
             userEmail: data.userEmail,
             userId: data.userId,
             createdOn: data.createdOn,
@@ -57,7 +58,7 @@ export function NotificationProvider({
         }
       );
 
-      return collections;
+      return notifications;
     } catch (err: any) {
       throw new Error(err.message);
     }

@@ -1,13 +1,44 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
+import { useNotification } from "../../contexts/NotificationContext";
 import { useNavigate } from "react-router-dom";
-import { UserBox, UserContainer, UserOption, Avatar } from "./UserStyle";
-import { Popover, Typography, Button, Box } from "@mui/material";
+import {
+  UserBox,
+  UserContainer,
+  UserOption,
+  Avatar,
+  NotificationItem,
+} from "./UserStyle";
+import { Popover, Typography, Button, Box, IconButton } from "@mui/material";
+import { Check, Close } from "@mui/icons-material";
+import { useCollection } from "../../contexts/CollectionContext";
+import { Notification } from "../../types";
 
 const Userbar = () => {
   const { currentUser, logOut } = useAuth();
+  const { getAllNotification } = useNotification();
+  const { acceptCollectionRequest, denyCollectionRequest } =
+    useCollection();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      if (currentUser) {
+        const fetchedNotifications = await getAllNotification();
+        if (fetchedNotifications) {
+          setNotifications(notifications);
+        }
+        console.log(fetchedNotifications);
+        setNotifications(fetchedNotifications);
+      }
+    };
+
+    if (anchorEl) {
+      fetchNotifications();
+    }
+  }, [anchorEl, currentUser, getAllNotification]);
 
   const handleLoginClick = () => {
     navigate("/signin");
@@ -20,11 +51,35 @@ const Userbar = () => {
   const handleLogout = async () => {
     await logOut();
     navigate("/signin");
-    setAnchorEl(null); // Close the popover after logout
+    setAnchorEl(null);
   };
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleAccept = async (
+    notificationId?: string,
+    collectionId?: string
+  ) => {
+    if (!notificationId || !collectionId) {
+      return;
+    }
+    await acceptCollectionRequest(collectionId);
+    await denyCollectionRequest(notificationId);
+    setNotifications(
+      notifications.filter((notification) => notification.id !== collectionId)
+    );
+  };
+
+  const handleDeny = async (notificationId?: string) => {
+    if (!notificationId) {
+      return;
+    }
+    await denyCollectionRequest(notificationId);
+    setNotifications(
+      notifications.filter((notification) => notification.id !== notificationId)
+    );
   };
 
   const getUserInitials = () => {
@@ -73,6 +128,35 @@ const Userbar = () => {
                 <Typography variant="body2" color="textSecondary">
                   {currentUser.email}
                 </Typography>
+                {notifications?.map((notification: Notification) => (
+                  <NotificationItem key={notification.collectionId}>
+                    <Typography variant="body2">
+                      {notification.senderName} shared the collection "
+                      {notification.collectionName}"
+                    </Typography>
+                    <Box display="flex" justifyContent="space-between" mt={1}>
+                      <IconButton
+                        size="small"
+                        color="primary"
+                        onClick={() =>
+                          handleAccept(
+                            notification.id,
+                            notification.collectionId
+                          )
+                        }
+                      >
+                        <Check />
+                      </IconButton>
+                      <IconButton
+                        size="small"
+                        color="secondary"
+                        onClick={() => handleDeny(notification.id)}
+                      >
+                        <Close />
+                      </IconButton>
+                    </Box>
+                  </NotificationItem>
+                ))}
                 <Button
                   variant="contained"
                   color="primary"
