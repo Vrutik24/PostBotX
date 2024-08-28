@@ -2,6 +2,7 @@ import * as React from "react";
 import { Box, Button, Typography, Modal, TextField } from "@mui/material";
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
 import { Height } from "@mui/icons-material";
+import { useFormik } from "formik";
 
 interface RequestModal {
   index: number;
@@ -34,6 +35,15 @@ const PayloadRequestModal = ({
   setRequestmodal,
 }: PayloadRequestModalProps) => {
   const { formik } = useAPITestFormikContext();
+  const payloadRequestFormik = useFormik({
+    initialValues: {
+      payload: requestModal.request
+    },
+    onSubmit: async (values) => {
+      formik.setFieldValue(`payload.${requestModal.index}`, values.payload)
+      console.log('values', values)
+    }
+  })
   return (
     <Modal
       open={requestModal.isOpen}
@@ -56,9 +66,11 @@ const PayloadRequestModal = ({
             // rows={10}
             variant="outlined"
             fullWidth
-            value={`${formik.values.payload[requestModal.index]}`}
+            id="payload"
+            name="payload"
+            value={payloadRequestFormik.values.payload}
             onChange={(e) => {
-              formik.setFieldValue(`payload.${requestModal.index}`, e.target.value);
+              payloadRequestFormik.setFieldValue('payload', e.target.value);
             }}
             sx={{
               "& .MuiInputBase-input": {
@@ -73,10 +85,10 @@ const PayloadRequestModal = ({
                   borderColor: "transparent",
                 },
                 "&:hover fieldset": {
-                  borderColor: "gray",
+                  borderColor: "transparent",
                 },
                 "&.Mui-focused fieldset": {
-                  borderColor: "gray",
+                  borderColor: "transparent",
                 },
               },
               overflowY: "auto",
@@ -95,7 +107,7 @@ const PayloadRequestModal = ({
             >
               Cancel
             </Button>
-            <Button variant="contained" color="success" onClick={() => setRequestmodal({...requestModal, isOpen: false})}>
+            <Button variant="contained" color="success" onClick={() => payloadRequestFormik.handleSubmit()}>
               Save
             </Button>
           </Box>
