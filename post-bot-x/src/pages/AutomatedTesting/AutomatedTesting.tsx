@@ -21,12 +21,65 @@ import { RequestTypeList } from "../../dropdown-list/request-type-list";
 import { TestingTypeList } from "../../dropdown-list/testing-type-list";
 import APITestingBody from "../../components/APITestingBody/APITestingBody";
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
+import { APIRequestPayload } from "../../types/APIRequestPayload";
+import { automatedPostWrite, automatedPostRead } from "../../api/AutomatedTestService";
+import { manualPostWrite, manualPostRead } from "../../api/ManualTestService";
 
 const AutomatedTesting = () => {
   const { formik, testingMethod, setTestingMethod } = useAPITestFormikContext();
   const handleChange = (event: SelectChangeEvent) => {
     setTestingMethod(event.target.value as "Automated" | "Manual");
   };
+
+  const testApi = async () => {
+    const apiPayload: APIRequestPayload = {
+      apiType: formik.values.apiType,
+      url: formik.values.url,
+      isAutomated: testingMethod == "Automated" ? true : false,
+      payload: formik.values.payload,
+      queryParameters:
+        testingMethod == "Automated"
+          ? formik.values.queryParameters
+          : formik.values.manualQueryParameters,
+      headers: formik.values.headers,
+    };
+    if (apiPayload.isAutomated) {
+      if (["Post", "Patch", "Put"].includes(apiPayload.apiType) ) {
+        try {
+          const results =  await automatedPostWrite(apiPayload);
+          console.log(results);
+        } catch (error) {
+          console.error(`Error calling ${apiPayload.apiType} method:`, error);
+        }
+      } else {
+        try
+        {
+          const results = await automatedPostRead(apiPayload);
+          console.log(results);
+        }
+        catch (error) {
+          console.error(`Error calling ${apiPayload.apiType} method:`, error);
+        }
+      }
+    } else {
+      if (["Post", "Patch", "Put"].includes(apiPayload.apiType)) {
+        try {
+          const results = await manualPostWrite(apiPayload);
+          console.log(results);
+        } catch (error) {
+          console.error(`Error calling ${apiPayload.apiType} method:`, error);
+        }
+        
+      } else {
+        try {
+          const results = await manualPostRead(apiPayload);
+          console.log(results);
+        } catch (error) {
+          console.error(`Error calling ${apiPayload.apiType} method:`, error);
+        }
+      }
+    }
+  }
 
   return (
     <APITestingPage>
@@ -123,7 +176,7 @@ const AutomatedTesting = () => {
           />
           <Button
             sx={{ backgroundColor: "green", color: "white", width: "100px" }}
-            onClick={() => formik.handleSubmit()}
+            onClick={() => testApi()}
           >
             Send
           </Button>

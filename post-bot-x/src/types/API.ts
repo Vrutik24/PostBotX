@@ -1,4 +1,5 @@
 import {Header} from "./Header";
+import { QueryParameter } from "./QueryParameter";
 
 export interface API {
     id:               string;
@@ -15,9 +16,4 @@ export interface API {
     payload?:          string[];
     headers?:          Header[];
     queryParameters?:  QueryParameter[];
-}
- 
-export interface QueryParameter {
-    key:    string;
-    values: string[];
 }
