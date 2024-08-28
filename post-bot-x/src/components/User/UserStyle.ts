@@ -1,5 +1,5 @@
 import { styled } from "@mui/material/styles";
-import { Box, Typography, Avatar as MUIAvatar } from "@mui/material";
+import { Box, Typography, Avatar as MUIAvatar, Paper } from "@mui/material";
 
 export const UserBox = styled(Box)(({ theme }) => ({
   height: "50px",
@@ -21,10 +21,19 @@ export const UserOption = styled(Typography)(({ theme }) => ({
 }));
 
 export const Avatar = styled(MUIAvatar)(({ theme }) => ({
-  backgroundColor: '#63a626', 
-  color: "#fff", 
-  width: 40, 
-  height: 40, 
-  fontSize: "1rem", 
-  cursor: "pointer", 
+  backgroundColor: "#63a626",
+  color: "#fff",
+  width: 40,
+  height: 40,
+  fontSize: "1rem",
+  cursor: "pointer",
+}));
+
+export const NotificationItem = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(2),
+  marginBottom: theme.spacing(1),
+  width: "100%",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
 }));

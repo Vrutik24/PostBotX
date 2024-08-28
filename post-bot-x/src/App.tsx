@@ -7,23 +7,26 @@ import { AuthProvider } from "./contexts/AuthContext";
 import SignIn from "./pages/Login/SignIn";
 import { CollectionContextProvider } from "./contexts/CollectionContext";
 import { APIContextProvider } from "./contexts/APIContext";
+import { NotificationContextProvider } from "./contexts/NotificationContext";
 
 function App() {
   return (
     <div className="App">
       <AuthProvider>
-        <CollectionContextProvider>
-          <APIContextProvider>
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/signup" element={<SignUp />} />
-                <Route path="/signin" element={<SignIn />} />
-                <Route path="/api-testing" element={<ApiTesting />} />
-              </Routes>
-            </BrowserRouter>
-          </APIContextProvider>
-        </CollectionContextProvider>
+        <NotificationContextProvider>
+          <CollectionContextProvider>
+            <APIContextProvider>
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/signup" element={<SignUp />} />
+                  <Route path="/signin" element={<SignIn />} />
+                  <Route path="/api-testing" element={<ApiTesting />} />
+                </Routes>
+              </BrowserRouter>
+            </APIContextProvider>
+          </CollectionContextProvider>
+        </NotificationContextProvider>
       </AuthProvider>
     </div>
   );
