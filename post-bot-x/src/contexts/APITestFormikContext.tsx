@@ -1,29 +1,16 @@
 import React, { createContext, useContext, ReactNode, useState } from "react";
-import {
-  useFormik,
-  FormikConfig,
-  FormikHelpers,
-  FormikContext,
-  FormikProps,
-} from "formik";
+import { useFormik, FormikProps } from "formik";
+import { Header } from "../types";
+import { QueryParameter } from "../types/QueryParameter";
 import * as Yup from "yup";
 
 interface FormValues {
   apiType: string;
   url: string;
   payload: string[];
-  headerPairs: {
-    key: string;
-    value: string;
-  }[];
-  queryParameters: {
-    key: string;
-    value: string | string;
-  }[];
-  manualQueryParameters: {
-    key: string;
-    value: string[];
-  }[];
+  headers: Header[];
+  queryParameters: QueryParameter[];
+  manualQueryParameters: QueryParameter[];
 }
 
 interface FormikContextType {
@@ -47,7 +34,7 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
     apiType: "Get",
     url: "",
     payload: [""],
-    headerPairs: [
+    headers: [
       {
         key: "",
         value: "",
@@ -56,7 +43,7 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
     queryParameters: [
       {
         key: "",
-        value: "",
+        value: [""],
       },
     ],
     manualQueryParameters: [
@@ -72,14 +59,6 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
     validateOnChange: true,
     onSubmit: (values) => {
       console.log("Values", values);
-      const apiPayload = {
-        apiType: values.apiType,
-        url: values.url,
-        payload: values.payload,
-        queryParameters: testingMethod === "Automated" ? [values.queryParameters] : values.manualQueryParameters,
-        headerPairs: values.headerPairs
-      }
-      console.log("apiPayload", apiPayload)
     },
     // validationSchema:
   });

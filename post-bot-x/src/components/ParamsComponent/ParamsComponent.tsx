@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 import { useState } from "react";
+import { QueryParameter } from "../../types/QueryParameter";
 
 const ParamsComponent = () => {
   const { formik } = useAPITestFormikContext();
@@ -29,10 +30,7 @@ const ParamsComponent = () => {
     } else {
       const newQueryParameters = formik.values.queryParameters.filter(
         (
-          queryParameter: {
-            key: string;
-            value: string;
-          },
+          queryParameter: QueryParameter,
           index
         ) => index !== i
       );
@@ -45,7 +43,7 @@ const ParamsComponent = () => {
     <Table>
       <TableBody>
         {formik.values.queryParameters.map(
-          (param: { key: string; value: string }, index: number) => (
+          (param: { key: string; value: string[] }, index: number) => (
             <TableRow key={index}>
               <TableCell sx={{ borderBottom: "none" }}>
                 <OutlinedInput
@@ -80,7 +78,7 @@ const ParamsComponent = () => {
                       });
                       formik.setFieldValue("queryParameters", [
                         ...formik.values.queryParameters,
-                        { key: "", value: "" },
+                        { key: "", value: [""] },
                       ]);
                     }
                     formik.setFieldValue(
@@ -94,9 +92,9 @@ const ParamsComponent = () => {
               </TableCell>
               <TableCell sx={{ borderBottom: "none" }}>
                 <OutlinedInput
-                  value={`${formik.values.queryParameters[index].value}`}
-                  id={`queryParameters.${index}.value`}
-                  name={`queryParameters.${index}.value`}
+                  value={`${formik.values.queryParameters[index].value[0]}`}
+                  id={`queryParameters.${index}.value.0`}
+                  name={`queryParameters.${index}.value.0`}
                   sx={{
                     height: "40px",
                     border: "1px solid gray",
@@ -124,11 +122,11 @@ const ParamsComponent = () => {
                       });
                       formik.setFieldValue("queryParameters", [
                         ...formik.values.queryParameters,
-                        { key: "", value: "" },
+                        { key: "", value: [""] },
                       ]);
                     }
                     formik.setFieldValue(
-                      `queryParameters.${index}.value`,
+                      `queryParameters.${index}.value.0`,
                       e.target.value
                     );
                   }}
