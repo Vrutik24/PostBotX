@@ -1,6 +1,7 @@
 import React, { createContext, useContext, ReactNode } from "react";
 import {
   addDoc,
+  doc,
   updateDoc,
   collection,
   deleteDoc,
@@ -11,7 +12,7 @@ import {
 import { useAuth } from "./AuthContext";
 import { firestore } from "../firebase";
 import generateUniqueId from "./GenerateUniqueId";
-import { Collection, Header } from "../types";
+import { Collection, Header, Notification } from "../types";
 
 interface CollectionContextProps {
   createCollection: (name: string) => Promise<void>;
@@ -22,6 +23,13 @@ interface CollectionContextProps {
     collectionId: string,
     newHeaders: Header[]
   ) => Promise<void>;
+  shareCollection: (
+    userEmail: string,
+    collectionId: string,
+    collectionName: string
+  ) => Promise<void>;
+  acceptCollectionRequest: (collectionId: string) => Promise<void>;
+  denyCollectionRequest: (id: string) => Promise<void>;
 }
 
 const CollectionContext = createContext<CollectionContextProps | undefined>(
@@ -45,7 +53,7 @@ interface CollectionContextProviderProps {
 export const CollectionContextProvider: React.FC<
   CollectionContextProviderProps
 > = ({ children }) => {
-  const { currentUser } = useAuth();
+  const { currentUser, getUserByEmailAsync } = useAuth();
 
   const createAnonymousUser = () => {
     const existingAnonymousUser = localStorage.getItem("anonymousUserId");
@@ -208,12 +216,102 @@ export const CollectionContextProvider: React.FC<
     }
   };
 
+  const shareCollection = async (
+    userEmail: string,
+    collectionId: string,
+    collectionName: string
+  ): Promise<void> => {
+    try {
+      if (!currentUser) {
+        throw new Error(`You need to login first to share the collection`);
+      }
+      const receivingUserRecord = await getUserByEmailAsync(userEmail);
+      if (!receivingUserRecord) {
+        throw new Error(`User with email ${userEmail} do not exists`);
+      }
+
+      const notificationQuery = query(
+        collection(firestore, "Notification"),
+        where("userEmail", "==", userEmail)
+      );
+      const notificationsSnapshot = await getDocs(notificationQuery);
+
+      notificationsSnapshot.docs.forEach((doc) => {
+        const notificationData = doc.data();
+        if (notificationData.collectionId === collectionId) {
+          throw new Error(`Collection is already shared with ${userEmail}`);
+        }
+      });
+      const receivingUserId = receivingUserRecord.id;
+      const collectionQuery = query(
+        collection(firestore, "UserCollection"),
+        where("userId", "==", receivingUserId)
+      );
+      const userCollectionSnapshot = await getDocs(collectionQuery);
+
+      userCollectionSnapshot.docs.forEach((doc) => {
+        const userCollectionData = doc.data();
+        if (userCollectionData.collectionId === collectionId) {
+          throw new Error(
+            `User with ${userEmail} already have this ${collectionName} collection`
+          );
+        }
+      });
+
+      const notification: Notification = {
+        userEmail,
+        userId: receivingUserId,
+        createdOn: new Date(),
+        collectionId,
+        collectionName,
+        senderName: currentUser?.displayName,
+      };
+
+      await addDoc(collection(firestore, "Notification"), notification);
+
+      console.log("Collection shared successfully.");
+    } catch (error) {
+      console.error("Error sharing collection:", error);
+      throw error;
+    }
+  };
+
+  const acceptCollectionRequest = async (
+    collectionId: string
+  ): Promise<void> => {
+    try {
+      if (!currentUser) {
+        throw new Error(`You need to login first to accept the collection`);
+      }
+      await addDoc(collection(firestore, "UserCollection"), {
+        userId: currentUser.id,
+        collectionId,
+        createdOn: new Date(),
+      });
+    } catch (error) {
+      console.error("Error accepting collection request:", error);
+      throw error;
+    }
+  };
+
+  const denyCollectionRequest = async (id: string): Promise<void> => {
+    try {
+      await deleteDoc(doc(firestore, "Notification", id));
+      console.log(`Notification ${id} deleted successfully.`);
+    } catch (error) {
+      console.error("Error deleting notification: ", error);
+    }
+  };
+
   const value: CollectionContextProps = {
     createCollection,
     getCollections,
     renameCollection,
     deleteCollection,
     updateCollectionHeaders,
+    shareCollection,
+    acceptCollectionRequest,
+    denyCollectionRequest
   };
 
   return (
