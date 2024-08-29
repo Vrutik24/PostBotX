@@ -83,7 +83,7 @@ const CollectionNavbar = () => {
     if (selectedCollection) {
       action === "rename"
         ? handleModalOpen(selectedCollection)
-        : deleteCollection(selectedCollection.collectionId);
+        : handleAction(undefined, selectedCollection.collectionId);
     }
   };
 
