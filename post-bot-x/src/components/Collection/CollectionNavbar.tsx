@@ -19,6 +19,7 @@ import {
   LibraryAddOutlined,
   ShareRounded,
 } from "@mui/icons-material";
+import ConfirmationModal from "../../modals/CollectionModal/ConfirmationModal";
 
 enum MenuAction {
   Fetch = 1,
@@ -37,8 +38,10 @@ const CollectionNavbar = () => {
   } = useCollection();
 
   const [collections, setCollections] = useState<Collection[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCollectionModalOpen, setIsCollectionModalOpen] = useState(false);
   const [selectedCollection, setSelectedCollection] = useState<Collection>();
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const [collectionToDelete, setCollectionToDelete] = useState<Collection>();
 
   useEffect(() => {
     fetchCollections();
@@ -57,11 +60,11 @@ const CollectionNavbar = () => {
 
   const handleModalOpen = (collection?: Collection) => {
     setSelectedCollection(collection);
-    setIsModalOpen(true);
+    setIsCollectionModalOpen(true);
   };
 
   const handleModalClose = () => {
-    setIsModalOpen(false);
+    setIsCollectionModalOpen(false);
     setSelectedCollection(undefined);
   };
 
@@ -98,8 +101,23 @@ const CollectionNavbar = () => {
     if (action === "rename") {
       handleModalOpen(selectedCollection);
     } else if (action === "delete") {
-      handleAction(undefined, selectedCollection?.collectionId);
+      setCollectionToDelete(selectedCollection);
+      setIsConfirmationModalOpen(true);
+      //handleAction(undefined, selectedCollection?.collectionId);
     }
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (collectionToDelete) {
+      await handleAction(undefined, collectionToDelete.collectionId);
+      setCollectionToDelete(undefined);
+    }
+    setIsConfirmationModalOpen(false);
+  };
+  
+  const handleDeleteCancel = () => {
+    setCollectionToDelete(undefined);
+    setIsConfirmationModalOpen(false);
   };
 
   return (
@@ -229,11 +247,19 @@ const CollectionNavbar = () => {
         </MenuItem>
       </Menu>
       <CollectionModal
-        isOpen={isModalOpen}
+        isOpen={isCollectionModalOpen}
         onClose={handleModalClose}
         onSubmit={handleAction}
         selectedCollection={selectedCollection}
       />
+      {collectionToDelete && (
+      <ConfirmationModal
+        isOpen={isConfirmationModalOpen}
+        onClose={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+        collectionName={collectionToDelete.name}
+      />
+    )}
     </CollectionNavbarBox>
   );
 };
