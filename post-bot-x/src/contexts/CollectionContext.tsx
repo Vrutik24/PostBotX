@@ -6,6 +6,7 @@ import {
   collection,
   deleteDoc,
   getDocs,
+  getDoc,
   query,
   where,
 } from "@firebase/firestore";
@@ -17,6 +18,7 @@ import { Collection, Header, Notification } from "../types";
 interface CollectionContextProps {
   createCollection: (name: string) => Promise<void>;
   getCollections: () => Promise<Collection[] | null>;
+  getCollectionById: (id: string) => Promise<Collection | undefined>;
   deleteCollection: (collectionId: string) => Promise<void>;
   renameCollection: (collectionId: string, newName: string) => Promise<void>;
   updateCollectionHeaders: (
@@ -66,11 +68,30 @@ export const CollectionContextProvider: React.FC<
     }
   };
 
+  const getCollectionById = async (
+    id: string
+  ): Promise<Collection | undefined> => {
+    const docRef = doc(firestore, "Collection", id);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      return docSnap.data() as Collection;
+    }
+  };
+
   const createCollection = async (name: string): Promise<void> => {
     const collectionId = generateUniqueId();
     const anonymousUserId = createAnonymousUser();
 
-    const userId = currentUser?.id || anonymousUserId;
+    let userId = anonymousUserId;
+    if (currentUser) {
+      const user = await getUserByEmailAsync(currentUser.email);
+      if (user) {
+        userId = user.id;
+      }
+    }
+
+    console.log("Create Collection >>>" + userId);
     const newCollection: Collection = {
       name,
       createdById: userId,
@@ -92,7 +113,13 @@ export const CollectionContextProvider: React.FC<
   const getCollections = async (): Promise<Collection[] | null> => {
     try {
       const existingAnonymousUserId = localStorage.getItem("anonymousUserId");
-      const userId = currentUser ? currentUser.id : existingAnonymousUserId;
+      let userId = existingAnonymousUserId;
+      if (currentUser) {
+        const user = await getUserByEmailAsync(currentUser.email);
+        if (user) {
+          userId = user.id;
+        }
+      }
 
       const userCollectionQuery = query(
         collection(firestore, "UserCollection"),
@@ -115,6 +142,7 @@ export const CollectionContextProvider: React.FC<
           (doc) => {
             const data = doc.data();
             return {
+              id: doc.id,
               name: data.name,
               createdById: data.createdById,
               createdOn: data.createdOn.toDate(),
@@ -151,7 +179,13 @@ export const CollectionContextProvider: React.FC<
         const collectionDocRef = querySnapshot.docs[0].ref;
 
         const existingAnonymousUserId = localStorage.getItem("anonymousUserId");
-        const userId = currentUser?.id || existingAnonymousUserId;
+        let userId = existingAnonymousUserId;
+        if (currentUser) {
+          const user = await getUserByEmailAsync(currentUser.email);
+          if (user) {
+            userId = user.id;
+          }
+        }
 
         await updateDoc(collectionDocRef, {
           name: newName,
@@ -171,7 +205,13 @@ export const CollectionContextProvider: React.FC<
   const deleteCollection = async (collectionId: string): Promise<void> => {
     try {
       const existingAnonymousUserId = localStorage.getItem("anonymousUserId");
-      const userId = currentUser?.id || existingAnonymousUserId;
+      let userId = existingAnonymousUserId;
+      if (currentUser) {
+        const user = await getUserByEmailAsync(currentUser.email);
+        if (user) {
+          userId = user.id;
+        }
+      }
 
       const userCollectionQuery = query(
         collection(firestore, "UserCollection"),
@@ -205,7 +245,13 @@ export const CollectionContextProvider: React.FC<
         const collectionDocRef = querySnapshot.docs[0].ref;
 
         const existingAnonymousUserId = localStorage.getItem("anonymousUserId");
-        const userId = currentUser?.id || existingAnonymousUserId;
+        let userId = existingAnonymousUserId;
+        if (currentUser) {
+          const user = await getUserByEmailAsync(currentUser.email);
+          if (user) {
+            userId = user.id;
+          }
+        }
 
         await updateDoc(collectionDocRef, {
           headers: newHeaders,
@@ -240,31 +286,30 @@ export const CollectionContextProvider: React.FC<
 
       const notificationQuery = query(
         collection(firestore, "Notification"),
-        where("userEmail", "==", userEmail)
+        where("userEmail", "==", userEmail),
+        where("collectionId", "==", collectionId)
       );
+
       const notificationsSnapshot = await getDocs(notificationQuery);
 
-      notificationsSnapshot.docs.forEach((doc) => {
-        const notificationData = doc.data();
-        if (notificationData.collectionId === collectionId) {
-          throw new Error(`Collection is already shared with ${userEmail}`);
-        }
-      });
-      const receivingUserId = receivingUserRecord.id;
-      const collectionQuery = query(
-        collection(firestore, "UserCollection"),
-        where("userId", "==", receivingUserId)
-      );
-      const userCollectionSnapshot = await getDocs(collectionQuery);
+      if (!notificationsSnapshot.empty) {
+        throw new Error(`Collection is already shared with ${userEmail}`);
+      }
 
-      userCollectionSnapshot.docs.forEach((doc) => {
-        const userCollectionData = doc.data();
-        if (userCollectionData.collectionId === collectionId) {
-          throw new Error(
-            `User with ${userEmail} already have this ${collectionName} collection`
-          );
-        }
-      });
+      const receivingUserId = receivingUserRecord.id;
+      const userCollectionQuery = query(
+        collection(firestore, "UserCollection"),
+        where("userId", "==", receivingUserId),
+        where("collectionId", "==", collectionId)
+      );
+
+      const userCollectionSnapshot = await getDocs(userCollectionQuery);
+
+      if (!userCollectionSnapshot.empty) {
+        throw new Error(
+          `User with ${userEmail} already has the ${collectionName} collection`
+        );
+      }
 
       const notification: Notification = {
         userEmail,
@@ -291,8 +336,10 @@ export const CollectionContextProvider: React.FC<
       if (!currentUser) {
         throw new Error(`You need to login first to accept the collection`);
       }
+      const user = await getUserByEmailAsync(currentUser.email);
+      console.log(user?.id);
       await addDoc(collection(firestore, "UserCollection"), {
-        userId: currentUser.id,
+        userId: user?.id,
         collectionId,
         createdOn: new Date(),
       });
@@ -320,6 +367,7 @@ export const CollectionContextProvider: React.FC<
     shareCollection,
     acceptCollectionRequest,
     denyCollectionRequest,
+    getCollectionById,
   };
 
   return (

@@ -9,6 +9,7 @@ import {
   getDocs,
   query,
   setDoc,
+  updateDoc,
   where,
   QuerySnapshot,
 } from "@firebase/firestore";
@@ -22,6 +23,7 @@ interface APIContextProps {
     apiDetail: API,
     collectionId: string
   ) => Promise<void>;
+  updateAPIName: (id: string, newName: string) => Promise<void>;
   getApisByCollectionId: (
     collectionId: string
   ) => Promise<QuerySnapshot<API> | null>;
@@ -46,14 +48,21 @@ interface APIContextProviderProps {
 export const APIContextProvider: React.FC<APIContextProviderProps> = ({
   children,
 }) => {
-  const { currentUser } = useAuth();
+  const { currentUser, getUserByEmailAsync } = useAuth();
 
   const createAPI = async (
     apiDetail: API,
     collectionId: string
   ): Promise<string> => {
-    const existingAnonymousUser = localStorage.getItem("anonymousUserId");
-    const userId = currentUser?.id || existingAnonymousUser;
+    const existingAnonymousUserId = localStorage.getItem("anonymousUserId");
+    let userId = existingAnonymousUserId ? existingAnonymousUserId : "";
+    if (currentUser) {
+      const user = await getUserByEmailAsync(currentUser.email);
+      if (user) {
+        userId = user.id;
+      }
+    }
+
     const newAPIObj: API = {
       ...apiDetail,
       collectionId,
@@ -74,8 +83,14 @@ export const APIContextProvider: React.FC<APIContextProviderProps> = ({
     apiDetail: API,
     collectionId: string
   ): Promise<void> => {
-    const existingAnonymousUser = localStorage.getItem("anonymousUserId");
-    const userId = currentUser?.id || existingAnonymousUser;
+    const existingAnonymousUserId = localStorage.getItem("anonymousUserId");
+    let userId = existingAnonymousUserId ? existingAnonymousUserId : "";
+    if (currentUser) {
+      const user = await getUserByEmailAsync(currentUser.email);
+      if (user) {
+        userId = user.id;
+      }
+    }
     const updatedAPIObj: API = {
       ...apiDetail,
       collectionId,
@@ -117,6 +132,27 @@ export const APIContextProvider: React.FC<APIContextProviderProps> = ({
     }
   };
 
+  const updateAPIName = async (id: string, newName: string): Promise<void> => {
+    const existingAnonymousUserId = localStorage.getItem("anonymousUserId");
+    let userId = existingAnonymousUserId ? existingAnonymousUserId : "";
+    if (currentUser) {
+      const user = await getUserByEmailAsync(currentUser.email);
+      if (user) {
+        userId = user.id;
+      }
+    }
+
+    try {
+      await updateDoc(doc(firestore, "API", id), {
+        name: newName,
+        updatedById: userId,
+        updatedOn: new Date(),
+      });
+    } catch (err: any) {
+      throw new Error(err.message);
+    }
+  };
+
   const deleteApiById = async (id: string): Promise<void> => {
     await deleteDoc(doc(firestore, "API", id));
   };
@@ -127,6 +163,7 @@ export const APIContextProvider: React.FC<APIContextProviderProps> = ({
     getApisByCollectionId,
     getApiById,
     deleteApiById,
+    updateAPIName,
   };
 
   return <APIContext.Provider value={value}>{children}</APIContext.Provider>;

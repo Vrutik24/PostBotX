@@ -6,16 +6,17 @@ import {
   TextField,
   Button,
   IconButton,
+  Alert,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { Collection } from "../../types";
 
-interface CollectionModalProps {
+interface CollectionShareModalProps {
   collection?: Collection;
   isOpen: boolean;
   action?: string;
   onClose: () => void;
-  onSubmit: (newName: string, id?: string) => void;
+  onSubmit: (receiverEmail: string, id: string, collectionName: string) => void;
 }
 
 const style = {
@@ -33,25 +34,37 @@ const style = {
   borderRadius: 2,
 };
 
-const CollectionModal: React.FC<CollectionModalProps> = ({
+const CollectionShareModal: React.FC<CollectionShareModalProps> = ({
   collection,
   isOpen,
   action,
   onClose,
   onSubmit,
 }) => {
-  const [collectionName, setCollectionName] = useState("");
+  const [receiverEmail, setReceiverEmail] = useState("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   useEffect(() => {
-    setCollectionName(collection?.name || "");
+    setReceiverEmail(collection?.name || "");
   }, [collection]);
 
-  const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setCollectionName(event.target.value);
+  const handleReceiverEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setReceiverEmail(event.target.value);
   };
 
   const handleSubmit = () => {
-    onSubmit(collectionName.trim(), collection?.collectionId);
+    try {
+      if (collection) {
+        onSubmit(
+          receiverEmail.trim(),
+          collection.collectionId,
+          collection.name
+        );
+      }
+    } catch (error : any) {
+      console.error("Failed to Share collection action:", error);
+      setErrorMessage(error.message);
+    }
   };
 
   return (
@@ -82,8 +95,8 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
         </Box>
         <TextField
           placeholder="Collection Name"
-          value={collectionName}
-          onChange={handleNameChange}
+          value={receiverEmail}
+          onChange={handleReceiverEmailChange}
           fullWidth
           margin="normal"
           sx={{
@@ -139,14 +152,22 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
                 color: "#FFFFFF50",
               },
             }}
-            disabled={collectionName.trim() === ""}
+            disabled={receiverEmail.trim() === ""}
           >
             {collection ? "Save" : "Create"}
           </Button>
         </Box>
+        {errorMessage && (
+        <Alert
+          sx={{ position: "absolute", bottom: 0, right: 0, margin: "20px" }}
+          severity="error"
+        >
+          {errorMessage}
+        </Alert>
+      )}
       </Box>
     </Modal>
   );
 };
 
-export default CollectionModal;
+export default CollectionShareModal;
