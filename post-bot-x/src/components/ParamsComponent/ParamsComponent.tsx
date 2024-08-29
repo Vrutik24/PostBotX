@@ -1,6 +1,5 @@
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
 import DynamicParamsTable from "../../shared/components/DynamicParamsTable";
-import { QueryParameter } from "../../types/QueryParameter";
 
 const ParamsComponent = () => {
   const { formik } = useAPITestFormikContext();
