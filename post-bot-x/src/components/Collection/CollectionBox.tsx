@@ -1,7 +1,7 @@
 import React, { MouseEvent } from "react";
 import { Box, Typography, IconButton } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { AddToPhotosRounded, MoreHorizRounded } from "@mui/icons-material";
+import { ArrowRight, MoreHorizRounded } from "@mui/icons-material";
 import { Collection } from "../../types";
 
 interface CollectionBoxProps {
@@ -21,8 +21,8 @@ const CollectionBox: React.FC<CollectionBoxProps> = ({
     <Box
       display="flex"
       alignItems="center"
-      p={1}
-      mb={1}
+      p="6px"
+      my={1}
       borderRadius="4px"
       position="relative"
       onContextMenu={(e) => onMenuOpen(e, collection)}
@@ -51,9 +51,10 @@ const CollectionBox: React.FC<CollectionBoxProps> = ({
             backgroundColor: "rgba(255, 255, 255, 0.1)",
             borderRadius: "8px",
           },
+          padding: 0,
         }}
       >
-        <AddToPhotosRounded sx={{ fontSize: "20px" }} />
+        <ArrowRight sx={{ fontSize: "25px"}} />
       </IconButton>
       <Typography>{collection.name}</Typography>
       <Box
