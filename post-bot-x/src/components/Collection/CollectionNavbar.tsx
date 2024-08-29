@@ -13,6 +13,13 @@ import { useCollection } from "../../contexts/CollectionContext";
 import { Collection } from "../../types";
 import { Divider, Menu, MenuItem } from "@mui/material";
 
+enum MenuAction {
+  Fetch = 1,
+  Create,
+  Rename,
+  Delete,
+}
+
 const CollectionNavbar = () => {
   const navigateTo = useNavigate();
   const {
@@ -22,10 +29,9 @@ const CollectionNavbar = () => {
     getCollections,
   } = useCollection();
 
+  const [collections, setCollections] = useState<Collection[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCollection, setSelectedCollection] = useState<Collection>();
-  const [collections, setCollections] = useState<Collection[]>([]);
-  const [anchorEl, setAnchorEl] = useState<HTMLElement>();
 
   useEffect(() => {
     fetchCollections();
@@ -36,7 +42,6 @@ const CollectionNavbar = () => {
       const collectionList = await getCollections();
       if (collectionList) {
         setCollections(collectionList);
-        console.log(collections);
       }
     } catch (error) {
       console.error("Failed to fetch collections:", error);
@@ -71,23 +76,24 @@ const CollectionNavbar = () => {
 
   const handleMenuOpen = (
     event: MouseEvent<HTMLElement>,
-    collection?: Collection
+    collection: Collection
   ) => {
     event.preventDefault();
-    setAnchorEl(event.currentTarget);
     setSelectedCollection(collection);
   };
 
-  const handleMenuAction = (action: "rename" | "delete") => {
-    setAnchorEl(undefined);
-    if (selectedCollection) {
-      action === "rename"
-        ? handleModalOpen(selectedCollection)
-        : handleAction(undefined, selectedCollection.collectionId);
-    }
+  const handleMenuClose = () => {
+    setSelectedCollection(undefined);
   };
 
-  const handleMenuClose = () => setAnchorEl(undefined);
+  const handleMenuAction = (action: "rename" | "delete") => {
+    handleMenuClose();
+    if (action === "rename") {
+      handleModalOpen(selectedCollection);
+    } else if (action === "delete") {
+      handleAction(undefined, selectedCollection?.collectionId);
+    }
+  };
 
   return (
     <CollectionNavbarBox>
@@ -106,15 +112,17 @@ const CollectionNavbar = () => {
             <CollectionBox
               key={collection.collectionId}
               collection={collection}
-              anchorEl={anchorEl}
+              selectedCollection={selectedCollection}
               onMenuOpen={(e) => handleMenuOpen(e, collection)}
             />
           ))}
         </CollectionBoxContainer>
       </CollectionNavbarContainer>
       <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
+        anchorEl={document.querySelector(
+          `[data-collection-id='${selectedCollection?.collectionId}']`
+        )}
+        open={Boolean(selectedCollection?.collectionId)}
         onClose={handleMenuClose}
         anchorOrigin={{
           vertical: "bottom",
@@ -193,7 +201,7 @@ const CollectionNavbar = () => {
         isOpen={isModalOpen}
         onClose={handleModalClose}
         onSubmit={handleAction}
-        collection={selectedCollection}
+        selectedCollection={selectedCollection}
       />
     </CollectionNavbarBox>
   );

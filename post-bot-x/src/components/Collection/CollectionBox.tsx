@@ -1,4 +1,4 @@
-import React, { useState, MouseEvent } from "react";
+import React, { MouseEvent } from "react";
 import { Box, Typography, IconButton } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { AddToPhotosRounded, MoreHorizRounded } from "@mui/icons-material";
@@ -6,15 +6,17 @@ import { Collection } from "../../types";
 
 interface CollectionBoxProps {
   collection: Collection;
-  onMenuOpen: (event: MouseEvent<HTMLElement>) => void;
-  anchorEl?: HTMLElement;
+  onMenuOpen: (event: MouseEvent<HTMLElement>, collection: Collection) => void;
+  selectedCollection?: Collection;
 }
 
 const CollectionBox: React.FC<CollectionBoxProps> = ({
   collection,
   onMenuOpen,
-  anchorEl,
+  selectedCollection,
 }) => {
+  const isOpen = selectedCollection?.collectionId === collection.collectionId;
+
   return (
     <Box
       display="flex"
@@ -23,13 +25,15 @@ const CollectionBox: React.FC<CollectionBoxProps> = ({
       mb={1}
       borderRadius="4px"
       position="relative"
-      onContextMenu={onMenuOpen}
+      onContextMenu={(e) => onMenuOpen(e, collection)}
       tabIndex={0}
+      data-context-open={isOpen}
+      data-collection-id={collection.collectionId}
       sx={{
-        backgroundColor: anchorEl ? "rgba(255, 255, 255, 0.1)" : "transparent", // Apply hover background if context menu is open
+        backgroundColor: isOpen ? "rgba(255, 255, 255, 0.1)" : "transparent", // Apply background color if context menu is open
         cursor: "pointer",
         "&:hover, &[data-context-open='true']": {
-          backgroundColor: "rgba(255, 255, 255, 0.1)", // Lighter background color on hover
+          backgroundColor: "rgba(255, 255, 255, 0.1)", // Background color when hovered or context menu is open
         },
         "&:hover .collection-actions, &[data-context-open='true'] .collection-actions":
           {
@@ -38,9 +42,17 @@ const CollectionBox: React.FC<CollectionBoxProps> = ({
         color: "#fff",
         gap: 2,
       }}
-      data-context-open={Boolean(anchorEl)}
     >
-      <IconButton size="small" sx={{ color: "rgba(255, 255, 255, 0.5)" }}>
+      <IconButton
+        size="small"
+        sx={{
+          color: "rgba(255, 255, 255, 0.5)",
+          "&:hover, &[data-context-open='true']": {
+            backgroundColor: "rgba(255, 255, 255, 0.1)",
+            borderRadius: "8px",
+          },
+        }}
+      >
         <AddToPhotosRounded sx={{ fontSize: "20px" }} />
       </IconButton>
       <Typography>{collection.name}</Typography>
@@ -63,7 +75,9 @@ const CollectionBox: React.FC<CollectionBoxProps> = ({
               backgroundColor: "rgba(255, 255, 255, 0.1)",
               borderRadius: "8px",
             },
-            "&[data-context-open='true']": { color: "white" },
+            "&[data-context-open='true']": {
+              color: "white",
+            },
           }}
         >
           <AddIcon sx={{ fontSize: "20px" }} />
@@ -76,9 +90,11 @@ const CollectionBox: React.FC<CollectionBoxProps> = ({
               backgroundColor: "rgba(255, 255, 255, 0.1)",
               borderRadius: "8px",
             },
-            "&[data-context-open='true']": { color: "white" },
+            "&[data-context-open='true']": {
+              color: "white",
+            },
           }}
-          onClick={onMenuOpen}
+          onClick={(e) => onMenuOpen(e, collection)}
         >
           <MoreHorizRounded sx={{ fontSize: "20px" }} />
         </IconButton>
