@@ -21,11 +21,12 @@ function CustomTabPanel(props: TabPanelProps) {
       role="tabpanel"
       hidden={value !== index}
       id={`simple-tabpanel-${index}`}
+      style={{height: '80%'}}
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
       {value === index && (
-        <Box sx={{ padding: "10px", backgroundColor: "inherit" }}>
+        <Box sx={{ padding: "10px", backgroundColor: "inherit", height: '100%'}}>
           {children}
         </Box>
       )}

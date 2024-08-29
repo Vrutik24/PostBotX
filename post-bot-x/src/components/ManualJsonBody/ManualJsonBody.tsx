@@ -25,6 +25,8 @@ const ManualJsonBody = () => {
   });
   const { formik } = useAPITestFormikContext();
 
+  console.log("requestModal", requestModal)
+
   const deleteJsonBody = (index: number) => {
     const newJsonBodyArray = formik.values.payload.filter(
       (payload: string, payloadIndex) => payloadIndex !== index
@@ -37,6 +39,7 @@ const ManualJsonBody = () => {
   };
 
   const viewAndEditRequest = (index: number, request: string) => {
+    console.log("Request++++++++++++++++", request)
     setRequestmodal({
       index: index,
       isOpen: true,
