@@ -56,9 +56,9 @@ export const CollectionContextProvider: React.FC<
   const { currentUser, getUserByEmailAsync } = useAuth();
 
   const createAnonymousUser = () => {
-    const existingAnonymousUser = localStorage.getItem("anonymousUserId");
-    if (existingAnonymousUser) {
-      return existingAnonymousUser;
+    const existingAnonymousUserId = localStorage.getItem("anonymousUserId");
+    if (existingAnonymousUserId) {
+      return existingAnonymousUserId;
     } else {
       const anonymousUserId = generateUniqueId();
       localStorage.setItem("anonymousUserId", anonymousUserId);
@@ -93,6 +93,7 @@ export const CollectionContextProvider: React.FC<
     try {
       const existingAnonymousUserId = localStorage.getItem("anonymousUserId");
       const userId = currentUser ? currentUser.id : existingAnonymousUserId;
+
       const userCollectionQuery = query(
         collection(firestore, "UserCollection"),
         where("userId", "==", userId)
@@ -149,8 +150,9 @@ export const CollectionContextProvider: React.FC<
       if (!querySnapshot.empty) {
         const collectionDocRef = querySnapshot.docs[0].ref;
 
-        const existingAnonymousUser = localStorage.getItem("anonymousUserId");
-        const userId = currentUser?.id || existingAnonymousUser;
+        const existingAnonymousUserId = localStorage.getItem("anonymousUserId");
+        const userId = currentUser?.id || existingAnonymousUserId;
+
         await updateDoc(collectionDocRef, {
           name: newName,
           updatedById: userId,
@@ -168,9 +170,12 @@ export const CollectionContextProvider: React.FC<
 
   const deleteCollection = async (collectionId: string): Promise<void> => {
     try {
+      const existingAnonymousUserId = localStorage.getItem("anonymousUserId");
+      const userId = currentUser?.id || existingAnonymousUserId;
+
       const userCollectionQuery = query(
         collection(firestore, "UserCollection"),
-        where("userId", "==", currentUser?.uid),
+        where("userId", "==", userId),
         where("collectionId", "==", collectionId)
       );
 
@@ -199,8 +204,9 @@ export const CollectionContextProvider: React.FC<
       if (!querySnapshot.empty) {
         const collectionDocRef = querySnapshot.docs[0].ref;
 
-        const existingAnonymousUser = localStorage.getItem("anonymousUserId");
-        const userId = currentUser?.id || existingAnonymousUser;
+        const existingAnonymousUserId = localStorage.getItem("anonymousUserId");
+        const userId = currentUser?.id || existingAnonymousUserId;
+
         await updateDoc(collectionDocRef, {
           headers: newHeaders,
           updatedById: userId,
