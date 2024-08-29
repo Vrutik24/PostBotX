@@ -2,7 +2,6 @@ import { Alert, Box, Button, TextField } from "@mui/material";
 import { useState } from "react";
 import { mapJsonToOutput } from "./MapJsonOutput";
 import { prettifyJSON } from "../../utils/PrettifyJson";
-import CallSnackbar from "../CallSnackbar";
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
 
 const JSONBody = () => {

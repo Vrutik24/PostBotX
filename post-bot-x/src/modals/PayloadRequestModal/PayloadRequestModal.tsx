@@ -42,7 +42,6 @@ const PayloadRequestModal = ({
   requestModal,
   setRequestmodal,
 }: PayloadRequestModalProps) => {
-  console.log("Payload++++++++++++", requestModal);
   const { formik } = useAPITestFormikContext();
   const payloadRequestFormik = useFormik({
     initialValues: {
@@ -56,7 +55,6 @@ const PayloadRequestModal = ({
         request: payloadRequestFormik.values.payload,
         isOpen: false,
       });
-      console.log("values", values);
     },
   });
 
