@@ -6,7 +6,7 @@ import {
   CollectionNavbarContainer,
   CollectionNavbarTitle,
 } from "./CollectionNavbarStyle";
-import { useState, useEffect, MouseEvent } from "react";
+import { useState, useEffect, MouseEvent, useCallback } from "react";
 import CollectionBox from "./CollectionBox";
 import CollectionModal from "../../modals/CollectionModal/CollectionModal";
 import { useCollection } from "../../contexts/CollectionContext";
@@ -20,13 +20,7 @@ import {
   ShareRounded,
 } from "@mui/icons-material";
 import ConfirmationModal from "../../modals/CollectionModal/ConfirmationModal";
-
-enum MenuAction {
-  Fetch = 1,
-  Create,
-  Rename,
-  Delete,
-}
+import HeadersModal from "../../modals/CollectionModal/HeadersModal";
 
 const CollectionNavbar = () => {
   const navigateTo = useNavigate();
@@ -38,16 +32,13 @@ const CollectionNavbar = () => {
   } = useCollection();
 
   const [collections, setCollections] = useState<Collection[]>([]);
-  const [isCollectionModalOpen, setIsCollectionModalOpen] = useState(false);
   const [selectedCollection, setSelectedCollection] = useState<Collection>();
+  const [isCollectionModalOpen, setIsCollectionModalOpen] = useState(false);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [collectionToDelete, setCollectionToDelete] = useState<Collection>();
+  const [isHeadersModalOpen, setIsHeadersModalOpen] = useState(false);
 
-  useEffect(() => {
-    fetchCollections();
-  }, []);
-
-  const fetchCollections = async () => {
+  const fetchCollections = useCallback(async () => {
     try {
       const collectionList = await getCollections();
       if (collectionList) {
@@ -56,7 +47,11 @@ const CollectionNavbar = () => {
     } catch (error) {
       console.error("Failed to fetch collections:", error);
     }
-  };
+  }, [getCollections]);
+
+  useEffect(() => {
+    fetchCollections();
+  }, [fetchCollections]);
 
   const handleModalOpen = (collection?: Collection) => {
     setSelectedCollection(collection);
@@ -103,7 +98,6 @@ const CollectionNavbar = () => {
     } else if (action === "delete") {
       setCollectionToDelete(selectedCollection);
       setIsConfirmationModalOpen(true);
-      //handleAction(undefined, selectedCollection?.collectionId);
     }
   };
 
@@ -114,10 +108,26 @@ const CollectionNavbar = () => {
     }
     setIsConfirmationModalOpen(false);
   };
-  
+
   const handleDeleteCancel = () => {
     setCollectionToDelete(undefined);
     setIsConfirmationModalOpen(false);
+  };
+
+  const handleOpenHeadersModal = () => {
+    setIsHeadersModalOpen(true);
+  };
+
+  const handleCloseHeadersModal = () => {
+    setIsHeadersModalOpen(false);
+  };
+
+  const handleSaveHeaders = (
+    headers: { key: string; value: string[] | string }[]
+  ) => {
+    // Save headers logic
+    console.log("Headers saved:", headers);
+    handleCloseHeadersModal();
   };
 
   return (
@@ -192,7 +202,7 @@ const CollectionNavbar = () => {
               backgroundColor: "#333333",
             },
           }}
-          onClick={handleMenuClose}
+          onClick={handleOpenHeadersModal}
         >
           <ListItemIcon sx={{ color: "rgba(255, 255, 255, 0.5)" }}>
             <LibraryAddOutlined sx={{ fontSize: "20px" }} />
@@ -253,13 +263,20 @@ const CollectionNavbar = () => {
         selectedCollection={selectedCollection}
       />
       {collectionToDelete && (
-      <ConfirmationModal
-        isOpen={isConfirmationModalOpen}
-        onClose={handleDeleteCancel}
-        onConfirm={handleDeleteConfirm}
-        collectionName={collectionToDelete.name}
-      />
-    )}
+        <ConfirmationModal
+          isOpen={isConfirmationModalOpen}
+          onClose={handleDeleteCancel}
+          onConfirm={handleDeleteConfirm}
+          collectionName={collectionToDelete.name}
+        />
+      )}
+      {isHeadersModalOpen && (
+        <HeadersModal
+          open={isHeadersModalOpen}
+          onClose={handleCloseHeadersModal}
+          onSave={handleSaveHeaders}
+        />
+      )}
     </CollectionNavbarBox>
   );
 };

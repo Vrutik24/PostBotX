@@ -36,6 +36,7 @@ const DynamicParamsTable: React.FC<DynamicParamsTableProps> = ({
   };
 
   const handleDelete = (index: number) => {
+    console.log("deleet index: ", index);
     onDelete(index);
     resetRowFlags();
   };
@@ -52,7 +53,7 @@ const DynamicParamsTable: React.FC<DynamicParamsTableProps> = ({
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     index: number,
-    field: "key" | "value.0"
+    field: string
   ) => {
     
     const updatedItem = {

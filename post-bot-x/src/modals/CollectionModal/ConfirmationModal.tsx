@@ -18,6 +18,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   return (
     <Modal open={isOpen} onClose={onClose}>
       <Box
+        onKeyDown={(e) => e.key === "Enter" && onConfirm()}
         sx={{
           position: "absolute",
           top: "50%",
@@ -38,7 +39,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            marginBottom: 5
+            marginBottom: 5,
           }}
         >
           <Typography>Delete the collection "{collectionName}"?</Typography>
@@ -64,9 +65,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         >
           Are you sure?
         </Typography> */}
-        <Box
-          sx={{ display: "flex", justifyContent: "space-between", gap: 2 }}
-        >
+        <Box sx={{ display: "flex", justifyContent: "space-between", gap: 2 }}>
           <Button
             onClick={onClose}
             variant="outlined"
