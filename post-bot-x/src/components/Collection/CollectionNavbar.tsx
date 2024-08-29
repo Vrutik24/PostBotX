@@ -12,6 +12,7 @@ import CollectionModal from "../../modals/CollectionModal/CollectionModal";
 import { useCollection } from "../../contexts/CollectionContext";
 import { Collection } from "../../types";
 import { Divider, Menu, MenuItem } from "@mui/material";
+import CollectionShareModal from "../../modals/CollectionModal/CollectionShareModal";
 
 const CollectionNavbar = () => {
   const navigateTo = useNavigate();
@@ -20,12 +21,15 @@ const CollectionNavbar = () => {
     renameCollection,
     deleteCollection,
     getCollections,
+    shareCollection,
   } = useCollection();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isShareModalOpen, setShareIsModalOpen] = useState(false);
   const [selectedCollection, setSelectedCollection] = useState<Collection>();
   const [collections, setCollections] = useState<Collection[]>([]);
   const [anchorEl, setAnchorEl] = useState<HTMLElement>();
+  const [action, setAction] = useState("");
 
   useEffect(() => {
     fetchCollections();
@@ -34,9 +38,12 @@ const CollectionNavbar = () => {
   const fetchCollections = async () => {
     try {
       const collectionList = await getCollections();
+      console.log("CollectionList >>>> " + collectionList);
       if (collectionList) {
         setCollections(collectionList);
-        console.log(collections);
+        collectionList?.forEach(element => {
+          console.log(element);
+        });
       }
     } catch (error) {
       console.error("Failed to fetch collections:", error);
@@ -47,25 +54,51 @@ const CollectionNavbar = () => {
     setSelectedCollection(collection);
     setIsModalOpen(true);
   };
-
   const handleModalClose = () => {
     setIsModalOpen(false);
     setSelectedCollection(undefined);
   };
+  const handleShareModalOpen = (collection?: Collection) => {
+    setSelectedCollection(collection);
+    setShareIsModalOpen(true);
+  };
 
-  const handleAction = async (name?: string, id?: string) => {
+  const handleShareModalClose = () => {
+    setShareIsModalOpen(false);
+    setSelectedCollection(undefined);
+  };
+
+  const handleAction = async (
+    name?: string,
+    id?: string,
+    receiverEmail?: string
+  ) => {
     try {
       if (id && name) {
         await renameCollection(id, name);
       } else if (id) {
         await deleteCollection(id);
       } else if (name) {
+        console.log(name);
         await createCollection(name);
       }
       await fetchCollections();
       handleModalClose();
     } catch (error) {
       console.error("Failed to process collection action:", error);
+    }
+  };
+
+  const handleShareCollection = async (
+    receiverEmail: string,
+    collectionId: string,
+    collectionName: string
+  ) => {
+    try {
+      await shareCollection(receiverEmail, collectionId, collectionName);
+      handleModalClose();
+    } catch (error) {
+      console.error("Failed to share collection action:", error);
     }
   };
 
@@ -78,12 +111,19 @@ const CollectionNavbar = () => {
     setSelectedCollection(collection);
   };
 
-  const handleMenuAction = (action: "rename" | "delete") => {
+  const handleMenuAction = (action: "rename" | "delete" | "share") => {
     setAnchorEl(undefined);
+
     if (selectedCollection) {
-      action === "rename"
-        ? handleModalOpen(selectedCollection)
-        : handleAction(undefined, selectedCollection.collectionId);
+      if (action === "rename") {
+        setAction("Rename");
+        handleModalOpen(selectedCollection);
+      } else if (action === "share") {
+        setAction("Share");
+        handleShareModalOpen(selectedCollection);
+      } else if (action === "delete") {
+        handleAction(undefined, selectedCollection.collectionId);
+      }
     }
   };
 
@@ -171,7 +211,7 @@ const CollectionNavbar = () => {
               backgroundColor: "#333333",
             },
           }}
-          onClick={handleMenuClose}
+          onClick={() => handleMenuAction("share")}
         >
           Share
         </MenuItem>
@@ -191,8 +231,16 @@ const CollectionNavbar = () => {
       </Menu>
       <CollectionModal
         isOpen={isModalOpen}
+        action={action}
         onClose={handleModalClose}
         onSubmit={handleAction}
+        collection={selectedCollection}
+      />
+      <CollectionShareModal
+        isOpen={isShareModalOpen}
+        action={action}
+        onClose={handleShareModalClose}
+        onSubmit={handleShareCollection}
         collection={selectedCollection}
       />
     </CollectionNavbarBox>
