@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   Box,
@@ -6,12 +6,15 @@ import {
   TextField,
   Button,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { Collection } from "../../types";
+import * as Yup from "yup";
+import { useFormik } from "formik";
 
 interface CollectionModalProps {
-  collection?: Collection;
+  selectedCollection?: Collection;
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (newName: string, id?: string) => void;
@@ -32,116 +35,136 @@ const style = {
   borderRadius: 2,
 };
 
+const validationSchema = Yup.object({
+  name: Yup.string().required(),
+});
+
 const CollectionModal: React.FC<CollectionModalProps> = ({
-  collection,
+  selectedCollection,
   isOpen,
   onClose,
   onSubmit,
 }) => {
-  const [collectionName, setCollectionName] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    setCollectionName(collection?.name || "");
-  }, [collection]);
-
-  const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setCollectionName(event.target.value);
-  };
-
-  const handleSubmit = () => {
-    onSubmit(collectionName.trim(), collection?.collectionId);
-  };
+  const formik = useFormik({
+    initialValues: {
+      name: selectedCollection?.name || "",
+    },
+    validationSchema: validationSchema,
+    onSubmit: async (values) => {
+      setLoading(true);
+      try {
+        await onSubmit(values.name.trim(), selectedCollection?.collectionId);
+      } finally {
+        setLoading(false);
+      }
+    },
+    validateOnMount: true,
+    validateOnChange: true,
+    enableReinitialize: true,
+  });
 
   return (
     <Modal open={isOpen} onClose={onClose}>
       <Box sx={style}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <Typography>
-            {collection ? "Rename Collection" : "Create Collection"}
-          </Typography>
-          <IconButton
-            onClick={onClose}
+        <form onSubmit={formik.handleSubmit}>
+          <Box
             sx={{
-              color: "white",
-              "&:hover": {
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
-              },
-              borderRadius: "8px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
             }}
           >
-            <CloseIcon fontSize="small" />
-          </IconButton>
-        </Box>
-        <TextField
-          placeholder="Collection Name"
-          value={collectionName}
-          onChange={handleNameChange}
-          fullWidth
-          margin="normal"
-          sx={{
-            "& .MuiInputBase-input": {
-              color: "white",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
-              borderRadius: "8px",
-            },
-            "& .MuiOutlinedInput-root": {
-              "& fieldset": {
-                borderColor: "transparent",
+            <Typography>
+              {selectedCollection ? "Rename Collection" : "Create Collection"}
+            </Typography>
+            <IconButton
+              onClick={onClose}
+              sx={{
+                color: "white",
+                "&:hover": {
+                  backgroundColor: "rgba(255, 255, 255, 0.1)",
+                },
+                borderRadius: "8px",
+              }}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          </Box>
+          <TextField
+            placeholder="Collection Name"
+            id="name"
+            name="name"
+            value={formik.values.name}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            fullWidth
+            margin="normal"
+            sx={{
+              "& .MuiInputBase-input": {
+                color: "white",
+                border: "1px solid rgba(255, 255, 255, 0.1)",
                 borderRadius: "8px",
               },
-              "&:hover:not(.Mui-focused) fieldset": {
-                borderColor: "transparent",
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "transparent",
+                  borderRadius: "8px",
+                },
+                "&:hover:not(.Mui-focused) fieldset": {
+                  borderColor: "transparent",
+                },
               },
-            },
-          }}
-        />
-        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
-          <Button
-            onClick={onClose}
-            variant="outlined"
-            sx={{
-              color: "white",
-              borderRadius: "8px",
-              border: "none",
-              backgroundColor: "rgba(255, 255, 255, 0.1)",
-              "&:hover": {
-                backgroundColor: "rgba(255, 255, 255, 0.2)",
+            }}
+          />
+          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
+            <Button
+              onClick={onClose}
+              variant="outlined"
+              sx={{
+                color: "white",
+                borderRadius: "8px",
                 border: "none",
-              },
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSubmit}
-            variant="contained"
-            sx={{
-              color: "white",
-              borderRadius: "8px",
-              backgroundColor: collection
-                ? "green"
-                : "rgba(255, 255, 255, 0.1)",
-              "&:hover": {
-                backgroundColor: collection
-                  ? "darkgreen"
-                  : "rgba(255, 255, 255, 0.1)",
-              },
-              "&.Mui-disabled": {
                 backgroundColor: "rgba(255, 255, 255, 0.1)",
-                color: "#FFFFFF50",
-              },
-            }}
-            disabled={collectionName.trim() === ""}
-          >
-            {collection ? "Save" : "Create"}
-          </Button>
-        </Box>
+                "&:hover": {
+                  backgroundColor: "rgba(255, 255, 255, 0.2)",
+                  border: "none",
+                },
+              }}
+              disabled={loading}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{
+                color: "white",
+                borderRadius: "8px",
+                backgroundColor: "green",
+                "&:hover": {
+                  backgroundColor: selectedCollection
+                    ? "darkgreen"
+                    : "rgba(255, 255, 255, 0.1)",
+                },
+                "&.Mui-disabled": {
+                  backgroundColor: "rgba(255, 255, 255, 0.1)",
+                  color: "#FFFFFF50",
+                },
+              }}
+              disabled={Boolean(formik.errors.name) || loading}
+            >
+              {loading ? (
+                <CircularProgress size={24} sx={{ color: "green" }} />
+              ) : selectedCollection ? (
+                "Save"
+              ) : (
+                "Create"
+              )}
+            </Button>
+          </Box>
+        </form>
       </Box>
     </Modal>
   );
