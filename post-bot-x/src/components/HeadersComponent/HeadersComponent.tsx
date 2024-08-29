@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import { Delete } from "@mui/icons-material";
 import { useState } from "react";
+import { Header } from "../../types";
 
 const HeadersComponent = () => {
   const { formik } = useAPITestFormikContext();
@@ -20,20 +21,17 @@ const HeadersComponent = () => {
   };
 
   const deleteHeader = (i: number) => {
-    if (formik.values.headerPairs.length === 1) {
-      formik.setFieldValue("headerPairs", formik.initialValues.headerPairs);
+    if (formik.values.headers.length === 1) {
+      formik.setFieldValue("headers", formik.initialValues.headers);
       resetRowFlags();
     } else {
-      const headerParams = formik.values.headerPairs.filter(
+      const headerParams = formik.values.headers.filter(
         (
-          header: {
-            key: string;
-            value: string;
-          },
+          header: Header,
           index
         ) => index !== i
       );
-      formik.setFieldValue("headerPairs", headerParams);
+      formik.setFieldValue("headers", headerParams);
       resetRowFlags();
     }
   };
@@ -41,14 +39,14 @@ const HeadersComponent = () => {
   return (
     <Table>
       <TableBody>
-        {formik.values.headerPairs.map(
+        {formik.values.headers.map(
           (header: { key: string; value: string }, index: number) => (
             <TableRow key={index}>
               <TableCell sx={{ borderBottom: "none" }}>
                 <OutlinedInput
-                  value={`${formik.values.headerPairs[index].key}`}
-                  id={`headerPairs.${index}.key`}
-                  name={`headerPairs.${index}.key`}
+                  value={`${formik.values.headers[index].key}`}
+                  id={`headers.${index}.key`}
+                  name={`headers.${index}.key`}
                   sx={{
                     height: "40px",
                     border: "1px solid gray",
@@ -64,12 +62,8 @@ const HeadersComponent = () => {
                     },
                   }}
                   onChange={(e) => {
-                    formik.setFieldValue(
-                      `headerPairs.${index}.key`,
-                      e.target.value
-                    );
                     if (
-                      index === formik.values.headerPairs.length - 1 &&
+                      index === formik.values.headers.length - 1 &&
                       !rowAddedFlags[index] &&
                       e.target.value
                     ) {
@@ -79,11 +73,15 @@ const HeadersComponent = () => {
                         updatedFlags[index] = true;
                         return updatedFlags;
                       });
-                      formik.setFieldValue("headerPairs", [
-                        ...formik.values.headerPairs,
+                      formik.setFieldValue("headers", [
+                        ...formik.values.headers,
                         { key: "", value: "" },
                       ]);
                     }
+                    formik.setFieldValue(
+                      `headers.${index}.key`,
+                      e.target.value
+                    );
                   }}
                   placeholder="Key"
                   fullWidth
@@ -91,9 +89,9 @@ const HeadersComponent = () => {
               </TableCell>
               <TableCell sx={{ borderBottom: "none" }}>
                 <OutlinedInput
-                  value={`${formik.values.headerPairs[index].value}`}
-                  id={`headerPairs.${index}.value`}
-                  name={`headerPairs.${index}.value`}
+                  value={`${formik.values.headers[index].value}`}
+                  id={`headers.${index}.value`}
+                  name={`headers.${index}.value`}
                   sx={{
                     height: "40px",
                     border: "1px solid gray",
@@ -109,12 +107,8 @@ const HeadersComponent = () => {
                     },
                   }}
                   onChange={(e) => {
-                    formik.setFieldValue(
-                      `headerPairs.${index}.value`,
-                      e.target.value
-                    );
                     if (
-                      index === formik.values.headerPairs.length - 1 &&
+                      index === formik.values.headers.length - 1 &&
                       !rowAddedFlags[index] &&
                       e.target.value
                     ) {
@@ -123,18 +117,22 @@ const HeadersComponent = () => {
                         updatedFlags[index] = true;
                         return updatedFlags;
                       });
-                      formik.setFieldValue("headerPairs", [
-                        ...formik.values.headerPairs,
+                      formik.setFieldValue("headers", [
+                        ...formik.values.headers,
                         { key: "", value: "" },
                       ]);
                     }
+                    formik.setFieldValue(
+                      `headers.${index}.value`,
+                      e.target.value
+                    );
                   }}
                   placeholder="Value"
                   fullWidth
                 />
               </TableCell>
               <TableCell sx={{ borderBottom: "none" }}>
-                {formik.values.headerPairs.length > 1 && (
+                {formik.values.headers.length > 1 && (
                   <Delete
                     sx={{ cursor: "pointer", color: "gray" }}
                     onClick={() => {

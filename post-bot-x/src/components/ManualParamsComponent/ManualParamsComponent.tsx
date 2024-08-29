@@ -69,7 +69,7 @@ const ManualParamsComponent = () => {
             },
             index: number
           ) => (
-            <TableRow key={index} sx={{verticalAlign: 'top'}}>
+            <TableRow key={index} sx={{ verticalAlign: "top" }}>
               <TableCell sx={{ borderBottom: "none" }}>
                 <OutlinedInput
                   value={`${formik.values.manualQueryParameters[index].key}`}
@@ -91,10 +91,6 @@ const ManualParamsComponent = () => {
                   }}
                   onChange={(e) => {
                     console.log("e", e.target.value);
-                    formik.setFieldValue(
-                      `manualQueryParameters.${index}.key`,
-                      e.target.value
-                    );
                     if (
                       index ===
                         formik.values.manualQueryParameters.length - 1 &&
@@ -108,9 +104,13 @@ const ManualParamsComponent = () => {
                       });
                       formik.setFieldValue("manualQueryParameters", [
                         ...formik.values.manualQueryParameters,
-                        { key: "", value: [" "] },
+                        { key: "", value: [""] },
                       ]);
                     }
+                    formik.setFieldValue(
+                      `manualQueryParameters.${index}.key`,
+                      e.target.value
+                    );
                   }}
                   placeholder="Key"
                   fullWidth
@@ -176,7 +176,7 @@ const ManualParamsComponent = () => {
                   </TableCell>
                 </Box>
               ))}
-              <TableCell sx={{ borderBottom: "none" }}>
+              <TableCell sx={{ borderBottom: "none", paddingTop: '25px' }}>
                 {formik.values.manualQueryParameters.length > 1 && (
                   <Delete
                     sx={{ cursor: "pointer", color: "gray" }}

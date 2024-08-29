@@ -27,3 +27,7 @@ export const AddCollectionButton = styled(Button)(({ theme }) => ({
   backgroundColor: "green",
   width: "100%",
 }));
+
+export const CollectionBoxContainer = styled(Box)(({ theme }) => ({
+  marginTop: "20px",
+}));

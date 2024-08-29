@@ -10,27 +10,22 @@ import {
   query,
   setDoc,
   where,
-  DocumentData,
   QuerySnapshot,
 } from "@firebase/firestore";
 import { firestore } from "../firebase";
+import { API } from "../types";
 
 interface APIContextProps {
-  createAPI: (
-    apiDetail: DocumentData,
-    apiType: string,
-    collectionId: string
-  ) => Promise<string>;
+  createAPI: (apiDetail: API, collectionId: string) => Promise<string>;
   updateAPI: (
-    apiId: string,
-    apiDetail: DocumentData,
-    apiType: string,
+    id: string,
+    apiDetail: API,
     collectionId: string
   ) => Promise<void>;
   getApisByCollectionId: (
     collectionId: string
-  ) => Promise<QuerySnapshot<DocumentData> | null>;
-  getApiById: (id: string) => Promise<DocumentData | undefined>;
+  ) => Promise<QuerySnapshot<API> | null>;
+  getApiById: (id: string) => Promise<API | undefined>;
   deleteApiById: (id: string) => Promise<void>;
 }
 
@@ -39,9 +34,7 @@ const APIContext = createContext<APIContextProps | undefined>(undefined);
 export function useAPI() {
   const context = useContext(APIContext);
   if (!context) {
-    throw new Error(
-      "useAPI must be used within an APICollectionContextProvider"
-    );
+    throw new Error("useAPI must be used within an APIContextProvider");
   }
   return context;
 }
@@ -56,24 +49,20 @@ export const APIContextProvider: React.FC<APIContextProviderProps> = ({
   const { currentUser } = useAuth();
 
   const createAPI = async (
-    apiDetail: DocumentData,
-    apiType: string,
+    apiDetail: API,
     collectionId: string
   ): Promise<string> => {
-    const newAPIObj = {
+    const existingAnonymousUser = localStorage.getItem("anonymousUserId");
+    const userId = currentUser?.id || existingAnonymousUser;
+    const newAPIObj: API = {
       ...apiDetail,
-      apiType,
       collectionId,
-      createdBy: currentUser?.displayName,
-      createdById: currentUser?.uid,
+      createdById: userId,
       createdOn: new Date(),
     };
 
     try {
-      const docRef = await addDoc(
-        collection(firestore, "ApiCollection"),
-        newAPIObj
-      );
+      const docRef = await addDoc(collection(firestore, "API"), newAPIObj);
       return docRef.id;
     } catch (err: any) {
       throw new Error(err.message);
@@ -81,22 +70,21 @@ export const APIContextProvider: React.FC<APIContextProviderProps> = ({
   };
 
   const updateAPI = async (
-    apiId: string,
-    apiDetail: DocumentData,
-    apiType: string,
+    id: string,
+    apiDetail: API,
     collectionId: string
   ): Promise<void> => {
-    const newAPIObj = {
+    const existingAnonymousUser = localStorage.getItem("anonymousUserId");
+    const userId = currentUser?.id || existingAnonymousUser;
+    const updatedAPIObj: API = {
       ...apiDetail,
-      apiType,
       collectionId,
-      createdBy: currentUser?.displayName,
-      createdById: currentUser?.uid,
-      createdOn: new Date(),
+      updatedById: userId,
+      updatedOn: new Date(),
     };
 
     try {
-      await setDoc(doc(firestore, "ApiCollection", apiId), newAPIObj);
+      await setDoc(doc(firestore, "API", id), updatedAPIObj);
     } catch (err: any) {
       throw new Error(err.message);
     }
@@ -104,15 +92,15 @@ export const APIContextProvider: React.FC<APIContextProviderProps> = ({
 
   const getApisByCollectionId = async (
     collectionId: string
-  ): Promise<QuerySnapshot<DocumentData> | null> => {
+  ): Promise<QuerySnapshot<API> | null> => {
     try {
       if (collectionId) {
         const apiCollectionQuery = query(
-          collection(firestore, "ApiCollection"),
+          collection(firestore, "API"),
           where("collectionId", "==", collectionId)
         );
         const apiCollections = await getDocs(apiCollectionQuery);
-        return apiCollections;
+        return apiCollections as QuerySnapshot<API>;
       }
       return null;
     } catch (err: any) {
@@ -120,17 +108,17 @@ export const APIContextProvider: React.FC<APIContextProviderProps> = ({
     }
   };
 
-  const getApiById = async (id: string): Promise<DocumentData | undefined> => {
-    const docRef = doc(firestore, "ApiCollection", id);
+  const getApiById = async (id: string): Promise<API | undefined> => {
+    const docRef = doc(firestore, "API", id);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      return docSnap.data();
+      return docSnap.data() as API;
     }
   };
 
   const deleteApiById = async (id: string): Promise<void> => {
-    await deleteDoc(doc(firestore, "ApiCollection", id));
+    await deleteDoc(doc(firestore, "API", id));
   };
 
   const value: APIContextProps = {
