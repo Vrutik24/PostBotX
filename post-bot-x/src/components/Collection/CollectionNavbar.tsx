@@ -11,7 +11,14 @@ import CollectionBox from "./CollectionBox";
 import CollectionModal from "../../modals/CollectionModal/CollectionModal";
 import { useCollection } from "../../contexts/CollectionContext";
 import { Collection } from "../../types";
-import { Divider, Menu, MenuItem } from "@mui/material";
+import { Divider, ListItemIcon, Menu, MenuItem } from "@mui/material";
+import {
+  AddBoxOutlined,
+  DeleteOutlineRounded,
+  EditOutlined,
+  LibraryAddOutlined,
+  ShareRounded,
+} from "@mui/icons-material";
 
 enum MenuAction {
   Fetch = 1,
@@ -140,7 +147,7 @@ const CollectionNavbar = () => {
             boxShadow: "0px 2px 4px #2e2b2b",
             px: 1,
             py: 1,
-            width: "150px",
+            width: "max-content",
           },
         }}
       >
@@ -154,10 +161,25 @@ const CollectionNavbar = () => {
           }}
           onClick={handleMenuClose}
         >
-          {/* <ListItemIcon sx={{ color: "white" }}>
-            <AddIcon sx={{ fontSize: "20px" }} />
-          </ListItemIcon> */}
-          Add Header
+          <ListItemIcon sx={{ color: "rgba(255, 255, 255, 0.5)" }}>
+            <AddBoxOutlined sx={{ fontSize: "20px" }} />
+          </ListItemIcon>
+          Create a Request
+        </MenuItem>
+        <MenuItem
+          sx={{
+            color: "white",
+            borderRadius: "8px",
+            "&:hover": {
+              backgroundColor: "#333333",
+            },
+          }}
+          onClick={handleMenuClose}
+        >
+          <ListItemIcon sx={{ color: "rgba(255, 255, 255, 0.5)" }}>
+            <LibraryAddOutlined sx={{ fontSize: "20px" }} />
+          </ListItemIcon>
+          Add Headers
         </MenuItem>
         <MenuItem
           sx={{
@@ -169,6 +191,9 @@ const CollectionNavbar = () => {
           }}
           onClick={() => handleMenuAction("rename")}
         >
+          <ListItemIcon sx={{ color: "rgba(255, 255, 255, 0.5)" }}>
+            <EditOutlined sx={{ fontSize: "20px" }} />
+          </ListItemIcon>
           Rename
         </MenuItem>
         <MenuItem
@@ -181,6 +206,9 @@ const CollectionNavbar = () => {
           }}
           onClick={handleMenuClose}
         >
+          <ListItemIcon sx={{ color: "rgba(255, 255, 255, 0.5)" }}>
+            <ShareRounded sx={{ fontSize: "20px" }} />
+          </ListItemIcon>
           Share
         </MenuItem>
         <Divider sx={{ backgroundColor: "#2e2b2b" }} />
@@ -194,6 +222,9 @@ const CollectionNavbar = () => {
           }}
           onClick={() => handleMenuAction("delete")}
         >
+          <ListItemIcon sx={{ color: "rgba(255, 255, 255, 0.5)" }}>
+            <DeleteOutlineRounded sx={{ fontSize: "20px" }} />
+          </ListItemIcon>
           Delete
         </MenuItem>
       </Menu>
