@@ -122,7 +122,9 @@ export const CollectionContextProvider: React.FC<
             } as Collection;
           }
         );
-
+        collections.sort(
+          (a, b) => a.createdOn.getTime() - b.createdOn.getTime()
+        );
         return collections;
       }
 
