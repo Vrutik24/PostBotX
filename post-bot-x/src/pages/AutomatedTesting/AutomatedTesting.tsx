@@ -24,8 +24,17 @@ import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
 import { APIRequestPayload } from "../../types/APIRequestPayload";
 import { automatedPostWrite, automatedPostRead } from "../../api/AutomatedTestService";
 import { manualPostWrite, manualPostRead } from "../../api/ManualTestService";
+import ResponseComponent from "../../components/ResponseComponent/ResponseComponent";
 
-const AutomatedTesting = () => {
+interface AutomatedTestingProps {
+  setIsVisible: (isVisible: boolean) => void;
+  isVisible: boolean;
+}
+
+const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
+  setIsVisible,
+  isVisible,
+}) => {
   const { formik, testingMethod, setTestingMethod } = useAPITestFormikContext();
   const handleChange = (event: SelectChangeEvent) => {
     setTestingMethod(event.target.value as "Automated" | "Manual");
@@ -176,7 +185,10 @@ const AutomatedTesting = () => {
           />
           <Button
             sx={{ backgroundColor: "green", color: "white", width: "100px" }}
-            onClick={() => testApi()}
+            onClick={() => {
+              testApi();
+              setIsVisible(true);
+            }}
           >
             Send
           </Button>
@@ -185,6 +197,11 @@ const AutomatedTesting = () => {
           <APITestingBody />
         </BodyContentBox>
       </ContentBox>
+
+      {isVisible && (
+        <ResponseComponent response="" setIsVisible={setIsVisible} />
+      )}
+      
     </APITestingPage>
   );
 };
