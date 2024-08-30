@@ -14,19 +14,21 @@ import {
   QuerySnapshot,
 } from "@firebase/firestore";
 import { firestore } from "../firebase";
-import { API } from "../types";
+import { API, CreateAPI, CreateAPIDetail, Header } from "../types";
+import { QueryParameter } from "../types/QueryParameter";
 
 interface APIContextProps {
-  createAPI: (apiDetail: API, collectionId: string) => Promise<string>;
+  createAPI: (
+    apiDetail: CreateAPIDetail,
+    collectionId: string
+  ) => Promise<string>;
   updateAPI: (
     id: string,
     apiDetail: API,
     collectionId: string
   ) => Promise<void>;
   updateAPIName: (id: string, newName: string) => Promise<void>;
-  getApisByCollectionId: (
-    collectionId: string
-  ) => Promise<QuerySnapshot<API> | null>;
+  getApisByCollectionId: (collectionId: string) => Promise<API[] | null>;
   getApiById: (id: string) => Promise<API | undefined>;
   deleteApiById: (id: string) => Promise<void>;
 }
@@ -51,7 +53,7 @@ export const APIContextProvider: React.FC<APIContextProviderProps> = ({
   const { currentUser, getUserByEmailAsync } = useAuth();
 
   const createAPI = async (
-    apiDetail: API,
+    apiDetail: CreateAPIDetail,
     collectionId: string
   ): Promise<string> => {
     const existingAnonymousUserId = localStorage.getItem("anonymousUserId");
@@ -63,7 +65,7 @@ export const APIContextProvider: React.FC<APIContextProviderProps> = ({
       }
     }
 
-    const newAPIObj: API = {
+    const newAPIObj: CreateAPI = {
       ...apiDetail,
       collectionId,
       createdById: userId,
@@ -107,7 +109,7 @@ export const APIContextProvider: React.FC<APIContextProviderProps> = ({
 
   const getApisByCollectionId = async (
     collectionId: string
-  ): Promise<QuerySnapshot<API> | null> => {
+  ): Promise<API[] | null> => {
     try {
       if (collectionId) {
         const apiCollectionQuery = query(
@@ -115,7 +117,28 @@ export const APIContextProvider: React.FC<APIContextProviderProps> = ({
           where("collectionId", "==", collectionId)
         );
         const apiCollections = await getDocs(apiCollectionQuery);
-        return apiCollections as QuerySnapshot<API>;
+
+        const apis: API[] = apiCollections.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            name: data.name,
+            createdById: data.createdById,
+            updatedById: data.updatedById || "",
+            createdOn: data.createdOn.toDate(),
+            updatedOn: data.updatedOn?.toDate() || new Date(),
+            collectionId: data.collectionId,
+            apiType: data.apiType || "",
+            isAutomated: data.isAutomated || false,
+            url: data.url || "",
+            configuredPayload: data.configuredPayload || undefined,
+            payload: data.payload || undefined,
+            headers: (data.headers as Header[]) || [],
+            queryParameters: (data.queryParameters as QueryParameter[]) || [],
+          } as API;
+        });
+        apis.sort((a, b) => a.createdOn.getTime() - b.createdOn.getTime());
+        return apis as API[];
       }
       return null;
     } catch (err: any) {

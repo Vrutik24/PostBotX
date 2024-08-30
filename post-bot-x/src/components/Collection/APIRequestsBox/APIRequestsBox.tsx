@@ -1,27 +1,26 @@
-import React, { useState, MouseEvent } from "react";
-import { Box, Typography, IconButton } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import { AddToPhotosRounded, MoreHorizRounded } from "@mui/icons-material";
-import { Collection } from "../../types";
+import { MouseEvent } from "react";
+import { MoreHorizRounded } from "@mui/icons-material";
+import { Box, IconButton, Typography } from "@mui/material";
+import { API } from "../../../types";
 
-interface CollectionBoxProps {
-  collection: Collection;
+interface APIRequestsBoxProps {
+  apiRequest: API;
   onMenuOpen: (event: MouseEvent<HTMLElement>) => void;
   anchorEl?: HTMLElement;
-  createAPIRequest: (collectionId: string) => void
 }
 
-const CollectionBox: React.FC<CollectionBoxProps> = ({
-  collection,
+const APIRequestsBox = ({
+  apiRequest,
   onMenuOpen,
   anchorEl,
-  createAPIRequest
-}) => {
+}: APIRequestsBoxProps) => {
   return (
     <Box
       display="flex"
       alignItems="center"
+      justifyContent={"space-between"}
       p={1}
+      pl={4}
       mb={1}
       borderRadius="4px"
       position="relative"
@@ -39,13 +38,17 @@ const CollectionBox: React.FC<CollectionBoxProps> = ({
           },
         color: "#fff",
         gap: 2,
+        fontSize: "8px",
       }}
       data-context-open={Boolean(anchorEl)}
     >
-      <IconButton size="small" sx={{ color: "rgba(255, 255, 255, 0.5)" }}>
-        <AddToPhotosRounded sx={{ fontSize: "20px" }} />
-      </IconButton>
-      <Typography>{collection.name}</Typography>
+      <Box display={"flex"} alignItems={"center"} gap={"10px"}>
+        <Typography>{apiRequest.apiType}</Typography>
+        <Typography>
+          {apiRequest.name ? apiRequest.name : "untitled"}
+        </Typography>
+      </Box>
+
       <Box
         className="collection-actions"
         display="none"
@@ -67,20 +70,6 @@ const CollectionBox: React.FC<CollectionBoxProps> = ({
             },
             "&[data-context-open='true']": { color: "white" },
           }}
-          onClick={() => createAPIRequest(collection.collectionId)}
-        >
-          <AddIcon sx={{ fontSize: "20px" }} />
-        </IconButton>
-        <IconButton
-          size="small"
-          sx={{
-            color: "rgba(255, 255, 255, 0.5)",
-            "&:hover, &[data-context-open='true']": {
-              backgroundColor: "rgba(255, 255, 255, 0.1)",
-              borderRadius: "8px",
-            },
-            "&[data-context-open='true']": { color: "white" },
-          }}
           onClick={onMenuOpen}
         >
           <MoreHorizRounded sx={{ fontSize: "20px" }} />
@@ -90,4 +79,4 @@ const CollectionBox: React.FC<CollectionBoxProps> = ({
   );
 };
 
-export default CollectionBox;
+export default APIRequestsBox;
