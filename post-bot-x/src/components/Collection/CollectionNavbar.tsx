@@ -97,8 +97,8 @@ const CollectionNavbar = () => {
     try {
       await shareCollection(receiverEmail, collectionId, collectionName);
       handleModalClose();
-    } catch (error) {
-      console.error("Failed to share collection action:", error);
+    } catch (error : any) {
+      throw new Error(error.message);
     }
   };
 
@@ -238,7 +238,6 @@ const CollectionNavbar = () => {
       />
       <CollectionShareModal
         isOpen={isShareModalOpen}
-        action={action}
         onClose={handleShareModalClose}
         onSubmit={handleShareCollection}
         collection={selectedCollection}

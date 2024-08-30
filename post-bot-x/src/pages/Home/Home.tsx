@@ -1,7 +1,6 @@
 import React from "react";
 import post_botX from "../../assets/PostBot_X_image.png";
 import { Typography } from "@mui/material";
-import Userbar from "../../components/User/User";
 import { Launch } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import {
@@ -15,6 +14,8 @@ import {
   FeatureContainer,
   FeatureContentPaper,
 } from "./HomeStyle";
+import { useAuth } from "../../contexts/AuthContext";
+import Header from "../../components/Header/Header";
 
 const Home = () => {
   const navigateTo = useNavigate();
@@ -22,7 +23,7 @@ const Home = () => {
   return (
     <>
       <HomePage>
-        <Userbar />
+        <Header/>
         <HomeContent>
           <HomeTitleBox>
             <img
