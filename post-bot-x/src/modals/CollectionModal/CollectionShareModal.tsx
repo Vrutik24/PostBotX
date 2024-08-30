@@ -7,6 +7,7 @@ import {
   Button,
   IconButton,
   Alert,
+  CircularProgress,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { Collection } from "../../types";
@@ -14,9 +15,12 @@ import { Collection } from "../../types";
 interface CollectionShareModalProps {
   collection?: Collection;
   isOpen: boolean;
-  action?: string;
   onClose: () => void;
-  onSubmit: (receiverEmail: string, id: string, collectionName: string) => void;
+  onSubmit: (
+    receiverEmail: string,
+    id: string,
+    collectionName: string
+  ) => Promise<void>;
 }
 
 const style = {
@@ -37,33 +41,59 @@ const style = {
 const CollectionShareModal: React.FC<CollectionShareModalProps> = ({
   collection,
   isOpen,
-  action,
   onClose,
   onSubmit,
 }) => {
   const [receiverEmail, setReceiverEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    setReceiverEmail(collection?.name || "");
-  }, [collection]);
+    if (isOpen) {
+      setReceiverEmail("");
+      setErrorMessage("");
+      setSuccessMessage("");
+    }
+  }, [isOpen]);
 
   const handleReceiverEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
     setReceiverEmail(event.target.value);
+    setErrorMessage("");
+    setSuccessMessage("");
   };
 
-  const handleSubmit = () => {
-    try {
-      if (collection) {
-        onSubmit(
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleSubmit = async () => {
+    if (!isValidEmail(receiverEmail)) {
+      setErrorMessage("Please enter a valid email address.");
+      return;
+    }
+
+    if (collection) {
+      setIsLoading(true);
+      try {
+        await onSubmit(
           receiverEmail.trim(),
           collection.collectionId,
           collection.name
         );
+        setSuccessMessage("Collection shared successfully!");
+        setErrorMessage("");
+        setReceiverEmail("");
+        setTimeout(() => onClose(), 500);
+      } catch (error: any) {
+        console.error("Failed to share collection action:", error);
+        setErrorMessage(
+          error.message || "An error occurred while sharing the collection."
+        );
+      } finally {
+        setIsLoading(false);
       }
-    } catch (error : any) {
-      console.error("Failed to Share collection action:", error);
-      setErrorMessage(error.message);
     }
   };
 
@@ -77,9 +107,7 @@ const CollectionShareModal: React.FC<CollectionShareModalProps> = ({
             alignItems: "center",
           }}
         >
-          <Typography>
-            {collection ? `${action} Collection` : "Create Collection"}
-          </Typography>
+          <Typography>Share Collection</Typography>
           <IconButton
             onClick={onClose}
             sx={{
@@ -94,7 +122,7 @@ const CollectionShareModal: React.FC<CollectionShareModalProps> = ({
           </IconButton>
         </Box>
         <TextField
-          placeholder="Collection Name"
+          placeholder="Receiver's Email"
           value={receiverEmail}
           onChange={handleReceiverEmailChange}
           fullWidth
@@ -152,19 +180,28 @@ const CollectionShareModal: React.FC<CollectionShareModalProps> = ({
                 color: "#FFFFFF50",
               },
             }}
-            disabled={receiverEmail.trim() === ""}
+            disabled={receiverEmail.trim() === "" || isLoading}
           >
-            {collection ? "Save" : "Create"}
+            {isLoading ? (
+              <CircularProgress size={24} sx={{ color: "white" }} />
+            ) : (
+              "Share"
+            )}
           </Button>
         </Box>
         {errorMessage && (
-        <Alert
-          sx={{ position: "absolute", bottom: 0, right: 0, margin: "20px" }}
-          severity="error"
-        >
-          {errorMessage}
-        </Alert>
-      )}
+          <Alert sx={{ marginTop: 2 }} severity="error">
+            {errorMessage}
+          </Alert>
+        )}
+        {successMessage && (
+          <Alert
+            sx={{ marginTop: 2, backgroundColor: "#4caf50", color: "white" }} // Styling for success alert
+            severity="success"
+          >
+            {successMessage}
+          </Alert>
+        )}
       </Box>
     </Modal>
   );

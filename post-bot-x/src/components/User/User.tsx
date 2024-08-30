@@ -1,87 +1,31 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import { useNotification } from "../../contexts/NotificationContext";
 import { useNavigate } from "react-router-dom";
-import {
-  UserBox,
-  UserContainer,
-  UserOption,
-  Avatar,
-  NotificationItem,
-  NotificationList,
-  LogoutButton,
-} from "./UserStyle";
-import { Popover, Typography, Box, IconButton } from "@mui/material";
-import { Check, Close } from "@mui/icons-material";
-import { useCollection } from "../../contexts/CollectionContext";
-import { Notification } from "../../types";
+import { UserBox, UserContainer, UserOption, Avatar, LogoutButton } from "./UserStyle";
+import { Popover, Typography, Box } from "@mui/material";
+import LogoutIcon from "@mui/icons-material/Logout";
 
-const Userbar = () => {
+const User = () => {
   const { currentUser, logOut } = useAuth();
-  const { getAllNotification } = useNotification();
-  const { acceptCollectionRequest, denyCollectionRequest } = useCollection();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      if (currentUser) {
-        const fetchedNotifications = await getAllNotification();
-        if (fetchedNotifications) {
-          setNotifications(fetchedNotifications);
-        }
-      }
-    };
-
-    if (anchorEl) {
-      fetchNotifications();
-    }
-  }, [anchorEl, currentUser, getAllNotification]);
 
   const handleLoginClick = () => {
     navigate("/signin");
   };
 
   const handleAvatarClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+    setAnchorEl(event.currentTarget); // Open popover on avatar click
   };
 
   const handleLogout = async () => {
     await logOut();
     navigate("/signin");
-    setAnchorEl(null);
+    setAnchorEl(null); // Close the popover after logging out
   };
 
   const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleAccept = async (
-    notificationId?: string,
-    collectionId?: string
-  ) => {
-
-    console.log("notification  >>> " + notificationId);
-    console.log("collectionId  >>> " + collectionId);
-    if (!notificationId || !collectionId) {
-      return;
-    }
-    await acceptCollectionRequest(collectionId);
-    await denyCollectionRequest(notificationId);
-    setNotifications(
-      notifications.filter((notification) => notification.id !== collectionId)
-    );
-  };
-
-  const handleDeny = async (notificationId?: string) => {
-    if (!notificationId) {
-      return;
-    }
-    await denyCollectionRequest(notificationId);
-    setNotifications(
-      notifications.filter((notification) => notification.id !== notificationId)
-    );
+    setAnchorEl(null); // Close the popover
   };
 
   const getUserInitials = () => {
@@ -95,7 +39,7 @@ const Userbar = () => {
     return "";
   };
 
-  const open = Boolean(anchorEl);
+  const open = Boolean(anchorEl); // Popover open state
   const id = open ? "user-popover" : undefined;
 
   return (
@@ -111,57 +55,30 @@ const Userbar = () => {
               onClose={handleClose}
               anchorOrigin={{
                 vertical: "bottom",
-                horizontal: "right",
+                horizontal: "left",
               }}
               transformOrigin={{
                 vertical: "top",
-                horizontal: "right",
+                horizontal: "left",
               }}
             >
-              <Box
-                p={2}
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-              >
-                <Typography variant="subtitle1">
+              <Box p={2} display="flex" flexDirection="column" alignItems="center">
+                {/* Display Name in larger and bold font */}
+                <Typography variant="h6" fontWeight="bold">
                   {currentUser.displayName}
                 </Typography>
+                {/* Email in a smaller font */}
                 <Typography variant="body2" color="textSecondary">
                   {currentUser.email}
                 </Typography>
-                <NotificationList>
-                  {notifications?.map((notification: Notification) => (
-                    <NotificationItem key={notification.collectionId}>
-                      <Typography variant="body2">
-                        {notification.senderName} shared the collection 
-                        {notification.collectionName}
-                      </Typography>
-                      <Box display="flex" justifyContent="space-between" mt={1}>
-                        <IconButton
-                          size="small"
-                          color="primary"
-                          onClick={() =>
-                            handleAccept(
-                              notification.id,
-                              notification.collectionId
-                            )
-                          }
-                        >
-                          <Check />
-                        </IconButton>
-                        <IconButton
-                          size="small"
-                          color="secondary"
-                          onClick={() => handleDeny(notification.id)}
-                        >
-                          <Close />
-                        </IconButton>
-                      </Box>
-                    </NotificationItem>
-                  ))}
-                </NotificationList>
-                <LogoutButton onClick={handleLogout}>Logout</LogoutButton>
+                {/* Logout Button with Logout Icon */}
+                <LogoutButton
+                  startIcon={<LogoutIcon />}
+                  onClick={handleLogout}
+                  variant="contained"
+                >
+                  Logout
+                </LogoutButton>
               </Box>
             </Popover>
           </>
@@ -173,4 +90,4 @@ const Userbar = () => {
   );
 };
 
-export default Userbar;
+export default User;
