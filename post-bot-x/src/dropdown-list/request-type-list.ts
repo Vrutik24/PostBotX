@@ -1,22 +1,22 @@
 export const RequestTypeList = [
   {
     name: "Get",
-    color: "white",
+    color: "#73DC8C",
   },
   {
     name: "Post",
-    color: "white",
+    color: "#DBDE52",
   },
   {
     name: "Put",
-    color: "white",
+    color: "#FFA24E",
   },
   {
     name: "Patch",
-    color: "white",
+    color: "#FFA24E",
   },
   {
     name: "Delete",
-    color: "white",
+    color: "#FF665B",
   },
 ];

@@ -30,7 +30,7 @@ const CollectionNavbar = () => {
     getCollections,
     shareCollection,
   } = useCollection();
-  const { createAPI, getApisByCollectionId, deleteApiById } = useAPI();
+  const { createAPI, getApisByCollectionId, deleteApiById, updateAPIName } = useAPI();
   const { formik } = useAPITestFormikContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isShareModalOpen, setShareIsModalOpen] = useState(false);
@@ -80,7 +80,6 @@ const CollectionNavbar = () => {
         const apiRequests = await getAPISByCollectionIdRequest(
           collection.collectionId
         );
-        console.log(apiRequests, "apiRequests");
         return { ...collection, apiRequests };
       })
     );
@@ -92,7 +91,7 @@ const CollectionNavbar = () => {
       apiType: formik.values.apiType || "",
       isAutomated: true,
       url: formik.values.url,
-      configuredPayload: formik.values.payload[0],
+      configuredPayload: formik.values.payload ? formik.values.payload[0] : '',
       headers: formik.values.headers,
       queryParameters: formik.values.queryParameters,
     };
@@ -107,8 +106,6 @@ const CollectionNavbar = () => {
   useEffect(() => {
     fetchRequestsForCollections();
   }, [collections]);
-
-  console.log("collectionsWithRequests", collectionsWithRequests);
 
   const handleModalOpen = (collection?: Collection) => {
     setSelectedCollection(collection);
@@ -143,6 +140,7 @@ const CollectionNavbar = () => {
         await createCollection(name);
       }
       await fetchCollections();
+      await fetchRequestsForCollections();
       handleModalClose();
     } catch (error) {
       console.error("Failed to process collection action:", error);
@@ -206,7 +204,7 @@ const CollectionNavbar = () => {
   const handleAPIAction = async (name?: string, id?: string) => {
     try {
       if (id && name) {
-        await renameCollection(id, name);
+        await updateAPIName(id, name);
       } else if (id) {
         await deleteApiById(id);
       }

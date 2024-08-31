@@ -5,9 +5,13 @@ import { prettifyJSON } from "../../utils/PrettifyJson";
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
 
 const JSONBody = () => {
-  const { formik } = useAPITestFormikContext();
-  const [jsonInput, setJsonInput] = useState("");
-  const [configuredJson, setConfiguredJson] = useState("");
+  const { formik, apiRequestData } = useAPITestFormikContext();
+  const [jsonInput, setJsonInput] = useState(
+    (apiRequestData?.isAutomated && apiRequestData?.payload) ? apiRequestData.payload[0] : ''
+  );
+  const [configuredJson, setConfiguredJson] = useState(
+    apiRequestData?.configuredPayload
+  );
   const [errorMessage, setErrorMessage] = useState<string>("");
   const handleInputChange = (e: any) => {
     setJsonInput(e.target.value);
@@ -90,7 +94,9 @@ const JSONBody = () => {
             },
           }}
           onClick={() => {
-            configureJsonObject(jsonInput);
+            if (jsonInput) {
+              configureJsonObject(jsonInput);
+            }
           }}
         >
           Configure Json Object

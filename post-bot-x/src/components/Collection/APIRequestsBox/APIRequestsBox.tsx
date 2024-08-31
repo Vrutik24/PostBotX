@@ -2,6 +2,8 @@ import { MouseEvent } from "react";
 import { MoreHorizRounded } from "@mui/icons-material";
 import { Box, IconButton, Typography } from "@mui/material";
 import { API } from "../../../types";
+import getAPIColor from "../../../utils/GetAPIColor";
+import { useAPITestFormikContext } from "../../../contexts/APITestFormikContext";
 
 interface APIRequestsBoxProps {
   apiRequest: API;
@@ -14,6 +16,9 @@ const APIRequestsBox = ({
   onMenuOpen,
   anchorEl,
 }: APIRequestsBoxProps) => {
+  const { formik, setSelectedAPIId } = useAPITestFormikContext();
+  const apiTypeColor = getAPIColor(apiRequest.apiType);
+  
   return (
     <Box
       display="flex"
@@ -26,6 +31,7 @@ const APIRequestsBox = ({
       position="relative"
       onContextMenu={onMenuOpen}
       tabIndex={0}
+      onClick={() => setSelectedAPIId(apiRequest.id)}
       sx={{
         backgroundColor: anchorEl ? "rgba(255, 255, 255, 0.1)" : "transparent", // Apply hover background if context menu is open
         cursor: "pointer",
@@ -43,8 +49,8 @@ const APIRequestsBox = ({
       data-context-open={Boolean(anchorEl)}
     >
       <Box display={"flex"} alignItems={"center"} gap={"10px"}>
-        <Typography>{apiRequest.apiType}</Typography>
-        <Typography>
+        <Typography color={apiTypeColor} fontSize={"14px"}>{apiRequest.apiType}</Typography>
+        <Typography fontSize={"16px"}>
           {apiRequest.name ? apiRequest.name : "untitled"}
         </Typography>
       </Box>

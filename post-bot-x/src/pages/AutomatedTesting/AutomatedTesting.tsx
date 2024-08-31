@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Divider,
   FormControl,
@@ -22,9 +23,15 @@ import { TestingTypeList } from "../../dropdown-list/testing-type-list";
 import APITestingBody from "../../components/APITestingBody/APITestingBody";
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
 import { APIRequestPayload } from "../../types/APIRequestPayload";
-import { automatedPostWrite, automatedPostRead } from "../../api/AutomatedTestService";
+import {
+  automatedPostWrite,
+  automatedPostRead,
+} from "../../api/AutomatedTestService";
 import { manualPostWrite, manualPostRead } from "../../api/ManualTestService";
 import ResponseComponent from "../../components/ResponseComponent/ResponseComponent";
+import { useAPI } from "../../contexts/APIContext";
+import getAPIColor from "../../utils/GetAPIColor";
+import { useEffect, useState } from "react";
 
 interface AutomatedTestingProps {
   setIsVisible: (isVisible: boolean) => void;
@@ -35,10 +42,19 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
   setIsVisible,
   isVisible,
 }) => {
-  const { formik, testingMethod, setTestingMethod } = useAPITestFormikContext();
+  const [apiTypeColor, setAPITypeColor] = useState<string>('#73DC8C')
+  const {
+    formik,
+    testingMethod,
+    setTestingMethod,
+    apiRequestData,
+    selectedAPIId,
+  } = useAPITestFormikContext();
   const handleChange = (event: SelectChangeEvent) => {
     setTestingMethod(event.target.value as "Automated" | "Manual");
   };
+
+  const { updateAPI } = useAPI();
 
   const testApi = async () => {
     const apiPayload: APIRequestPayload = {
@@ -53,20 +69,18 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
       headers: formik.values.headers,
     };
     if (apiPayload.isAutomated) {
-      if (["Post", "Patch", "Put"].includes(apiPayload.apiType) ) {
+      if (["Post", "Patch", "Put"].includes(apiPayload.apiType)) {
         try {
-          const results =  await automatedPostWrite(apiPayload);
+          const results = await automatedPostWrite(apiPayload);
           console.log(results);
         } catch (error) {
           console.error(`Error calling ${apiPayload.apiType} method:`, error);
         }
       } else {
-        try
-        {
+        try {
           const results = await automatedPostRead(apiPayload);
           console.log(results);
-        }
-        catch (error) {
+        } catch (error) {
           console.error(`Error calling ${apiPayload.apiType} method:`, error);
         }
       }
@@ -78,7 +92,6 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
         } catch (error) {
           console.error(`Error calling ${apiPayload.apiType} method:`, error);
         }
-        
       } else {
         try {
           const results = await manualPostRead(apiPayload);
@@ -88,42 +101,82 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
         }
       }
     }
-  }
+  };
+
+  const updateAPIById = async () => {
+    const formPayload = {
+      apiType: formik.values.apiType,
+      isAutomated: testingMethod == "Automated" ? true : false,
+      url: formik.values.url,
+      configuredPayload:
+        testingMethod == "Automated" ? formik.values.payload[0] : "",
+      payload: testingMethod == "Manual" ? formik.values.payload : [""],
+      headers: formik.values.headers,
+      queryParameters: testingMethod == "Automated" ? formik.values.queryParameters : formik.values.manualQueryParameters,
+    };
+    if (selectedAPIId && apiRequestData?.collectionId) {
+      const data = await updateAPI(
+        selectedAPIId,
+        { ...apiRequestData, ...formPayload },
+        apiRequestData?.collectionId
+      );
+    }
+  };
+
+  useEffect(() => {
+    let apiTypeColor = getAPIColor(formik.values.apiType);
+    setAPITypeColor(apiTypeColor)
+  }, [formik.values.apiType])
 
   return (
     <APITestingPage>
       <ContentBox>
         <CollectionInfoBox>
-          <Typography>Collection</Typography>
-          <FormControl sx={{ width: "150px" }}>
-            <Select
-              value={testingMethod}
-              sx={{
-                color: "white",
-                border: "1px solid gray",
-                height: "50px",
-                backgroundColor: "transparent",
-                borderRadius: "4px",
-
-                "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "gray",
-                },
-                "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "gray",
-                },
-                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "gray",
-                },
-              }}
-              onChange={handleChange}
+          <Typography>Collection / {apiRequestData?.name}</Typography>
+          <Box display="flex" alignItems={"center"} gap={"20px"}>
+            <Button
+              variant="contained"
+              size="large"
+              color="success"
+              onClick={() => updateAPIById()}
             >
-              {TestingTypeList.map((testingType: string) => (
-                <MenuItem key={testingType} value={testingType}>
-                  {testingType}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+              Save
+            </Button>
+            <FormControl sx={{ width: "150px" }}>
+              <Select
+                value={testingMethod}
+                sx={{
+                  color: "white",
+                  border: "1px solid gray",
+                  height: "50px",
+                  backgroundColor: "transparent",
+                  borderRadius: "4px",
+
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "gray",
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "gray",
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    borderColor: "gray",
+                  },
+                }}
+                onChange={handleChange}
+              >
+                {TestingTypeList.map((testingType: string) => {
+                  return (
+                    <MenuItem
+                      key={testingType}
+                      value={testingType}
+                    >
+                      {testingType}
+                    </MenuItem>
+                  );
+                })}
+              </Select>
+            </FormControl>
+          </Box>
         </CollectionInfoBox>
         <HeaderContentBox>
           <Select
@@ -131,7 +184,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
             name="apiType"
             value={formik.values.apiType}
             sx={{
-              color: "white",
+              color: apiTypeColor,
               borderColor: "transparent",
               "& .MuiOutlinedInput-notchedOutline": {
                 borderColor: "transparent",
@@ -144,13 +197,15 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
               },
             }}
             onChange={formik.handleChange}
-            IconComponent={(props) => <ArrowDropDown sx={{ color: "white" }} />}
+            IconComponent={(props) => <ArrowDropDown sx={{ color: apiTypeColor }} />}
           >
-            {RequestTypeList.map((requestType: any) => (
-              <MenuItem key={requestType.name} value={requestType.name}>
-                {requestType.name}
-              </MenuItem>
-            ))}
+            {RequestTypeList.map((requestType: any) => {
+              return (
+                <MenuItem key={requestType.name} value={requestType.name} sx={{color: requestType.color}}>
+                  {requestType.name}
+                </MenuItem>
+              );
+            })}
           </Select>
           <Divider
             orientation="vertical"
@@ -184,7 +239,14 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
             }}
           />
           <Button
-            sx={{ backgroundColor: "green", color: "white", width: "100px" }}
+            sx={{
+              backgroundColor: "#2E7D32",
+              color: "white",
+              width: "100px",
+              "&:hover": {
+                backgroundColor: "darkGreen",
+              },
+            }}
             onClick={() => {
               testApi();
               setIsVisible(true);
@@ -201,7 +263,6 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
       {isVisible && (
         <ResponseComponent response="" setIsVisible={setIsVisible} />
       )}
-      
     </APITestingPage>
   );
 };
