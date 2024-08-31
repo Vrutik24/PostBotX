@@ -23,7 +23,7 @@ const Home = () => {
   return (
     <>
       <HomePage>
-        <Header/>
+        {/* <Header/> */}
         <HomeContent>
           <HomeTitleBox>
             <img

@@ -11,7 +11,7 @@ import CollectionBox from "./CollectionBox";
 import CollectionModal from "../../modals/CollectionModal/CollectionModal";
 import { useCollection } from "../../contexts/CollectionContext";
 import { API, Collection } from "../../types";
-import { Divider, Menu, MenuItem } from "@mui/material";
+import { Divider, IconButton, Menu, MenuItem } from "@mui/material";
 import CollectionShareModal from "../../modals/CollectionModal/CollectionShareModal";
 import { useAPI } from "../../contexts/APIContext";
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
@@ -19,6 +19,7 @@ import { CreateAPIDetail } from "../../types";
 import { CollectionWithAPIRequests } from "../../types";
 import APIRequestsBox from "./APIRequestsBox/APIRequestsBox";
 import APIRenameModal from "../../modals/APIRenameModal/APIRenameModal";
+import { AddCircle } from "@mui/icons-material";
 
 const CollectionNavbar = () => {
   const navigateTo = useNavigate();
@@ -244,6 +245,11 @@ const CollectionNavbar = () => {
         <AddCollectionButton
           variant="contained"
           onClick={() => handleModalOpen()}
+          endIcon={
+            <IconButton sx={{ color: "white" }}>
+              <AddCircle fontSize="small" />
+            </IconButton>
+          }
         >
           Add Collection
         </AddCollectionButton>
@@ -262,6 +268,7 @@ const CollectionNavbar = () => {
                   <APIRequestsBox
                     key={request.id}
                     apiRequest={request}
+                    colId={collection.id}
                     anchorEl={apiAnchorEl}
                     onMenuOpen={(e) => handleAPIMenuOpen(e, request)}
                   />

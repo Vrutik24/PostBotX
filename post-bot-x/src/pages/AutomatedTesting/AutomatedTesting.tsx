@@ -3,6 +3,7 @@ import {
   Button,
   Divider,
   FormControl,
+  IconButton,
   InputLabel,
   MenuItem,
   Select,
@@ -17,7 +18,7 @@ import {
   ContentBox,
   HeaderContentBox,
 } from "./AutomatedTestingStyle";
-import { ArrowDropDown } from "@mui/icons-material";
+import { ArrowDropDown, Save, Send } from "@mui/icons-material";
 import { RequestTypeList } from "../../dropdown-list/request-type-list";
 import { TestingTypeList } from "../../dropdown-list/testing-type-list";
 import APITestingBody from "../../components/APITestingBody/APITestingBody";
@@ -42,13 +43,15 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
   setIsVisible,
   isVisible,
 }) => {
-  const [apiTypeColor, setAPITypeColor] = useState<string>('#73DC8C')
+  const [apiTypeColor, setAPITypeColor] = useState<string>("#73DC8C");
   const {
     formik,
     testingMethod,
     setTestingMethod,
     apiRequestData,
     selectedAPIId,
+    collectionName,
+    // setAPIRequestTypeName
   } = useAPITestFormikContext();
   const handleChange = (event: SelectChangeEvent) => {
     setTestingMethod(event.target.value as "Automated" | "Manual");
@@ -61,7 +64,11 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
       apiType: formik.values.apiType,
       url: formik.values.url,
       isAutomated: testingMethod == "Automated" ? true : false,
-      payload: formik.values.payload,
+      payload:
+        testingMethod == "Automated"
+          ? [formik.values.configuredPayload]
+          : formik.values.manualPayload,
+      // payload: formik.values.payload,
       queryParameters:
         testingMethod == "Automated"
           ? formik.values.queryParameters
@@ -109,10 +116,20 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
       isAutomated: testingMethod == "Automated" ? true : false,
       url: formik.values.url,
       configuredPayload:
-        testingMethod == "Automated" ? formik.values.payload[0] : "",
-      payload: testingMethod == "Manual" ? formik.values.payload : [""],
+        testingMethod == "Automated" ? formik.values.configuredPayload : "",
+      payload:
+        testingMethod == "Automated"
+          ? formik.values.payload
+          : formik.values.manualPayload,
+
+      // configuredPayload:
+      //   testingMethod == "Automated" ? formik.values.payload[0] : "",
+      // payload: testingMethod == "Manual" ? formik.values.payload : [""],
       headers: formik.values.headers,
-      queryParameters: testingMethod == "Automated" ? formik.values.queryParameters : formik.values.manualQueryParameters,
+      queryParameters:
+        testingMethod == "Automated"
+          ? formik.values.queryParameters
+          : formik.values.manualQueryParameters,
     };
     if (selectedAPIId && apiRequestData?.collectionId) {
       const data = await updateAPI(
@@ -125,19 +142,28 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
 
   useEffect(() => {
     let apiTypeColor = getAPIColor(formik.values.apiType);
-    setAPITypeColor(apiTypeColor)
-  }, [formik.values.apiType])
+    setAPITypeColor(apiTypeColor);
+  }, [formik.values.apiType]);
 
   return (
     <APITestingPage>
       <ContentBox>
         <CollectionInfoBox>
-          <Typography>Collection / {apiRequestData?.name}</Typography>
+          <Box display={"flex"} alignItems={"center"} gap={"10px"}>
+            <Typography sx={{ color: "gray" }}>{collectionName}</Typography>
+            <Typography>/</Typography>
+            <Typography>{apiRequestData?.name ? apiRequestData?.name : 'untitled'}</Typography>
+          </Box>
           <Box display="flex" alignItems={"center"} gap={"20px"}>
             <Button
               variant="contained"
               size="large"
               color="success"
+              endIcon={
+                <IconButton sx={{ color: "white" }}>
+                  <Save fontSize="small" />
+                </IconButton>
+              }
               onClick={() => updateAPIById()}
             >
               Save
@@ -166,10 +192,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
               >
                 {TestingTypeList.map((testingType: string) => {
                   return (
-                    <MenuItem
-                      key={testingType}
-                      value={testingType}
-                    >
+                    <MenuItem key={testingType} value={testingType}>
                       {testingType}
                     </MenuItem>
                   );
@@ -197,11 +220,25 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
               },
             }}
             onChange={formik.handleChange}
-            IconComponent={(props) => <ArrowDropDown sx={{ color: apiTypeColor }} />}
+            IconComponent={(props) => (
+              <ArrowDropDown sx={{ color: apiTypeColor }} />
+            )}
           >
             {RequestTypeList.map((requestType: any) => {
               return (
-                <MenuItem key={requestType.name} value={requestType.name} sx={{color: requestType.color}}>
+                <MenuItem
+                  key={requestType.name}
+                  value={requestType.name}
+                  sx={{
+                    color: requestType.color,
+
+                    "& .MuiMenuItem-root": {
+                      backgroundColor: "gray",
+                      borderRadius: "8px",
+                      padding: "8px",
+                    },
+                  }}
+                >
                   {requestType.name}
                 </MenuItem>
               );
@@ -242,11 +279,17 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
             sx={{
               backgroundColor: "#2E7D32",
               color: "white",
-              width: "100px",
+              width: "150px",
+              paddingX: "20px",
               "&:hover": {
                 backgroundColor: "darkGreen",
               },
             }}
+            endIcon={
+              <IconButton sx={{ color: "white" }}>
+                <Send fontSize="small" />
+              </IconButton>
+            }
             onClick={() => {
               testApi();
               setIsVisible(true);

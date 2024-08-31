@@ -13,6 +13,7 @@ export interface Collection {
 }
 
 export interface CollectionWithAPIRequests {
+  id?: string;
   name: string;
   createdById: string;
   updatedById: string;

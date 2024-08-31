@@ -8,17 +8,20 @@ import { useAPITestFormikContext } from "../../../contexts/APITestFormikContext"
 interface APIRequestsBoxProps {
   apiRequest: API;
   onMenuOpen: (event: MouseEvent<HTMLElement>) => void;
+  colId?: string;
   anchorEl?: HTMLElement;
 }
 
 const APIRequestsBox = ({
   apiRequest,
   onMenuOpen,
+  colId,
   anchorEl,
 }: APIRequestsBoxProps) => {
-  const { formik, setSelectedAPIId } = useAPITestFormikContext();
+  const { formik, setSelectedAPIId, selectedAPIId, setCurrentCollectionId } =
+    useAPITestFormikContext();
   const apiTypeColor = getAPIColor(apiRequest.apiType);
-  
+
   return (
     <Box
       display="flex"
@@ -31,9 +34,12 @@ const APIRequestsBox = ({
       position="relative"
       onContextMenu={onMenuOpen}
       tabIndex={0}
-      onClick={() => setSelectedAPIId(apiRequest.id)}
+      onClick={() => {
+        setSelectedAPIId(apiRequest.id);
+        setCurrentCollectionId(colId ? colId : '');
+      }}
       sx={{
-        backgroundColor: anchorEl ? "rgba(255, 255, 255, 0.1)" : "transparent", // Apply hover background if context menu is open
+        backgroundColor: (anchorEl || apiRequest.id == selectedAPIId) ? "rgba(255, 255, 255, 0.1)" : "transparent", // Apply hover background if context menu is open
         cursor: "pointer",
         "&:hover, &[data-context-open='true']": {
           backgroundColor: "rgba(255, 255, 255, 0.1)", // Lighter background color on hover
@@ -49,7 +55,7 @@ const APIRequestsBox = ({
       data-context-open={Boolean(anchorEl)}
     >
       <Box display={"flex"} alignItems={"center"} gap={"10px"}>
-        <Typography color={apiTypeColor} fontSize={"14px"}>{apiRequest.apiType}</Typography>
+      <Typography color={apiTypeColor} fontSize={"14px"}>{apiRequest.apiType}</Typography>
         <Typography fontSize={"16px"}>
           {apiRequest.name ? apiRequest.name : "untitled"}
         </Typography>
@@ -70,7 +76,7 @@ const APIRequestsBox = ({
           size="small"
           sx={{
             color: "rgba(255, 255, 255, 0.5)",
-            "&:hover, &[data-context-open='true']": {
+            "&:hover": {
               backgroundColor: "rgba(255, 255, 255, 0.1)",
               borderRadius: "8px",
             },
