@@ -176,7 +176,7 @@ const ManualParamsComponent = () => {
                   </TableCell>
                 </Box>
               ))}
-              <TableCell sx={{ borderBottom: "none", paddingTop: '25px' }}>
+              <TableCell sx={{ borderBottom: "none", paddingTop: "25px" }}>
                 {formik.values.manualQueryParameters.length > 1 && (
                   <Delete
                     sx={{ cursor: "pointer", color: "gray" }}

@@ -6,13 +6,22 @@ import {
   CollectionNavbarContainer,
   CollectionNavbarTitle,
 } from "./CollectionNavbarStyle";
-import { useState, useEffect, MouseEvent } from "react";
+import { useState, useEffect, MouseEvent, useCallback } from "react";
 import CollectionBox from "./CollectionBox";
 import CollectionModal from "../../modals/CollectionModal/CollectionModal";
 import { useCollection } from "../../contexts/CollectionContext";
 import { Collection } from "../../types";
-import { Divider, Menu, MenuItem } from "@mui/material";
+import { Divider, ListItemIcon, Menu, MenuItem } from "@mui/material";
 import CollectionShareModal from "../../modals/CollectionModal/CollectionShareModal";
+import {
+  AddBoxOutlined,
+  DeleteOutlineRounded,
+  EditOutlined,
+  LibraryAddOutlined,
+  ShareRounded,
+} from "@mui/icons-material";
+import ConfirmationModal from "../../modals/CollectionModal/ConfirmationModal";
+import HeadersModal from "../../modals/CollectionModal/HeadersModal";
 
 const CollectionNavbar = () => {
   const navigateTo = useNavigate();
@@ -24,40 +33,40 @@ const CollectionNavbar = () => {
     shareCollection,
   } = useCollection();
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCollectionModalOpen, setIsCollectionModalOpen] = useState(false);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [isShareModalOpen, setShareIsModalOpen] = useState(false);
-  const [selectedCollection, setSelectedCollection] = useState<Collection>();
+  const [isHeadersModalOpen, setIsHeadersModalOpen] = useState(false);
   const [collections, setCollections] = useState<Collection[]>([]);
-  const [anchorEl, setAnchorEl] = useState<HTMLElement>();
+  const [selectedCollection, setSelectedCollection] = useState<Collection>();
+  const [collectionToDelete, setCollectionToDelete] = useState<Collection>();
   const [action, setAction] = useState("");
 
-  useEffect(() => {
-    fetchCollections();
-  }, []);
-
-  const fetchCollections = async () => {
+  const fetchCollections = useCallback(async () => {
     try {
       const collectionList = await getCollections();
-      console.log("CollectionList >>>> " + collectionList);
       if (collectionList) {
         setCollections(collectionList);
-        collectionList?.forEach(element => {
-          console.log(element);
-        });
       }
     } catch (error) {
       console.error("Failed to fetch collections:", error);
     }
+  }, [getCollections]);
+
+  useEffect(() => {
+    fetchCollections();
+  }, [fetchCollections]);
+
+  const handleCollectionModalOpen = (collection?: Collection) => {
+    setSelectedCollection(collection);
+    setIsCollectionModalOpen(true);
   };
 
-  const handleModalOpen = (collection?: Collection) => {
-    setSelectedCollection(collection);
-    setIsModalOpen(true);
-  };
-  const handleModalClose = () => {
-    setIsModalOpen(false);
+  const handleCollectionModalClose = () => {
+    setIsCollectionModalOpen(false);
     setSelectedCollection(undefined);
   };
+
   const handleShareModalOpen = (collection?: Collection) => {
     setSelectedCollection(collection);
     setShareIsModalOpen(true);
@@ -79,11 +88,10 @@ const CollectionNavbar = () => {
       } else if (id) {
         await deleteCollection(id);
       } else if (name) {
-        console.log(name);
         await createCollection(name);
       }
       await fetchCollections();
-      handleModalClose();
+      handleCollectionModalClose();
     } catch (error) {
       console.error("Failed to process collection action:", error);
     }
@@ -96,38 +104,68 @@ const CollectionNavbar = () => {
   ) => {
     try {
       await shareCollection(receiverEmail, collectionId, collectionName);
-      handleModalClose();
-    } catch (error : any) {
+      handleCollectionModalClose();
+    } catch (error: any) {
       throw new Error(error.message);
     }
   };
 
   const handleMenuOpen = (
     event: MouseEvent<HTMLElement>,
-    collection?: Collection
+    collection: Collection
   ) => {
     event.preventDefault();
-    setAnchorEl(event.currentTarget);
     setSelectedCollection(collection);
   };
 
-  const handleMenuAction = (action: "rename" | "delete" | "share") => {
-    setAnchorEl(undefined);
+  const handleMenuClose = () => {
+    setSelectedCollection(undefined);
+  };
 
+  const handleMenuAction = (action: "rename" | "delete" | "share") => {
     if (selectedCollection) {
       if (action === "rename") {
         setAction("Rename");
-        handleModalOpen(selectedCollection);
+        handleCollectionModalOpen(selectedCollection);
       } else if (action === "share") {
         setAction("Share");
         handleShareModalOpen(selectedCollection);
       } else if (action === "delete") {
-        handleAction(undefined, selectedCollection.collectionId);
+        setCollectionToDelete(selectedCollection);
+        setIsConfirmationModalOpen(true);
+        //handleAction(undefined, selectedCollection.collectionId);
       }
     }
   };
 
-  const handleMenuClose = () => setAnchorEl(undefined);
+  const handleDeleteConfirm = async () => {
+    if (collectionToDelete) {
+      await handleAction(undefined, collectionToDelete.collectionId);
+      setCollectionToDelete(undefined);
+    }
+    setIsConfirmationModalOpen(false);
+  };
+
+  const handleDeleteCancel = () => {
+    setCollectionToDelete(undefined);
+    setIsConfirmationModalOpen(false);
+  };
+
+  const handleOpenHeadersModal = () => {
+    setIsHeadersModalOpen(true);
+  };
+
+  const handleCloseHeadersModal = () => {
+    setIsHeadersModalOpen(false);
+  };
+
+  const handleSaveHeaders = (
+    headers: { key: string; value: string[] | string }[]
+  ) => {
+    // Save headers logic
+    console.log("Headers saved:", headers);
+    handleCloseHeadersModal();
+  };
 
   return (
     <CollectionNavbarBox>
@@ -137,7 +175,7 @@ const CollectionNavbar = () => {
         </CollectionNavbarTitle>
         <AddCollectionButton
           variant="contained"
-          onClick={() => handleModalOpen()}
+          onClick={() => handleCollectionModalOpen()}
         >
           Add Collection
         </AddCollectionButton>
@@ -146,15 +184,17 @@ const CollectionNavbar = () => {
             <CollectionBox
               key={collection.collectionId}
               collection={collection}
-              anchorEl={anchorEl}
+              selectedCollection={selectedCollection}
               onMenuOpen={(e) => handleMenuOpen(e, collection)}
             />
           ))}
         </CollectionBoxContainer>
       </CollectionNavbarContainer>
       <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
+        anchorEl={document.querySelector(
+          `[data-collection-id='${selectedCollection?.collectionId}']`
+        )}
+        open={Boolean(selectedCollection?.collectionId)}
         onClose={handleMenuClose}
         anchorOrigin={{
           vertical: "bottom",
@@ -172,7 +212,7 @@ const CollectionNavbar = () => {
             boxShadow: "0px 2px 4px #2e2b2b",
             px: 1,
             py: 1,
-            width: "150px",
+            width: "max-content",
           },
         }}
       >
@@ -186,9 +226,24 @@ const CollectionNavbar = () => {
           }}
           onClick={handleMenuClose}
         >
-          {/* <ListItemIcon sx={{ color: "white" }}>
-            <AddIcon sx={{ fontSize: "20px" }} />
-          </ListItemIcon> */}
+          <ListItemIcon sx={{ color: "rgba(255, 255, 255, 0.5)" }}>
+            <AddBoxOutlined sx={{ fontSize: "20px" }} />
+          </ListItemIcon>
+          Create a Request
+        </MenuItem>
+        <MenuItem
+          sx={{
+            color: "white",
+            borderRadius: "8px",
+            "&:hover": {
+              backgroundColor: "#333333",
+            },
+          }}
+          onClick={handleOpenHeadersModal}
+        >
+          <ListItemIcon sx={{ color: "rgba(255, 255, 255, 0.5)" }}>
+            <LibraryAddOutlined sx={{ fontSize: "20px" }} />
+          </ListItemIcon>
           Add Header
         </MenuItem>
         <MenuItem
@@ -201,6 +256,9 @@ const CollectionNavbar = () => {
           }}
           onClick={() => handleMenuAction("rename")}
         >
+          <ListItemIcon sx={{ color: "rgba(255, 255, 255, 0.5)" }}>
+            <EditOutlined sx={{ fontSize: "20px" }} />
+          </ListItemIcon>
           Rename
         </MenuItem>
         <MenuItem
@@ -213,6 +271,9 @@ const CollectionNavbar = () => {
           }}
           onClick={() => handleMenuAction("share")}
         >
+          <ListItemIcon sx={{ color: "rgba(255, 255, 255, 0.5)" }}>
+            <ShareRounded sx={{ fontSize: "20px" }} />
+          </ListItemIcon>
           Share
         </MenuItem>
         <Divider sx={{ backgroundColor: "#2e2b2b" }} />
@@ -226,22 +287,40 @@ const CollectionNavbar = () => {
           }}
           onClick={() => handleMenuAction("delete")}
         >
+          <ListItemIcon sx={{ color: "rgba(255, 255, 255, 0.5)" }}>
+            <DeleteOutlineRounded sx={{ fontSize: "20px" }} />
+          </ListItemIcon>
           Delete
         </MenuItem>
       </Menu>
       <CollectionModal
-        isOpen={isModalOpen}
+        isOpen={isCollectionModalOpen}
         action={action}
-        onClose={handleModalClose}
+        onClose={handleCollectionModalClose}
         onSubmit={handleAction}
-        collection={selectedCollection}
+        selectedCollection={selectedCollection}
       />
       <CollectionShareModal
         isOpen={isShareModalOpen}
         onClose={handleShareModalClose}
         onSubmit={handleShareCollection}
-        collection={selectedCollection}
+        selectedCollection={selectedCollection}
       />
+      {collectionToDelete && (
+        <ConfirmationModal
+          isOpen={isConfirmationModalOpen}
+          onClose={handleDeleteCancel}
+          onConfirm={handleDeleteConfirm}
+          collectionName={collectionToDelete.name}
+        />
+      )}
+      {isHeadersModalOpen && (
+        <HeadersModal
+          open={isHeadersModalOpen}
+          onClose={handleCloseHeadersModal}
+          onSave={handleSaveHeaders}
+        />
+      )}
     </CollectionNavbarBox>
   );
 };

@@ -21,18 +21,57 @@ const HeadersComponent = () => {
   };
 
   const deleteHeader = (i: number) => {
-    if (formik.values.headers.length === 1) {
-      formik.setFieldValue("headers", formik.initialValues.headers);
-      resetRowFlags();
+    const newHeaders =
+      formik.values.headers.length === 1
+        ? formik.initialValues.headers
+        : formik.values.headers.filter((_, index) => index !== i);
+
+    formik.setFieldValue("headers", newHeaders);
+    resetRowFlags();
+  };
+
+  const isEmptyField = (value: string) => !value || value === "";
+
+  const isRowEmpty = (
+    headers: Header[],
+    index: number,
+    field: "key" | "value",
+    value: string
+  ) => {
+    return (
+      isEmptyField(value) &&
+      (field === "key"
+        ? isEmptyField(headers[index].value)
+        : isEmptyField(headers[index].key))
+    );
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    index: number,
+    field: "key" | "value"
+  ) => {
+    const { headers } = formik.values;
+    const isLastRow = index === headers.length - 1;
+    const newValue = e.target.value;
+
+    if (isRowEmpty(headers, index, field, newValue) && !isLastRow) {
+      deleteHeader(index);
     } else {
-      const headerParams = formik.values.headers.filter(
-        (
-          header: Header,
-          index
-        ) => index !== i
-      );
-      formik.setFieldValue("headers", headerParams);
-      resetRowFlags();
+      if (
+        isLastRow &&
+        !rowAddedFlags[index] &&
+        (headers[index].key || newValue)
+      ) {
+        setRowAddedFlags((prevFlags) => {
+          const updatedFlags = [...prevFlags];
+          updatedFlags[index] = true;
+          return updatedFlags;
+        });
+        formik.setFieldValue("headers", [...headers, { key: "", value: "" }]);
+      }
+
+      formik.setFieldValue(`headers.${index}.${field}`, newValue);
     }
   };
 
@@ -44,7 +83,7 @@ const HeadersComponent = () => {
             <TableRow key={index}>
               <TableCell sx={{ borderBottom: "none" }}>
                 <OutlinedInput
-                  value={`${formik.values.headers[index].key}`}
+                  value={header.key}
                   id={`headers.${index}.key`}
                   name={`headers.${index}.key`}
                   sx={{
@@ -61,35 +100,14 @@ const HeadersComponent = () => {
                       opacity: 1,
                     },
                   }}
-                  onChange={(e) => {
-                    if (
-                      index === formik.values.headers.length - 1 &&
-                      !rowAddedFlags[index] &&
-                      e.target.value
-                    ) {
-                      console.log("if condition called");
-                      setRowAddedFlags((prevFlags) => {
-                        const updatedFlags = [...prevFlags];
-                        updatedFlags[index] = true;
-                        return updatedFlags;
-                      });
-                      formik.setFieldValue("headers", [
-                        ...formik.values.headers,
-                        { key: "", value: "" },
-                      ]);
-                    }
-                    formik.setFieldValue(
-                      `headers.${index}.key`,
-                      e.target.value
-                    );
-                  }}
+                  onChange={(e) => handleInputChange(e, index, "key")}
                   placeholder="Key"
                   fullWidth
                 />
               </TableCell>
               <TableCell sx={{ borderBottom: "none" }}>
                 <OutlinedInput
-                  value={`${formik.values.headers[index].value}`}
+                  value={header.value}
                   id={`headers.${index}.value`}
                   name={`headers.${index}.value`}
                   sx={{
@@ -106,40 +124,25 @@ const HeadersComponent = () => {
                       opacity: 1,
                     },
                   }}
-                  onChange={(e) => {
-                    if (
-                      index === formik.values.headers.length - 1 &&
-                      !rowAddedFlags[index] &&
-                      e.target.value
-                    ) {
-                      setRowAddedFlags((prevFlags) => {
-                        const updatedFlags = [...prevFlags];
-                        updatedFlags[index] = true;
-                        return updatedFlags;
-                      });
-                      formik.setFieldValue("headers", [
-                        ...formik.values.headers,
-                        { key: "", value: "" },
-                      ]);
-                    }
-                    formik.setFieldValue(
-                      `headers.${index}.value`,
-                      e.target.value
-                    );
-                  }}
+                  onChange={(e) => handleInputChange(e, index, "value")}
                   placeholder="Value"
                   fullWidth
                 />
               </TableCell>
               <TableCell sx={{ borderBottom: "none" }}>
-                {formik.values.headers.length > 1 && (
-                  <Delete
-                    sx={{ cursor: "pointer", color: "gray" }}
-                    onClick={() => {
-                      deleteHeader(index);
-                    }}
-                  />
-                )}
+                {formik.values.headers.length > 1 &&
+                  !(
+                    index === formik.values.headers.length - 1 &&
+                    isEmptyField(header.key) &&
+                    isEmptyField(header.value)
+                  ) && (
+                    <Delete
+                      sx={{ cursor: "pointer", color: "gray" }}
+                      onClick={() => {
+                        deleteHeader(index);
+                      }}
+                    />
+                  )}
               </TableCell>
             </TableRow>
           )
