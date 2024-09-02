@@ -16,7 +16,7 @@ export const CollectionNavbarContainer = styled(Box)(({ theme }) => ({
 export const CollectionNavbarTitle = styled(Typography)(({ theme }) => ({
   fontSize: "25px",
   fontWeight: "bold",
-  color: "green",
+  color: "#63a626",
   letterSpacing: "5px",
   textAlign: "center",
   cursor: "pointer",
@@ -24,7 +24,7 @@ export const CollectionNavbarTitle = styled(Typography)(({ theme }) => ({
 
 export const AddCollectionButton = styled(Button)(({ theme }) => ({
   marginTop: "20px",
-  backgroundColor: "green",
+  backgroundColor: "#63a626",
   width: "100%",
 }));
 

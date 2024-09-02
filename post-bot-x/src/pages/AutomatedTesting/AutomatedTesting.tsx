@@ -184,7 +184,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
             }}
           />
           <Button
-            sx={{ backgroundColor: "green", color: "white", width: "100px" }}
+            sx={{ backgroundColor: "#63a626", color: "white", width: "100px" }}
             onClick={() => {
               testApi();
               setIsVisible(true);

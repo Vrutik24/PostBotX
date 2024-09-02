@@ -143,7 +143,7 @@ const HeadersModal: React.FC<HeadersModalProps> = ({
                 height: "100%",
               }}
             >
-              <CircularProgress style={{ color: "green" }} />
+              <CircularProgress style={{ color: "#63a626" }} />
             </div>
           ) : (
             <Table>
@@ -243,7 +243,7 @@ const HeadersModal: React.FC<HeadersModalProps> = ({
             sx={{
               color: "white",
               borderRadius: "8px",
-              backgroundColor: "green",
+              backgroundColor: "#63a626",
               "&:hover": {
                 backgroundColor: selectedCollectionId
                   ? "darkgreen"

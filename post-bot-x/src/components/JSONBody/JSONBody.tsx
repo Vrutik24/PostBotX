@@ -80,7 +80,7 @@ const JSONBody = () => {
         <Button
           variant="contained"
           sx={{
-            backgroundColor: "green",
+            backgroundColor: "#63a626",
             color: "white",
             position: "sticky",
             marginTop: "20px",

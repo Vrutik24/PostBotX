@@ -147,7 +147,7 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
               sx={{
                 color: "white",
                 borderRadius: "8px",
-                backgroundColor: "green",
+                backgroundColor: "#63a626",
                 "&:hover": {
                   backgroundColor: selectedCollection
                     ? "darkgreen"
@@ -161,7 +161,7 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
               disabled={Boolean(formik.errors.name) || loading}
             >
               {loading ? (
-                <CircularProgress size={24} sx={{ color: "green" }} />
+                <CircularProgress size={24} sx={{ color: "#63a626" }} />
               ) : selectedCollection ? (
                 "Save"
               ) : (

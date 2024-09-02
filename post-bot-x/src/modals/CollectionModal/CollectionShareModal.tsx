@@ -168,7 +168,7 @@ const CollectionShareModal: React.FC<CollectionShareModalProps> = ({
               color: "white",
               borderRadius: "8px",
               backgroundColor: selectedCollection
-                ? "green"
+                ? "#63a626"
                 : "rgba(255, 255, 255, 0.1)",
               "&:hover": {
                 backgroundColor: selectedCollection
