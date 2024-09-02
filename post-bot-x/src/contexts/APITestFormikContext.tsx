@@ -75,7 +75,6 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
 
 const useAPITestFormikContext = () => {
   const context = useContext(APITestFormikContext);
-  console.log("context", context);
   if (!context) {
     throw new Error("useFormikContext must be used within a FormikProvider");
   }
