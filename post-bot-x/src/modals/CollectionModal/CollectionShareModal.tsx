@@ -13,7 +13,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Collection } from "../../types";
 
 interface CollectionShareModalProps {
-  collection?: Collection;
+  selectedCollection?: Collection;
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (
@@ -39,7 +39,7 @@ const style = {
 };
 
 const CollectionShareModal: React.FC<CollectionShareModalProps> = ({
-  collection,
+  selectedCollection,
   isOpen,
   onClose,
   onSubmit,
@@ -74,13 +74,13 @@ const CollectionShareModal: React.FC<CollectionShareModalProps> = ({
       return;
     }
 
-    if (collection) {
+    if (selectedCollection) {
       setIsLoading(true);
       try {
         await onSubmit(
           receiverEmail.trim(),
-          collection.collectionId,
-          collection.name
+          selectedCollection.collectionId,
+          selectedCollection.name
         );
         setSuccessMessage("Collection shared successfully!");
         setErrorMessage("");
@@ -167,11 +167,11 @@ const CollectionShareModal: React.FC<CollectionShareModalProps> = ({
             sx={{
               color: "white",
               borderRadius: "8px",
-              backgroundColor: collection
+              backgroundColor: selectedCollection
                 ? "green"
                 : "rgba(255, 255, 255, 0.1)",
               "&:hover": {
-                backgroundColor: collection
+                backgroundColor: selectedCollection
                   ? "darkgreen"
                   : "rgba(255, 255, 255, 0.1)",
               },
