@@ -11,7 +11,7 @@ import CollectionBox from "./CollectionBox";
 import CollectionModal from "../../modals/CollectionModal/CollectionModal";
 import { useCollection } from "../../contexts/CollectionContext";
 import { API, Collection } from "../../types";
-import { Divider, IconButton, Menu, MenuItem } from "@mui/material";
+import { Box, Divider, IconButton, Menu, MenuItem } from "@mui/material";
 import CollectionShareModal from "../../modals/CollectionModal/CollectionShareModal";
 import { useAPI } from "../../contexts/APIContext";
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
@@ -31,18 +31,20 @@ const CollectionNavbar = () => {
     getCollections,
     shareCollection,
   } = useCollection();
-  const { createAPI, getApisByCollectionId, deleteApiById, updateAPIName } = useAPI();
-  const { formik } = useAPITestFormikContext();
+  const { createAPI, getApisByCollectionId, deleteApiById, updateAPIName } =
+    useAPI();
+  const {
+    formik,
+    fetchCollections,
+    fetchRequestsForCollections,
+    collections,
+    collectionsWithRequests,
+  } = useAPITestFormikContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isShareModalOpen, setShareIsModalOpen] = useState(false);
   const [isAPIModalOpen, setIsAPIModalOpen] = useState(false);
   const [selectedCollection, setSelectedCollection] = useState<Collection>();
   const [selectedAPI, setSelectedAPI] = useState<API>();
-  const [collections, setCollections] = useState<Collection[]>([]);
-  const [collectionsWithRequests, setCollectionsWithRequests] = useState<
-    CollectionWithAPIRequests[]
-  >([]);
-  // const [collectionAPIS, setCollectionAPIS] = useState<API[] | null>([]);
   const [anchorEl, setAnchorEl] = useState<HTMLElement>();
   const [action, setAction] = useState("");
   const [apiAnchorEl, setAPIAnchorEl] = useState<HTMLElement>();
@@ -51,50 +53,25 @@ const CollectionNavbar = () => {
     fetchCollections();
   }, []);
 
-  const fetchCollections = async () => {
-    try {
-      const collectionList = await getCollections();
-      console.log("CollectionList >>>> " + collectionList);
-      if (collectionList) {
-        setCollections(collectionList);
-      }
-    } catch (error) {
-      console.error("Failed to fetch collections:", error);
-    }
-  };
-
-  const getAPISByCollectionIdRequest = async (collectionId: string) => {
-    try {
-      console.log(collectionId);
-      const collectionAPIs = await getApisByCollectionId(collectionId);
-      console.log("collectionAPIs", collectionAPIs);
-      // setCollectionAPIS(collectionAPIs);
-      return collectionAPIs;
-    } catch (error) {
-      console.error("Failed to get APIs of this collection", error);
-    }
-  };
-
-  const fetchRequestsForCollections = async () => {
-    const updatedCollections = await Promise.all(
-      collections.map(async (collection: Collection) => {
-        const apiRequests = await getAPISByCollectionIdRequest(
-          collection.collectionId
-        );
-        return { ...collection, apiRequests };
-      })
-    );
-    setCollectionsWithRequests(updatedCollections);
-  };
 
   const createAPIRequest = async (collectionId: string) => {
     const createAPIPayload: CreateAPIDetail = {
-      apiType: formik.values.apiType || "",
+      apiType: "Get",
       isAutomated: true,
-      url: formik.values.url,
-      configuredPayload: formik.values.payload ? formik.values.payload[0] : '',
-      headers: formik.values.headers,
-      queryParameters: formik.values.queryParameters,
+      url: "",
+      configuredPayload: "",
+      headers: [
+        {
+          key: "",
+          value: "",
+        },
+      ],
+      queryParameters: [
+        {
+          key: "",
+          value: [""],
+        },
+      ],
     };
     try {
       const data = await createAPI(createAPIPayload, collectionId);
@@ -140,8 +117,8 @@ const CollectionNavbar = () => {
         console.log(name);
         await createCollection(name);
       }
-      await fetchCollections();
-      await fetchRequestsForCollections();
+      fetchCollections();
+      // fetchRequestsForCollections();
       handleModalClose();
     } catch (error) {
       console.error("Failed to process collection action:", error);
@@ -256,7 +233,7 @@ const CollectionNavbar = () => {
         <CollectionBoxContainer>
           {collectionsWithRequests.map(
             (collection: CollectionWithAPIRequests, index) => (
-              <>
+              <Box key={`Collection ${index}`}>
                 <CollectionBox
                   key={collection.collectionId}
                   collection={collection}
@@ -273,7 +250,7 @@ const CollectionNavbar = () => {
                     onMenuOpen={(e) => handleAPIMenuOpen(e, request)}
                   />
                 ))}
-              </>
+              </Box>
             )
           )}
         </CollectionBoxContainer>

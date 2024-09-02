@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { API, Collection } from "../../types";
+import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
 
 interface CollectionModalProps {
   isOpen: boolean;
@@ -38,18 +39,17 @@ const APIRenameModal: React.FC<CollectionModalProps> = ({
   onSubmit,
   api,
 }) => {
-  const [apiName, setAPIName] = useState("");
-
+  const [currentAPIName, setCurrentAPIName] = useState("");
   useEffect(() => {
-    setAPIName(api?.name || "");
+    setCurrentAPIName(api?.name || "");
   }, [api]);
 
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setAPIName(event.target.value);
+    setCurrentAPIName(event.target.value);
   };
 
   const handleSubmit = () => {
-    onSubmit(apiName.trim(), api?.id);
+    onSubmit(currentAPIName.trim(), api?.id);
   };
 
   return (
@@ -80,7 +80,7 @@ const APIRenameModal: React.FC<CollectionModalProps> = ({
         </Box>
         <TextField
           placeholder="API Name"
-          value={apiName}
+          value={currentAPIName}
           onChange={handleNameChange}
           fullWidth
           margin="normal"
@@ -133,7 +133,7 @@ const APIRenameModal: React.FC<CollectionModalProps> = ({
                 color: "#FFFFFF50",
               },
             }}
-            disabled={apiName.trim() === ""}
+            disabled={currentAPIName.trim() === ""}
           >
             Save
           </Button>

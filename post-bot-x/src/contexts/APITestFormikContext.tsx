@@ -6,7 +6,7 @@ import React, {
   useEffect,
 } from "react";
 import { useFormik, FormikProps } from "formik";
-import { API, Collection, Header } from "../types";
+import { API, Collection, CollectionWithAPIRequests, Header } from "../types";
 import { QueryParameter } from "../types/QueryParameter";
 import * as Yup from "yup";
 import { useAPI } from "./APIContext";
@@ -32,9 +32,12 @@ interface FormikContextType {
   apiRequestData: API | undefined;
   selectedAPIId: string | undefined;
   collectionName: string;
-  // apiName: string;
-  // apiRequestTypeName: string;
-  // setAPIName: (apiName: string) => void;
+  apiName: string | undefined;
+  setAPIName: (apiName: string | undefined) => void;
+  fetchCollections: () => void;
+  fetchRequestsForCollections: () => void;
+  collections: Collection[];
+  collectionsWithRequests: CollectionWithAPIRequests[];
   // setAPIRequestTypeName: (apiRequestTypeName: string) => void;
 }
 // Created a context
@@ -46,7 +49,7 @@ export const APITestFormikContext = createContext<FormikContextType | null>(
 const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const { getApiById } = useAPI();
+  const { getApiById, getApisByCollectionId } = useAPI();
   const [testingMethod, setTestingMethod] = useState<"Automated" | "Manual">(
     "Automated"
   );
@@ -54,19 +57,59 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
   const [currentCollectionId, setCurrentCollectionId] = useState<string>();
   const [apiRequestData, setAPIRequestData] = useState<API | undefined>();
   const [collectionName, setCollectionName] = useState("Collection");
-  // const [apiName, setAPIName] = useState<string>("untitled");
+  const [apiName, setAPIName] = useState<string | undefined>("");
+  const [collections, setCollections] = useState<Collection[]>([]);
+  const [collectionsWithRequests, setCollectionsWithRequests] = useState<
+    CollectionWithAPIRequests[]
+  >([]);
   // const [apiRequestTypeName, setAPIRequestTypeName] = useState<string>('');
-  const { getCollectionById } = useCollection();
-  
-  console.log("currentCollectionId", currentCollectionId)
+  const { getCollectionById, getCollections } = useCollection();
+
+  console.log("currentCollectionId", currentCollectionId);
+
+  const fetchCollections = async () => {
+    try {
+      const collectionList = await getCollections();
+      console.log("CollectionList >>>> " + collectionList);
+      if (collectionList) {
+        setCollections(collectionList);
+      }
+    } catch (error) {
+      console.error("Failed to fetch collections:", error);
+    }
+  };
+
+  const getAPISByCollectionIdRequest = async (collectionId: string) => {
+    try {
+      console.log(collectionId);
+      const collectionAPIs = await getApisByCollectionId(collectionId);
+      console.log("collectionAPIs", collectionAPIs);
+      return collectionAPIs;
+    } catch (error) {
+      console.error("Failed to get APIs of this collection", error);
+    }
+  };
+
+  const fetchRequestsForCollections = async () => {
+    const updatedCollections = await Promise.all(
+      collections.map(async (collection: Collection) => {
+        const apiRequests = await getAPISByCollectionIdRequest(
+          collection.collectionId
+        );
+        return { ...collection, apiRequests };
+      })
+    );
+    setCollectionsWithRequests(updatedCollections);
+  };
 
   const getCollection = async (id: string) => {
     try {
-      const collectionData: Collection | undefined = await getCollectionById(id);
-      console.log("collectionData", collectionData)
-      if(collectionData)
-      {
-        setCollectionName(collectionData.name)
+      const collectionData: Collection | undefined = await getCollectionById(
+        id
+      );
+      console.log("collectionData", collectionData);
+      if (collectionData) {
+        setCollectionName(collectionData.name);
       }
     } catch (error) {
       console.error("Could not fetch collection!");
@@ -85,6 +128,7 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
       console.log("apiData", apiData);
       if (apiData) {
         // setAPIRequestTypeName(apiData.apiType)
+        setAPIName(apiData.name ? apiData.name : "untitled");
         setAPIRequestData(apiData);
         setTestingMethod(apiData.isAutomated ? "Automated" : "Manual");
         formik.setValues({
@@ -199,10 +243,12 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
         apiRequestData,
         selectedAPIId,
         collectionName,
-        // apiName,
-        // setAPIName,
-        // apiRequestTypeName,
-        // setAPIRequestTypeName
+        apiName,
+        setAPIName,
+        fetchCollections,
+        fetchRequestsForCollections,
+        collections,
+        collectionsWithRequests
       }}
     >
       {children}

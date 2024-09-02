@@ -18,8 +18,13 @@ const APIRequestsBox = ({
   colId,
   anchorEl,
 }: APIRequestsBoxProps) => {
-  const { formik, setSelectedAPIId, selectedAPIId, setCurrentCollectionId } =
-    useAPITestFormikContext();
+  const {
+    formik,
+    setSelectedAPIId,
+    selectedAPIId,
+    setCurrentCollectionId,
+    apiName,
+  } = useAPITestFormikContext();
   const apiTypeColor = getAPIColor(apiRequest.apiType);
 
   return (
@@ -30,16 +35,20 @@ const APIRequestsBox = ({
       p={1}
       pl={4}
       mb={1}
+      key={apiRequest.id}
       borderRadius="4px"
       position="relative"
       onContextMenu={onMenuOpen}
       tabIndex={0}
       onClick={() => {
         setSelectedAPIId(apiRequest.id);
-        setCurrentCollectionId(colId ? colId : '');
+        setCurrentCollectionId(colId ? colId : "");
       }}
       sx={{
-        backgroundColor: (anchorEl || apiRequest.id == selectedAPIId) ? "rgba(255, 255, 255, 0.1)" : "transparent", // Apply hover background if context menu is open
+        backgroundColor:
+          anchorEl || apiRequest.id == selectedAPIId
+            ? "rgba(255, 255, 255, 0.1)"
+            : "transparent", // Apply hover background if context menu is open
         cursor: "pointer",
         "&:hover, &[data-context-open='true']": {
           backgroundColor: "rgba(255, 255, 255, 0.1)", // Lighter background color on hover
@@ -55,9 +64,17 @@ const APIRequestsBox = ({
       data-context-open={Boolean(anchorEl)}
     >
       <Box display={"flex"} alignItems={"center"} gap={"10px"}>
-      <Typography color={apiTypeColor} fontSize={"14px"}>{apiRequest.apiType}</Typography>
+        <Typography color={apiTypeColor} fontSize={"14px"}>
+          {apiRequest.apiType}
+        </Typography>
         <Typography fontSize={"16px"}>
-          {apiRequest.name ? apiRequest.name : "untitled"}
+          {selectedAPIId == apiRequest.id
+            ? apiName
+              ? apiName
+              : "untitled"
+            : apiRequest.name
+            ? apiRequest.name
+            : "untitled"}
         </Typography>
       </Box>
 

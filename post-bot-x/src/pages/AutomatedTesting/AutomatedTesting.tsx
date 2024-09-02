@@ -5,7 +5,9 @@ import {
   FormControl,
   IconButton,
   InputLabel,
+  Menu,
   MenuItem,
+  OutlinedInput,
   Select,
   SelectChangeEvent,
   TextField,
@@ -32,7 +34,9 @@ import { manualPostWrite, manualPostRead } from "../../api/ManualTestService";
 import ResponseComponent from "../../components/ResponseComponent/ResponseComponent";
 import { useAPI } from "../../contexts/APIContext";
 import getAPIColor from "../../utils/GetAPIColor";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import SelectTestingMethodButton from "../../components/SelectTestingMethodButton/SelectTestingMethodButton";
+import { API } from "../../types";
 
 interface AutomatedTestingProps {
   setIsVisible: (isVisible: boolean) => void;
@@ -44,6 +48,9 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
   isVisible,
 }) => {
   const [apiTypeColor, setAPITypeColor] = useState<string>("#73DC8C");
+  const [isEditingAPIName, setIsEditingAPIName] = useState(false);
+  const inputRef = useRef(null);
+
   const {
     formik,
     testingMethod,
@@ -51,7 +58,9 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
     apiRequestData,
     selectedAPIId,
     collectionName,
-    // setAPIRequestTypeName
+    apiName,
+    setAPIName,
+    fetchRequestsForCollections
   } = useAPITestFormikContext();
   const handleChange = (event: SelectChangeEvent) => {
     setTestingMethod(event.target.value as "Automated" | "Manual");
@@ -60,6 +69,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
   const { updateAPI } = useAPI();
 
   const testApi = async () => {
+    await updateAPIById();
     const apiPayload: APIRequestPayload = {
       apiType: formik.values.apiType,
       url: formik.values.url,
@@ -131,12 +141,15 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
           ? formik.values.queryParameters
           : formik.values.manualQueryParameters,
     };
-    if (selectedAPIId && apiRequestData?.collectionId) {
+    if (selectedAPIId && apiRequestData && apiRequestData?.collectionId) {
+      apiRequestData.name = apiName ? apiName : "untitled";
       const data = await updateAPI(
         selectedAPIId,
         { ...apiRequestData, ...formPayload },
+
         apiRequestData?.collectionId
       );
+      fetchRequestsForCollections();
     }
   };
 
@@ -145,6 +158,14 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
     setAPITypeColor(apiTypeColor);
   }, [formik.values.apiType]);
 
+  const handleAPINameFocus = () => {
+    setIsEditingAPIName(true);
+  };
+
+  const handleAPINameBlur = () => {
+    setIsEditingAPIName(false);
+  };
+
   return (
     <APITestingPage>
       <ContentBox>
@@ -152,13 +173,38 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
           <Box display={"flex"} alignItems={"center"} gap={"10px"}>
             <Typography sx={{ color: "gray" }}>{collectionName}</Typography>
             <Typography>/</Typography>
-            <Typography>{apiRequestData?.name ? apiRequestData?.name : 'untitled'}</Typography>
+            <>
+              {isEditingAPIName ? (
+                <OutlinedInput
+                  autoFocus
+                  inputRef={inputRef}
+                  value={apiName}
+                  sx={{ color: "white", height: "40px" }}
+                  onChange={(e) => setAPIName(e.target.value)}
+                  onBlur={handleAPINameBlur}
+                  fullWidth
+                />
+              ) : (
+                <Typography
+                  onClick={handleAPINameFocus}
+                  sx={{
+                    color: "white",
+                    cursor: "pointer",
+                    padding: "8px",
+                    border: "1px solid transparent",
+                  }}
+                >
+                  {apiName}
+                </Typography>
+              )}
+            </>
           </Box>
           <Box display="flex" alignItems={"center"} gap={"20px"}>
             <Button
               variant="contained"
               size="large"
               color="success"
+              sx={{ display: "flex", alignItems: "center", gap: "2px" }}
               endIcon={
                 <IconButton sx={{ color: "white" }}>
                   <Save fontSize="small" />
@@ -168,37 +214,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
             >
               Save
             </Button>
-            <FormControl sx={{ width: "150px" }}>
-              <Select
-                value={testingMethod}
-                sx={{
-                  color: "white",
-                  border: "1px solid gray",
-                  height: "50px",
-                  backgroundColor: "transparent",
-                  borderRadius: "4px",
-
-                  "& .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "gray",
-                  },
-                  "&:hover .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "gray",
-                  },
-                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "gray",
-                  },
-                }}
-                onChange={handleChange}
-              >
-                {TestingTypeList.map((testingType: string) => {
-                  return (
-                    <MenuItem key={testingType} value={testingType}>
-                      {testingType}
-                    </MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl>
+            <SelectTestingMethodButton />
           </Box>
         </CollectionInfoBox>
         <HeaderContentBox>
@@ -231,12 +247,6 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
                   value={requestType.name}
                   sx={{
                     color: requestType.color,
-
-                    "& .MuiMenuItem-root": {
-                      backgroundColor: "gray",
-                      borderRadius: "8px",
-                      padding: "8px",
-                    },
                   }}
                 >
                   {requestType.name}
