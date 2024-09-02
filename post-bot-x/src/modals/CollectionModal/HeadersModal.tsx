@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Modal,
   Box,
@@ -10,26 +10,25 @@ import {
   TableBody,
   Table,
   OutlinedInput,
+  CircularProgress,
 } from "@mui/material";
-import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
 import CloseIcon from "@mui/icons-material/Close";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { Header } from "../../types";
-import { Delete } from "@mui/icons-material";
+import { useCollection } from "../../contexts/CollectionContext";
 
-const style = {
-  position: "absolute" as "absolute",
+const modalStyle = {
+  position: "absolute" as const,
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: "50%",
-  height: "50%",
+  height: "70%",
   bgcolor: "#2e2b2b",
   color: "#FFFFFF",
   boxShadow: 24,
-  py: 2,
-  px: 3,
-  border: "none",
   borderRadius: 2,
+  p: 3,
   display: "flex",
   flexDirection: "column",
 };
@@ -37,118 +36,94 @@ const style = {
 type HeadersModalProps = {
   open: boolean;
   onClose: () => void;
-  onSave: (headers: { key: string; value: string[] | string }[]) => void;
+  selectedCollectionId: string;
 };
+
+const defaultHeaders: Header[] = [{ key: "", value: "" }];
 
 const HeadersModal: React.FC<HeadersModalProps> = ({
   open,
   onClose,
-  onSave,
+  selectedCollectionId,
 }) => {
-  const { formik } = useAPITestFormikContext();
+  const { updateCollectionHeaders, getCollectionById } = useCollection();
+  const [headers, setHeaders] = useState<Header[]>(defaultHeaders);
+  const [loading, setLoading] = useState<boolean>(true);
+  useEffect(() => {
+    const fetchCollection = async () => {
+      const collection = await getCollectionById(selectedCollectionId);
+      if (collection) {
+        setHeaders([...collection.headers, { key: "", value: "" }]);
+        setLoading(false);
+      }
+    };
 
-  const [rowAddedFlags, setRowAddedFlags] = useState<boolean[]>([]);
+    fetchCollection();
+  }, [getCollectionById, selectedCollectionId]);
 
-  const resetRowFlags = () => {
-    setRowAddedFlags(
-      new Array(formik.values.queryParameters.length).fill(false)
-    );
+  const handleDeleteRow = (index: number) => {
+    const updatedHeaders = [...headers];
+    updatedHeaders.splice(index, 1);
+
+    setHeaders(updatedHeaders);
   };
 
-  const deleteHeader = (i: number) => {
-    const newHeaders =
-      formik.values.headers.length === 1
-        ? formik.initialValues.headers
-        : formik.values.headers.filter((_, index) => index !== i);
-
-    formik.setFieldValue("headers", newHeaders);
-    resetRowFlags();
-  };
-
-  const isEmptyField = (value: string) => !value || value === "";
-
-  const isRowEmpty = (
-    headers: Header[],
+  const handleInputChange = (
     index: number,
     field: "key" | "value",
     value: string
   ) => {
-    return (
-      isEmptyField(value) &&
-      (field === "key"
-        ? isEmptyField(headers[index].value)
-        : isEmptyField(headers[index].key))
-    );
-  };
+    const updatedHeaders = [...headers];
+    updatedHeaders[index][field] = value;
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    index: number,
-    field: "key" | "value"
-  ) => {
-    const { headers } = formik.values;
-    const isLastRow = index === headers.length - 1;
-    const newValue = e.target.value;
-
-    if (isRowEmpty(headers, index, field, newValue) && !isLastRow) {
-      deleteHeader(index);
-    } else {
-      if (
-        isLastRow &&
-        !rowAddedFlags[index] &&
-        (headers[index].key || newValue)
-      ) {
-        setRowAddedFlags((prevFlags) => {
-          const updatedFlags = [...prevFlags];
-          updatedFlags[index] = true;
-          return updatedFlags;
-        });
-        formik.setFieldValue("headers", [...headers, { key: "", value: "" }]);
-      }
-
-      formik.setFieldValue(`headers.${index}.${field}`, newValue);
+    if (index === headers.length - 1 && value.trim() !== "") {
+      updatedHeaders.push({ key: "", value: "" });
     }
+
+    if (
+      index !== headers.length - 1 &&
+      updatedHeaders[index].key.trim() === "" &&
+      updatedHeaders[index].value.trim() === ""
+    ) {
+      updatedHeaders.splice(index, 1);
+    }
+
+    setHeaders(updatedHeaders);
   };
 
-  const handleSave = () => {
-    onSave(formik.values.headers);
+  const handleSave = async () => {
+    const filteredHeaders = headers.filter(
+      (header) => header.key.trim() !== "" || header.value.trim() !== ""
+    );
+
+    await updateCollectionHeaders(selectedCollectionId, filteredHeaders);
     onClose();
   };
 
   return (
     <Modal open={open} onClose={onClose}>
-      <Box sx={style}>
-        {/* should be on the top, fixed */}
+      <Box sx={modalStyle}>
         <Box
           sx={{
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            marginBottom: 2,
+            mb: 2,
           }}
         >
-          <Typography>Manage Headers</Typography>
-          <IconButton
-            onClick={onClose}
-            sx={{
-              color: "white",
-              "&:hover": {
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
-              },
-              borderRadius: "8px",
-            }}
-          >
-            <CloseIcon fontSize="small" />
+          <Typography variant="h6">Manage Headers</Typography>
+          <IconButton onClick={onClose} sx={{ color: "white" }}>
+            <CloseIcon />
           </IconButton>
         </Box>
-        {/* should be on the middle, if content of the table overflows then this bozx should be scrollable*/}
         <Box
           sx={{
             flex: 1,
             overflowY: "auto",
-            marginBottom: 2,
+            mb: 2,
+            pr: 1,
             "&::-webkit-scrollbar": {
-              width: "5px",
+              width: "8px",
             },
             "&::-webkit-scrollbar-thumb": {
               backgroundColor: "gray",
@@ -159,16 +134,30 @@ const HeadersModal: React.FC<HeadersModalProps> = ({
             },
           }}
         >
-          <Table>
-            <TableBody>
-              {formik.values.headers.map(
-                (header: { key: string; value: string }, index: number) => (
+          {loading ? (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100%",
+              }}
+            >
+              <CircularProgress style={{ color: "green" }} />
+            </div>
+          ) : (
+            <Table>
+              <TableBody>
+                {headers.map((header, index) => (
                   <TableRow key={index}>
-                    <TableCell sx={{ borderBottom: "none" }}>
+                    <TableCell sx={{ borderBottom: "none"}}>
                       <OutlinedInput
                         value={header.key}
-                        id={`headers.${index}.key`}
-                        name={`headers.${index}.key`}
+                        onChange={(e) =>
+                          handleInputChange(index, "key", e.target.value)
+                        }
+                        placeholder="Key"
+                        fullWidth
                         sx={{
                           height: "40px",
                           border: "1px solid gray",
@@ -183,16 +172,16 @@ const HeadersModal: React.FC<HeadersModalProps> = ({
                             opacity: 1,
                           },
                         }}
-                        onChange={(e) => handleInputChange(e, index, "key")}
-                        placeholder="Key"
-                        fullWidth
                       />
                     </TableCell>
-                    <TableCell sx={{ borderBottom: "none" }}>
+                    <TableCell sx={{ borderBottom: "none", width: "40%" }}>
                       <OutlinedInput
                         value={header.value}
-                        id={`headers.${index}.value`}
-                        name={`headers.${index}.value`}
+                        onChange={(e) =>
+                          handleInputChange(index, "value", e.target.value)
+                        }
+                        placeholder="Value"
+                        fullWidth
                         sx={{
                           height: "40px",
                           border: "1px solid gray",
@@ -207,37 +196,29 @@ const HeadersModal: React.FC<HeadersModalProps> = ({
                             opacity: 1,
                           },
                         }}
-                        onChange={(e) => handleInputChange(e, index, "value")}
-                        placeholder="Value"
-                        fullWidth
                       />
                     </TableCell>
-                    <TableCell sx={{ borderBottom: "none" }}>
-                      {formik.values.headers.length > 1 &&
-                        !(
-                          index === formik.values.headers.length - 1 &&
-                          isEmptyField(header.key) &&
-                          isEmptyField(header.value)
-                        ) && (
-                          <Delete
-                            sx={{ cursor: "pointer", color: "gray" }}
-                            onClick={() => {
-                              deleteHeader(index);
-                            }}
-                          />
-                        )}
-                    </TableCell>
+                    {index !== headers.length - 1 && (
+                      <TableCell sx={{ borderBottom: "none", width: "10%" }}>
+                        <IconButton
+                          onClick={() => handleDeleteRow(index)}
+                          sx={{ color: "gray" }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </TableCell>
+                    )}
                   </TableRow>
-                )
-              )}
-            </TableBody>
-          </Table>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </Box>
-        {/* should be in the bottom, fixed */}
         <Box sx={{ display: "flex", justifyContent: "space-between" }}>
           <Button
             onClick={onClose}
             variant="outlined"
+            disabled={loading}
             sx={{
               color: "white",
               borderRadius: "8px",
@@ -247,28 +228,32 @@ const HeadersModal: React.FC<HeadersModalProps> = ({
                 backgroundColor: "rgba(255, 255, 255, 0.2)",
                 border: "none",
               },
+              "&.Mui-disabled": {
+                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                color: "#FFFFFF50",
+              },
             }}
-            //disabled={loading}
           >
             Cancel
           </Button>
           <Button
-            type="submit"
             onClick={handleSave}
             variant="contained"
+            disabled={loading}
             sx={{
               color: "white",
               borderRadius: "8px",
               backgroundColor: "green",
               "&:hover": {
-                backgroundColor: "darkgreen",
+                backgroundColor: selectedCollectionId
+                  ? "darkgreen"
+                  : "rgba(255, 255, 255, 0.1)",
               },
               "&.Mui-disabled": {
                 backgroundColor: "rgba(255, 255, 255, 0.1)",
                 color: "#FFFFFF50",
               },
             }}
-            //disabled={Boolean(formik.errors.name) || loading}
           >
             Save
           </Button>

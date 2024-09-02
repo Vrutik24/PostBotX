@@ -133,7 +133,6 @@ const CollectionNavbar = () => {
       } else if (action === "delete") {
         setCollectionToDelete(selectedCollection);
         setIsConfirmationModalOpen(true);
-        //handleAction(undefined, selectedCollection.collectionId);
       }
     }
   };
@@ -151,21 +150,15 @@ const CollectionNavbar = () => {
     setIsConfirmationModalOpen(false);
   };
 
-  const handleOpenHeadersModal = () => {
+  const handleOpenHeadersModal = async () => {
     setIsHeadersModalOpen(true);
   };
 
   const handleCloseHeadersModal = () => {
     setIsHeadersModalOpen(false);
+    setSelectedCollection(undefined);
   };
 
-  const handleSaveHeaders = (
-    headers: { key: string; value: string[] | string }[]
-  ) => {
-    // Save headers logic
-    console.log("Headers saved:", headers);
-    handleCloseHeadersModal();
-  };
 
   return (
     <CollectionNavbarBox>
@@ -314,11 +307,12 @@ const CollectionNavbar = () => {
           collectionName={collectionToDelete.name}
         />
       )}
-      {isHeadersModalOpen && (
+      {isHeadersModalOpen && selectedCollection && (
         <HeadersModal
           open={isHeadersModalOpen}
           onClose={handleCloseHeadersModal}
-          onSave={handleSaveHeaders}
+          //onSave={handleSaveHeaders}
+          selectedCollectionId={selectedCollection.collectionId}
         />
       )}
     </CollectionNavbarBox>
