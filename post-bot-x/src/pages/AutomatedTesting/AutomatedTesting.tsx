@@ -22,7 +22,10 @@ import { TestingTypeList } from "../../dropdown-list/testing-type-list";
 import APITestingBody from "../../components/APITestingBody/APITestingBody";
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
 import { APIRequestPayload } from "../../types/APIRequestPayload";
-import { automatedPostWrite, automatedPostRead } from "../../api/AutomatedTestService";
+import {
+  automatedPostWrite,
+  automatedPostRead,
+} from "../../api/AutomatedTestService";
 import { manualPostWrite, manualPostRead } from "../../api/ManualTestService";
 import ResponseComponent from "../../components/ResponseComponent/ResponseComponent";
 
@@ -53,20 +56,18 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
       headers: formik.values.headers,
     };
     if (apiPayload.isAutomated) {
-      if (["Post", "Patch", "Put"].includes(apiPayload.apiType) ) {
+      if (["Post", "Patch", "Put"].includes(apiPayload.apiType)) {
         try {
-          const results =  await automatedPostWrite(apiPayload);
+          const results = await automatedPostWrite(apiPayload);
           console.log(results);
         } catch (error) {
           console.error(`Error calling ${apiPayload.apiType} method:`, error);
         }
       } else {
-        try
-        {
+        try {
           const results = await automatedPostRead(apiPayload);
           console.log(results);
-        }
-        catch (error) {
+        } catch (error) {
           console.error(`Error calling ${apiPayload.apiType} method:`, error);
         }
       }
@@ -78,7 +79,6 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
         } catch (error) {
           console.error(`Error calling ${apiPayload.apiType} method:`, error);
         }
-        
       } else {
         try {
           const results = await manualPostRead(apiPayload);
@@ -88,7 +88,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
         }
       }
     }
-  }
+  };
 
   return (
     <APITestingPage>
@@ -184,7 +184,14 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
             }}
           />
           <Button
-            sx={{ backgroundColor: "#63a626", color: "white", width: "100px" }}
+            sx={{
+              backgroundColor: "#4CAF50",
+              color: "white",
+              width: "100px", margin: "0 10px",
+              "&:hover": {
+                backgroundColor: "darkgreen",
+              },
+            }}
             onClick={() => {
               testApi();
               setIsVisible(true);
@@ -201,7 +208,6 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
       {isVisible && (
         <ResponseComponent response="" setIsVisible={setIsVisible} />
       )}
-      
     </APITestingPage>
   );
 };

@@ -77,10 +77,8 @@ const ManualParamsComponent = () => {
                   name={`manualQueryParameters.${index}.key`}
                   sx={{
                     height: "40px",
-                    border: "1px solid gray",
-                    "&.Mui-focused": {
-                      border: "1px solid blue",
-                    },
+                    border: "2px solid #2b2b2b",
+                    
                     "& .MuiInputBase-input": {
                       color: "#FFA24E",
                     },
@@ -125,12 +123,9 @@ const ManualParamsComponent = () => {
                       name={`manualQueryParameters.${index}.value.${valIndex}`}
                       sx={{
                         height: "40px",
-                        border: "1px solid gray",
-                        "&.Mui-focused": {
-                          border: "1px solid blue",
-                        },
+                        border: "2px solid #2b2b2b",
                         "& .MuiInputBase-input": {
-                          color: "white",
+                          color: "#FFA24E",
                         },
                         "& .MuiInputBase-input::placeholder": {
                           color: "gray",

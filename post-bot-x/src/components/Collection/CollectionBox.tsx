@@ -30,10 +30,10 @@ const CollectionBox: React.FC<CollectionBoxProps> = ({
       data-context-open={isOpen}
       data-collection-id={collection.collectionId}
       sx={{
-        backgroundColor: isOpen ? "rgba(255, 255, 255, 0.1)" : "transparent", // Apply background color if context menu is open
+        backgroundColor: isOpen ? "rgb(29 28 28)" : "transparent", // Apply background color if context menu is open
         cursor: "pointer",
         "&:hover, &[data-context-open='true']": {
-          backgroundColor: "rgba(255, 255, 255, 0.1)", // Background color when hovered or context menu is open
+          backgroundColor: "rgb(29 28 28)", // Background color when hovered or context menu is open
         },
         "&:hover .collection-actions, &[data-context-open='true'] .collection-actions":
           { display: "flex" },
@@ -46,7 +46,7 @@ const CollectionBox: React.FC<CollectionBoxProps> = ({
         sx={{
           color: "rgba(255, 255, 255, 0.5)",
           "&:hover, &[data-context-open='true']": {
-            backgroundColor: "rgba(255, 255, 255, 0.1)",
+            backgroundColor: "rgb(29 28 28)",
             borderRadius: "8px",
           },
           padding: 0,
@@ -71,7 +71,7 @@ const CollectionBox: React.FC<CollectionBoxProps> = ({
           sx={{
             color: "rgba(255, 255, 255, 0.5)",
             "&:hover, &[data-context-open='true']": {
-              backgroundColor: "rgba(255, 255, 255, 0.1)",
+              backgroundColor: "rgb(29 28 28)",
               borderRadius: "8px",
             },
             "&[data-context-open='true']": { color: "white" },
@@ -84,7 +84,7 @@ const CollectionBox: React.FC<CollectionBoxProps> = ({
           sx={{
             color: "rgba(255, 255, 255, 0.5)",
             "&:hover, &[data-context-open='true']": {
-              backgroundColor: "rgba(255, 255, 255, 0.1)",
+              backgroundColor: "rgb(29 28 28)",
               borderRadius: "8px",
             },
             "&[data-context-open='true']": { color: "white" },

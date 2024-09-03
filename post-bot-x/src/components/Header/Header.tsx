@@ -11,13 +11,19 @@ const Header = () => {
     <Box
       display="flex"
       alignItems="center"
-      justifyContent="flex-start"
-      width="100px"
-      padding={2}
-      gap={1} // Add gap to space items properly
+      justifyContent="flex-end"
+      width="90%"
+      sx={{
+        position: "absolute",
+        top: 12,
+        zIndex: 1000,
+        cursor: "pointer",
+      }}
     >
-      <User />
-      {currentUser && <Notification />}
+      <Box display="flex" alignItems="center" gap={1}>
+        {currentUser && <Notification />}
+        <User />
+      </Box>
     </Box>
   );
 };

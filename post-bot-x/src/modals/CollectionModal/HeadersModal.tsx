@@ -24,7 +24,7 @@ const modalStyle = {
   transform: "translate(-50%, -50%)",
   width: "50%",
   height: "70%",
-  bgcolor: "#2e2b2b",
+  bgcolor: "rgb(29 28 28)",
   color: "#FFFFFF",
   boxShadow: 24,
   borderRadius: 2,
@@ -143,7 +143,7 @@ const HeadersModal: React.FC<HeadersModalProps> = ({
                 height: "100%",
               }}
             >
-              <CircularProgress style={{ color: "#63a626" }} />
+              <CircularProgress style={{ color: "#4CAF50" }} />
             </div>
           ) : (
             <Table>
@@ -160,10 +160,7 @@ const HeadersModal: React.FC<HeadersModalProps> = ({
                         fullWidth
                         sx={{
                           height: "40px",
-                          border: "1px solid gray",
-                          "&.Mui-focused": {
-                            border: "1px solid blue",
-                          },
+                          border: "2px solid #2b2b2b",
                           "& .MuiInputBase-input": {
                             color: "#FFA24E",
                           },
@@ -184,10 +181,7 @@ const HeadersModal: React.FC<HeadersModalProps> = ({
                         fullWidth
                         sx={{
                           height: "40px",
-                          border: "1px solid gray",
-                          "&.Mui-focused": {
-                            border: "1px solid blue",
-                          },
+                          border: "2px solid #2b2b2b",
                           "& .MuiInputBase-input": {
                             color: "white",
                           },
@@ -223,13 +217,13 @@ const HeadersModal: React.FC<HeadersModalProps> = ({
               color: "white",
               borderRadius: "8px",
               border: "none",
-              backgroundColor: "rgba(255, 255, 255, 0.1)",
+              backgroundColor: "#2b2b2b",
               "&:hover": {
                 backgroundColor: "rgba(255, 255, 255, 0.2)",
                 border: "none",
               },
               "&.Mui-disabled": {
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                backgroundColor: "#2b2b2b",
                 color: "#FFFFFF50",
               },
             }}
@@ -243,14 +237,14 @@ const HeadersModal: React.FC<HeadersModalProps> = ({
             sx={{
               color: "white",
               borderRadius: "8px",
-              backgroundColor: "#63a626",
+              backgroundColor: "#4CAF50",
               "&:hover": {
                 backgroundColor: selectedCollectionId
                   ? "darkgreen"
-                  : "rgba(255, 255, 255, 0.1)",
+                  : "rgb(29 28 28)",
               },
               "&.Mui-disabled": {
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                backgroundColor: "rgb(29 28 28)",
                 color: "#FFFFFF50",
               },
             }}

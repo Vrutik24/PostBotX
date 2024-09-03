@@ -88,10 +88,8 @@ const HeadersComponent = () => {
                   name={`headers.${index}.key`}
                   sx={{
                     height: "40px",
-                    border: "1px solid gray",
-                    "&.Mui-focused": {
-                      border: "1px solid blue",
-                    },
+                    border: "2px solid #2b2b2b",
+                    
                     "& .MuiInputBase-input": {
                       color: "#FFA24E",
                     },
@@ -112,12 +110,10 @@ const HeadersComponent = () => {
                   name={`headers.${index}.value`}
                   sx={{
                     height: "40px",
-                    border: "1px solid gray",
-                    "&.Mui-focused": {
-                      border: "1px solid blue",
-                    },
+                    border: "2px solid #2b2b2b",
+                    
                     "& .MuiInputBase-input": {
-                      color: "white",
+                      color: "#FFA24E",
                     },
                     "& .MuiInputBase-input::placeholder": {
                       color: "gray",

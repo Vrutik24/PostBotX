@@ -6,7 +6,7 @@ import { Notifications as NotificationsIcon } from "@mui/icons-material";
 export const NotificationContainer = styled(Box)(({ theme }) => ({
   width: "400px",  // Fixed width
   padding: theme.spacing(2),
-  backgroundColor: "#040719", // Black background for the container
+  backgroundColor: "#151414", // Black background for the container
   color: "#fff",  // White text for contrast
   borderRadius: "5px",
 }));
@@ -24,7 +24,7 @@ export const NotificationItem = styled(Paper)(({ theme }) => ({
   borderRadius: "5px",
 }));
 
-// Notification list component with black background
+// Notification list component with #151414 background
 export const NotificationList = styled(Box)(({ theme }) => ({
   maxHeight: "400px",  // Fixed max height
   overflowY: "auto",   // Enables vertical scrolling
@@ -35,7 +35,7 @@ export const NotificationList = styled(Box)(({ theme }) => ({
 
 // Styled Bell Icon
 export const BellIcon = styled(NotificationsIcon)(({ theme }) => ({
-  color: "#63a626", // Green color
+  color: "#4CAF50", // Green color
   width: 40,        // Adjusted width
   height: 40,       // Adjusted height
   cursor: "pointer",
