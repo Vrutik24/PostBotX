@@ -28,14 +28,14 @@ const ManualJsonBody = () => {
   console.log("requestModal", requestModal)
 
   const deleteJsonBody = (index: number) => {
-    const newJsonBodyArray = formik.values.payload.filter(
+    const newJsonBodyArray = formik.values.manualPayload.filter(
       (payload: string, payloadIndex) => payloadIndex !== index
     );
-    formik.setFieldValue("payload", newJsonBodyArray);
+    formik.setFieldValue("manualPayload", newJsonBodyArray);
   };
 
   const addNewPayload = (index: number) => {
-    formik.setFieldValue("payload", [...formik.values.payload, formik.values.payload[index]]);
+    formik.setFieldValue("manualPayload", [...formik.values.manualPayload, formik.values.manualPayload[index]]);
   };
 
   const viewAndEditRequest = (index: number, request: string) => {
@@ -51,7 +51,7 @@ const ManualJsonBody = () => {
 
   return (
     <Box>
-      {formik.values.payload.map((payload: string, index: number) => (
+      {formik.values.manualPayload.map((payload: string, index: number) => (
         <Box key={index} display={"flex"} gap={"40px"} marginTop={"30px"}>
           <Typography color={"gray"} width={"200px"}>
             Request {index + 1}
@@ -70,7 +70,7 @@ const ManualJsonBody = () => {
               fullWidth
               value={payload}
               onChange={(e) => {
-                formik.setFieldValue(`payload.${index}`, e.target.value);
+                formik.setFieldValue(`manualPayload.${index}`, e.target.value);
               }}
               placeholder='{
                               "id": 1,
@@ -121,7 +121,7 @@ const ManualJsonBody = () => {
                 ),
               }}
             />
-            {index === formik.values.payload.length - 1 && (
+            {index === formik.values.manualPayload.length - 1 && (
               <Button
                 variant="contained"
                 color="success"
@@ -133,7 +133,7 @@ const ManualJsonBody = () => {
               </Button>
             )}
           </Box>
-          {formik.values.payload.length > 1 && (
+          {formik.values.manualPayload.length > 1 && (
             <IconButton
               sx={{ color: "gray" }}
               size="small"

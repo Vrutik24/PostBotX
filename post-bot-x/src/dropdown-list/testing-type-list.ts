@@ -1,1 +1,1 @@
-export const TestingTypeList = ["Automated", "Manual"]
+export const TestingTypeList: ("Automated" | "Manual")[] = ["Automated", "Manual"]

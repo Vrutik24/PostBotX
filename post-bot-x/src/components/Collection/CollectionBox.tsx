@@ -7,6 +7,7 @@ import { Collection } from "../../types";
 interface CollectionBoxProps {
   collection: Collection;
   onMenuOpen: (event: MouseEvent<HTMLElement>, collection: Collection) => void;
+  createAPIRequest: (collectionId: string, id: string | undefined) => void;
   selectedCollection?: Collection;
 }
 
@@ -14,6 +15,7 @@ const CollectionBox: React.FC<CollectionBoxProps> = ({
   collection,
   onMenuOpen,
   selectedCollection,
+  createAPIRequest,
 }) => {
   const isOpen = selectedCollection?.collectionId === collection.collectionId;
 
@@ -76,6 +78,9 @@ const CollectionBox: React.FC<CollectionBoxProps> = ({
             },
             "&[data-context-open='true']": { color: "white" },
           }}
+          onClick={() =>
+            createAPIRequest(collection.collectionId, collection.id)
+          }
         >
           <AddIcon sx={{ fontSize: "20px" }} />
         </IconButton>

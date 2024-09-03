@@ -5,12 +5,13 @@ import { prettifyJSON } from "../../utils/PrettifyJson";
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
 
 const JSONBody = () => {
-  const { formik } = useAPITestFormikContext();
-  const [jsonInput, setJsonInput] = useState("");
-  const [configuredJson, setConfiguredJson] = useState("");
+  const { formik, apiRequestData } = useAPITestFormikContext();
+  const [jsonInput, setJsonInput] = useState(formik.values.payload[0]);
+  const [configuredJson, setConfiguredJson] = useState(formik.values.configuredPayload);
   const [errorMessage, setErrorMessage] = useState<string>("");
   const handleInputChange = (e: any) => {
     setJsonInput(e.target.value);
+    formik.setFieldValue(`payload[0]`, prettifyJSON(e.target.value));
   };
   const configureJsonObject = (json: string) => {
     try {
@@ -19,7 +20,7 @@ const JSONBody = () => {
       const configuredStringifyJson = JSON.stringify(configuredJson);
       setErrorMessage("");
       setConfiguredJson(prettifyJSON(configuredStringifyJson));
-      formik.setFieldValue(`payload[0]`, prettifyJSON(configuredStringifyJson));
+      formik.setFieldValue(`configuredPayload`, prettifyJSON(configuredStringifyJson));
     } catch (error) {
       setErrorMessage("Invalid Json Format");
       console.error(error);
@@ -27,7 +28,7 @@ const JSONBody = () => {
   };
   const handleConfiguredInputChange = (e: any) => {
     setConfiguredJson(prettifyJSON(e.target.value));
-    formik.setFieldValue(`payload[0]`, prettifyJSON(e.target.value));
+    formik.setFieldValue(`configuredPayload`, prettifyJSON(e.target.value));
   };
 
   console.log("configuredJson", configuredJson);
@@ -90,7 +91,9 @@ const JSONBody = () => {
             },
           }}
           onClick={() => {
-            configureJsonObject(jsonInput);
+            if (jsonInput) {
+              configureJsonObject(jsonInput);
+            }
           }}
         >
           Configure Json Object

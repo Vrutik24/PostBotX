@@ -5,7 +5,7 @@ import AutomatedTesting from "../AutomatedTesting/AutomatedTesting";
 import { APITestFormikProvider } from "../../contexts/APITestFormikContext";
 
 const ApiTesting = () => {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
 
   return (
     <APITestFormikProvider>

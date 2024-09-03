@@ -84,7 +84,7 @@ const ParamsComponent = () => {
   return (
     <Table>
       <TableBody>
-        {formik.values.queryParameters.map(
+        {formik.values.queryParameters?.map(
           (param: { key: string; value: string[] }, index: number) => (
             <TableRow
               key={index}

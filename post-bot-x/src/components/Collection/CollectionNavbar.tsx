@@ -10,21 +10,26 @@ import { useState, useEffect, MouseEvent, useCallback } from "react";
 import CollectionBox from "./CollectionBox";
 import CollectionModal from "../../modals/CollectionModal/CollectionModal";
 import { useCollection } from "../../contexts/CollectionContext";
-import { Collection } from "../../types";
-import { Divider, ListItemIcon, Menu, MenuItem } from "@mui/material";
+import { API, Collection } from "../../types";
+import { Box, Divider, ListItemIcon, IconButton, Menu, MenuItem } from "@mui/material";
 import CollectionShareModal from "../../modals/CollectionModal/CollectionShareModal";
-import {
-  AddBoxOutlined,
+import { useAPI } from "../../contexts/APIContext";
+import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
+import { CreateAPIDetail } from "../../types";
+import { CollectionWithAPIRequests } from "../../types";
+import APIRequestsBox from "./APIRequestsBox/APIRequestsBox";
+import APIRenameModal from "../../modals/APIRenameModal/APIRenameModal";
+import { AddCircle, AddBoxOutlined,
   DeleteOutlineRounded,
   EditOutlined,
   LibraryAddOutlined,
-  ShareRounded,
-} from "@mui/icons-material";
+  ShareRounded } from "@mui/icons-material";
 import ConfirmationModal from "../../modals/CollectionModal/ConfirmationModal";
 import HeadersModal from "../../modals/CollectionModal/HeadersModal";
 
 const CollectionNavbar = () => {
   const navigateTo = useNavigate();
+
   const {
     createCollection,
     renameCollection,
@@ -32,35 +37,77 @@ const CollectionNavbar = () => {
     getCollections,
     shareCollection,
   } = useCollection();
-
+  const { createAPI, getApisByCollectionId, deleteApiById, updateAPIName } =
+    useAPI();
+  const {
+    formik,
+    fetchCollections,
+    fetchRequestsForCollections,
+    collections,
+    collectionsWithRequests,
+    setSelectedAPIId,
+    setCurrentCollectionId
+  } = useAPITestFormikContext();
+  const [isAPIModalOpen, setIsAPIModalOpen] = useState(false);
+  const [selectedAPI, setSelectedAPI] = useState<API>();
+  
   const [isCollectionModalOpen, setIsCollectionModalOpen] = useState(false);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [isShareModalOpen, setShareIsModalOpen] = useState(false);
   const [isHeadersModalOpen, setIsHeadersModalOpen] = useState(false);
-  const [collections, setCollections] = useState<Collection[]>([]);
+  // const [collections, setCollections] = useState<Collection[]>([]);
   const [selectedCollection, setSelectedCollection] = useState<Collection>();
   const [collectionToDelete, setCollectionToDelete] = useState<Collection>();
   const [action, setAction] = useState("");
-
-  const fetchCollections = useCallback(async () => {
-    try {
-      const collectionList = await getCollections();
-      if (collectionList) {
-        setCollections(collectionList);
-      }
-    } catch (error) {
-      console.error("Failed to fetch collections:", error);
-    }
-  }, [getCollections]);
+  const [apiAnchorEl, setAPIAnchorEl] = useState<HTMLElement>();
 
   useEffect(() => {
     fetchCollections();
-  }, [fetchCollections]);
+  }, []);
+
+
+  const createAPIRequest = async (collectionId: string, id?: string) => {
+    const createAPIPayload: CreateAPIDetail = {
+      apiType: "Get",
+      isAutomated: true,
+      url: "",
+      configuredPayload: "",
+      headers: [
+        {
+          key: "",
+          value: "",
+        },
+      ],
+      queryParameters: [
+        {
+          key: "",
+          value: [""],
+        },
+      ],
+    };
+    try {
+      const data = await createAPI(createAPIPayload, collectionId);
+      console.log("data", data)
+      await fetchRequestsForCollections();
+      setSelectedAPIId(data);
+      id && setCurrentCollectionId(id)
+    } catch (error) {
+      console.error("Failed to create API request", error);
+    }
+  }
+
+  // useEffect(() => {
+  //   fetchCollections();
+  // }, [fetchCollections]);
 
   const handleCollectionModalOpen = (collection?: Collection) => {
     setSelectedCollection(collection);
     setIsCollectionModalOpen(true);
   };
+
+  useEffect(() => {
+    fetchRequestsForCollections();
+  }, [collections]);
 
   const handleCollectionModalClose = () => {
     setIsCollectionModalOpen(false);
@@ -160,6 +207,54 @@ const CollectionNavbar = () => {
   };
 
 
+  // API Menu changes
+
+  const handleAPIModalClose = () => {
+    setIsAPIModalOpen(false);
+    setSelectedAPI(undefined);
+  };
+
+  const handleAPIModalOpen = (api?: API) => {
+    setSelectedAPI(api);
+    setIsAPIModalOpen(true);
+  };
+
+  // Need to do changes for this
+
+  const handleAPIAction = async (name?: string, id?: string) => {
+    try {
+      if (id && name) {
+        await updateAPIName(id, name);
+      } else if (id) {
+        await deleteApiById(id);
+      }
+      await fetchRequestsForCollections();
+      handleAPIModalClose();
+    } catch (error) {
+      console.error("Failed to process api action:", error);
+    }
+  };
+
+  const handleAPIMenuOpen = (
+    event: MouseEvent<HTMLElement>,
+    apiRequest?: API
+  ) => {
+    event.preventDefault();
+    setAPIAnchorEl(event.currentTarget);
+    setSelectedAPI(apiRequest);
+  };
+
+  const handleAPIMenuAction = (action: "rename" | "delete") => {
+    setAPIAnchorEl(undefined);
+    if (selectedAPI) {
+      action === "rename"
+        ? handleAPIModalOpen(selectedAPI)
+        : handleAPIAction(undefined, selectedAPI.id);
+    }
+  };
+
+  const handleAPIMenuClose = () => setAPIAnchorEl(undefined);
+
   return (
     <CollectionNavbarBox>
       <CollectionNavbarContainer>
@@ -169,20 +264,90 @@ const CollectionNavbar = () => {
         <AddCollectionButton
           variant="contained"
           onClick={() => handleCollectionModalOpen()}
+          endIcon={
+            <IconButton sx={{ color: "white" }}>
+              <AddCircle fontSize="small" />
+            </IconButton>
+          }
         >
           Add Collection
         </AddCollectionButton>
         <CollectionBoxContainer>
-          {collections.map((collection, index) => (
-            <CollectionBox
-              key={collection.collectionId}
-              collection={collection}
-              selectedCollection={selectedCollection}
-              onMenuOpen={(e) => handleMenuOpen(e, collection)}
-            />
-          ))}
+          {collectionsWithRequests.map(
+            (collection: CollectionWithAPIRequests, index) => (
+              <Box key={`Collection ${index}`}>
+                <CollectionBox
+                  key={collection.collectionId}
+                  collection={collection}
+                  selectedCollection={selectedCollection}
+                  // anchorEl={anchorEl}
+                  createAPIRequest={createAPIRequest}
+                  onMenuOpen={(e) => handleMenuOpen(e, collection)}
+                />
+                {collection.apiRequests?.map((request: API) => (
+                  <APIRequestsBox
+                    key={request.id}
+                    apiRequest={request}
+                    colId={collection.id}
+                    anchorEl={apiAnchorEl}
+                    onMenuOpen={(e) => handleAPIMenuOpen(e, request)}
+                  />
+                ))}
+              </Box>
+            )
+          )}
         </CollectionBoxContainer>
       </CollectionNavbarContainer>
+      <Menu
+        anchorEl={apiAnchorEl}
+        open={Boolean(apiAnchorEl)}
+        onClose={handleAPIMenuClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "right",
+        }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        sx={{
+          "& .MuiPaper-root": {
+            my: 1.5,
+            backgroundColor: "#1a1a1a",
+            border: "1px solid #2e2b2b",
+            boxShadow: "0px 2px 4px #2e2b2b",
+            px: 1,
+            py: 1,
+            width: "150px",
+          },
+        }}
+      >
+        <MenuItem
+          sx={{
+            color: "white",
+            borderRadius: "8px",
+            "&:hover": {
+              backgroundColor: "#333333",
+            },
+          }}
+          onClick={() => handleAPIMenuAction("rename")}
+        >
+          Rename
+        </MenuItem>
+        <Divider sx={{ backgroundColor: "#2e2b2b" }} />
+        <MenuItem
+          sx={{
+            color: "white",
+            borderRadius: "8px",
+            "&:hover": {
+              backgroundColor: "#333333",
+            },
+          }}
+          onClick={() => handleAPIMenuAction("delete")}
+        >
+          Delete
+        </MenuItem>
+      </Menu>
       <Menu
         anchorEl={document.querySelector(
           `[data-collection-id='${selectedCollection?.collectionId}']`
@@ -297,6 +462,12 @@ const CollectionNavbar = () => {
         onClose={handleShareModalClose}
         onSubmit={handleShareCollection}
         selectedCollection={selectedCollection}
+      />
+      <APIRenameModal
+        isOpen={isAPIModalOpen}
+        onClose={handleAPIModalClose}
+        onSubmit={handleAPIAction}
+        api={selectedAPI}
       />
       {collectionToDelete && (
         <ConfirmationModal
