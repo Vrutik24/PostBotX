@@ -39,6 +39,8 @@ const CollectionNavbar = () => {
     fetchRequestsForCollections,
     collections,
     collectionsWithRequests,
+    setSelectedAPIId,
+    setCurrentCollectionId
   } = useAPITestFormikContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isShareModalOpen, setShareIsModalOpen] = useState(false);
@@ -54,7 +56,7 @@ const CollectionNavbar = () => {
   }, []);
 
 
-  const createAPIRequest = async (collectionId: string) => {
+  const createAPIRequest = async (collectionId: string, id?: string) => {
     const createAPIPayload: CreateAPIDetail = {
       apiType: "Get",
       isAutomated: true,
@@ -75,7 +77,10 @@ const CollectionNavbar = () => {
     };
     try {
       const data = await createAPI(createAPIPayload, collectionId);
-      fetchRequestsForCollections();
+      console.log("data", data)
+      await fetchRequestsForCollections();
+      setSelectedAPIId(data);
+      id && setCurrentCollectionId(id)
     } catch (error) {
       console.error("Failed to create API request", error);
     }

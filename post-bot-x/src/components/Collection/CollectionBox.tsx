@@ -8,7 +8,7 @@ interface CollectionBoxProps {
   collection: Collection;
   onMenuOpen: (event: MouseEvent<HTMLElement>) => void;
   anchorEl?: HTMLElement;
-  createAPIRequest: (collectionId: string) => void
+  createAPIRequest: (collectionId: string, id: string | undefined) => void
 }
 
 const CollectionBox: React.FC<CollectionBoxProps> = ({
@@ -67,7 +67,7 @@ const CollectionBox: React.FC<CollectionBoxProps> = ({
             },
             "&[data-context-open='true']": { color: "white" },
           }}
-          onClick={() => createAPIRequest(collection.collectionId)}
+          onClick={() => createAPIRequest(collection.collectionId, collection.id)}
         >
           <AddIcon sx={{ fontSize: "20px" }} />
         </IconButton>
