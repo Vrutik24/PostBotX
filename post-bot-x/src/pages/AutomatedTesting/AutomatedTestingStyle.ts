@@ -16,28 +16,28 @@ export const ContentBox = styled(Box)(({ theme }) => ({
   margin: "20px 30px 20px 20px",
 }));
 
-export const CollectionInfoBox = styled(Box)(({theme}) => ({
+export const CollectionInfoBox = styled(Box)(({ theme }) => ({
   width: "100%",
-  display:'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
   //margin: '30px auto 0px',
-  color:'white'
-}))
+  color: "white",
+}));
 
 export const HeaderContentBox = styled(Box)(({ theme }) => ({
   width: "100%",
   //margin: "20px auto 20px",
   //marginLeft: 'auto',
   //marginRight:'auto',
-  height: '50px',
+  height: "50px",
   padding: "5px",
   backgroundColor: "#151414",
   border: "none",
   borderRadius: "10px",
-  display: 'flex',
-  alignItems:'center',
-  gap: '10px'
+  display: "flex",
+  alignItems: "center",
+  gap: "10px",
 }));
 
 export const BodyContentBox = styled(Box)(({ theme }) => ({
@@ -48,5 +48,15 @@ export const BodyContentBox = styled(Box)(({ theme }) => ({
   borderRadius: "10px",
   padding: "5px",
   //margin: "0px auto 20px",
-  overflowY: 'auto'
+  overflowY: "auto",
+  "&::-webkit-scrollbar": {
+    width: "4px",
+  },
+  "&::-webkit-scrollbar-thumb": {
+    backgroundColor: "gray",
+    borderRadius: "4px",
+  },
+  "&::-webkit-scrollbar-thumb:hover": {
+    backgroundColor: "#555",
+  },
 }));

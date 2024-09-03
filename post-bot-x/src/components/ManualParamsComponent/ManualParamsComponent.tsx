@@ -69,7 +69,15 @@ const ManualParamsComponent = () => {
             },
             index: number
           ) => (
-            <TableRow key={index} sx={{ verticalAlign: "top" }}>
+            <TableRow
+              key={index}
+              sx={{
+                verticalAlign: "middle",
+                "&:hover .delete-icon": {
+                  visibility: "visible",
+                },
+              }}
+            >
               <TableCell sx={{ borderBottom: "none" }}>
                 <OutlinedInput
                   value={`${formik.values.manualQueryParameters[index].key}`}
@@ -78,7 +86,7 @@ const ManualParamsComponent = () => {
                   sx={{
                     height: "40px",
                     border: "2px solid #2b2b2b",
-                    
+
                     "& .MuiInputBase-input": {
                       color: "#FFA24E",
                     },
@@ -171,10 +179,16 @@ const ManualParamsComponent = () => {
                   </TableCell>
                 </Box>
               ))}
-              <TableCell sx={{ borderBottom: "none", paddingTop: "25px" }}>
+              <TableCell sx={{ borderBottom: "none", padding: 0 }}>
                 {formik.values.manualQueryParameters.length > 1 && (
                   <Delete
-                    sx={{ cursor: "pointer", color: "gray" }}
+                    className="delete-icon"
+                    sx={{
+                      cursor: "pointer",
+                      color: "gray",
+                      fontSize: 20,
+                      visibility: "hidden",
+                    }}
                     onClick={() => {
                       deleteManualQueryParameter(index);
                     }}

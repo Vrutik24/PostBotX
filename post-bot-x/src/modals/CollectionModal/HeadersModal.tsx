@@ -14,8 +14,9 @@ import {
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { Header } from "../../types";
+import { Collection, Header } from "../../types";
 import { useCollection } from "../../contexts/CollectionContext";
+import { Delete } from "@mui/icons-material";
 
 const modalStyle = {
   position: "absolute" as const,
@@ -36,7 +37,7 @@ const modalStyle = {
 type HeadersModalProps = {
   open: boolean;
   onClose: () => void;
-  selectedCollectionId: string;
+  selectedCollection: Collection;
 };
 
 const defaultHeaders: Header[] = [{ key: "", value: "" }];
@@ -44,14 +45,14 @@ const defaultHeaders: Header[] = [{ key: "", value: "" }];
 const HeadersModal: React.FC<HeadersModalProps> = ({
   open,
   onClose,
-  selectedCollectionId,
+  selectedCollection,
 }) => {
   const { updateCollectionHeaders, getCollectionById } = useCollection();
   const [headers, setHeaders] = useState<Header[]>(defaultHeaders);
   const [loading, setLoading] = useState<boolean>(true);
   useEffect(() => {
     const fetchCollection = async () => {
-      const collection = await getCollectionById(selectedCollectionId);
+      const collection = await getCollectionById(selectedCollection.id || "");
       if (collection) {
         setHeaders([...collection.headers, { key: "", value: "" }]);
         setLoading(false);
@@ -59,7 +60,7 @@ const HeadersModal: React.FC<HeadersModalProps> = ({
     };
 
     fetchCollection();
-  }, [getCollectionById, selectedCollectionId]);
+  }, [getCollectionById, selectedCollection]);
 
   const handleDeleteRow = (index: number) => {
     const updatedHeaders = [...headers];
@@ -96,7 +97,10 @@ const HeadersModal: React.FC<HeadersModalProps> = ({
       (header) => header.key.trim() !== "" || header.value.trim() !== ""
     );
 
-    await updateCollectionHeaders(selectedCollectionId, filteredHeaders);
+    await updateCollectionHeaders(
+      selectedCollection.collectionId,
+      filteredHeaders
+    );
     onClose();
   };
 
@@ -121,9 +125,9 @@ const HeadersModal: React.FC<HeadersModalProps> = ({
             flex: 1,
             overflowY: "auto",
             mb: 2,
-            pr: 1,
+            paddingRight: 2,
             "&::-webkit-scrollbar": {
-              width: "8px",
+              width: "4px",
             },
             "&::-webkit-scrollbar-thumb": {
               backgroundColor: "gray",
@@ -149,8 +153,15 @@ const HeadersModal: React.FC<HeadersModalProps> = ({
             <Table>
               <TableBody>
                 {headers.map((header, index) => (
-                  <TableRow key={index}>
-                    <TableCell sx={{ borderBottom: "none"}}>
+                  <TableRow
+                    key={index}
+                    sx={{
+                      "&:hover .delete-icon": {
+                        visibility: "visible",
+                      },
+                    }}
+                  >
+                    <TableCell sx={{ borderBottom: "none" }}>
                       <OutlinedInput
                         value={header.key}
                         onChange={(e) =>
@@ -171,7 +182,7 @@ const HeadersModal: React.FC<HeadersModalProps> = ({
                         }}
                       />
                     </TableCell>
-                    <TableCell sx={{ borderBottom: "none", width: "40%" }}>
+                    <TableCell sx={{ borderBottom: "none" }}>
                       <OutlinedInput
                         value={header.value}
                         onChange={(e) =>
@@ -193,13 +204,25 @@ const HeadersModal: React.FC<HeadersModalProps> = ({
                       />
                     </TableCell>
                     {index !== headers.length - 1 && (
-                      <TableCell sx={{ borderBottom: "none", width: "10%" }}>
-                        <IconButton
+                      <TableCell sx={{ borderBottom: "none", padding: 0 }}>
+                        {/* <IconButton
                           onClick={() => handleDeleteRow(index)}
                           sx={{ color: "gray" }}
                         >
                           <DeleteIcon />
-                        </IconButton>
+                        </IconButton> */}
+                        <Delete
+                          className="delete-icon"
+                          sx={{
+                            cursor: "pointer",
+                            color: "gray",
+                            fontSize: 20,
+                            visibility: "hidden",
+                          }}
+                          onClick={() => {
+                            handleDeleteRow(index);
+                          }}
+                        />
                       </TableCell>
                     )}
                   </TableRow>
@@ -239,7 +262,7 @@ const HeadersModal: React.FC<HeadersModalProps> = ({
               borderRadius: "8px",
               backgroundColor: "#4CAF50",
               "&:hover": {
-                backgroundColor: selectedCollectionId
+                backgroundColor: selectedCollection
                   ? "darkgreen"
                   : "rgb(29 28 28)",
               },

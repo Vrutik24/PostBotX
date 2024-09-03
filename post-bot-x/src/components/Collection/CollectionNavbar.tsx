@@ -311,7 +311,7 @@ const CollectionNavbar = () => {
           open={isHeadersModalOpen}
           onClose={handleCloseHeadersModal}
           //onSave={handleSaveHeaders}
-          selectedCollectionId={selectedCollection.collectionId}
+          selectedCollection={selectedCollection}
         />
       )}
     </CollectionNavbarBox>

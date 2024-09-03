@@ -80,7 +80,14 @@ const HeadersComponent = () => {
       <TableBody>
         {formik.values.headers.map(
           (header: { key: string; value: string }, index: number) => (
-            <TableRow key={index}>
+            <TableRow
+              key={index}
+              sx={{
+                "&:hover .delete-icon": {
+                  visibility: "visible",
+                },
+              }}
+            >
               <TableCell sx={{ borderBottom: "none" }}>
                 <OutlinedInput
                   value={header.key}
@@ -89,7 +96,6 @@ const HeadersComponent = () => {
                   sx={{
                     height: "40px",
                     border: "2px solid #2b2b2b",
-                    
                     "& .MuiInputBase-input": {
                       color: "#FFA24E",
                     },
@@ -111,7 +117,6 @@ const HeadersComponent = () => {
                   sx={{
                     height: "40px",
                     border: "2px solid #2b2b2b",
-                    
                     "& .MuiInputBase-input": {
                       color: "#FFA24E",
                     },
@@ -125,7 +130,7 @@ const HeadersComponent = () => {
                   fullWidth
                 />
               </TableCell>
-              <TableCell sx={{ borderBottom: "none" }}>
+              <TableCell sx={{ borderBottom: "none", padding: 0 }}>
                 {formik.values.headers.length > 1 &&
                   !(
                     index === formik.values.headers.length - 1 &&
@@ -133,7 +138,13 @@ const HeadersComponent = () => {
                     isEmptyField(header.value)
                   ) && (
                     <Delete
-                      sx={{ cursor: "pointer", color: "gray" }}
+                      className="delete-icon"
+                      sx={{
+                        cursor: "pointer",
+                        color: "gray",
+                        fontSize: 20,
+                        visibility: "hidden",
+                      }}
                       onClick={() => {
                         deleteHeader(index);
                       }}
