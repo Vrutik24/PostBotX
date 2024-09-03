@@ -3,6 +3,7 @@ import { Box, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import post_botX from "../../assets/PostBot_X_image.png";
 import ResponseContent from "./ResponseContent";
+import { DragHandle } from "@mui/icons-material";
 
 const ResponseComponent: React.FC<{
   response: string;
@@ -120,8 +121,8 @@ const ResponseComponent: React.FC<{
         bottom: 0,
         left: 0,
         right: 0,
-        height: `${height}px`,
-        overflow: "auto",
+        height: `${Math.max(height, 20)}px`,
+        overflow: height > 20 ? "auto" : "hidden",
         border: "1px solid gray",
         borderRadius: "4px 4px 0 0",
         backgroundColor: "white",
@@ -134,25 +135,31 @@ const ResponseComponent: React.FC<{
           left: 0,
           right: 0,
           zIndex: 1,
+          marginBottom: 20,
         }}
       >
         <Box
           onMouseDown={handleMouseDown}
           sx={{
-            height: "10px",
+            height: "20px",
             cursor: "row-resize",
             position: "relative",
             top: 0,
             zIndex: 1,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
+          <DragHandle sx={{ color: "black", fontSize: 20 }} />
           <IconButton
             onClick={() => setIsVisible(false)}
             sx={{
               position: "absolute",
-              top: 0,
+              top: 10,
               right: 0,
               zIndex: 2,
+              visibility: height > 50 ? "visible" : "hidden",
             }}
           >
             <CloseIcon />
