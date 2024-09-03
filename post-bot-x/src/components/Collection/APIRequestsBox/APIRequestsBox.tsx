@@ -44,16 +44,18 @@ const APIRequestsBox = ({
         setSelectedAPIId(apiRequest.id);
         setCurrentCollectionId(colId ? colId : "");
       }}
+      data-api-open={apiRequest.id == selectedAPIId}
+      data-api-id={apiRequest.id}
       sx={{
         backgroundColor:
           anchorEl || apiRequest.id == selectedAPIId
             ? "rgba(255, 255, 255, 0.1)"
             : "transparent", // Apply hover background if context menu is open
         cursor: "pointer",
-        "&:hover, &[data-context-open='true']": {
+        "&:hover, &[data-api-open='true']": {
           backgroundColor: "rgba(255, 255, 255, 0.1)", // Lighter background color on hover
         },
-        "&:hover .collection-actions, &[data-context-open='true'] .collection-actions":
+        "&:hover .collection-actions, &[data-api-open='true'] .collection-actions":
           {
             display: "flex",
           },
@@ -61,7 +63,6 @@ const APIRequestsBox = ({
         gap: 2,
         fontSize: "8px",
       }}
-      data-context-open={Boolean(anchorEl)}
     >
       <Box display={"flex"} alignItems={"center"} gap={"10px"}>
         <Typography color={apiTypeColor} fontSize={"14px"}>
@@ -97,7 +98,7 @@ const APIRequestsBox = ({
               backgroundColor: "rgba(255, 255, 255, 0.1)",
               borderRadius: "8px",
             },
-            "&[data-context-open='true']": { color: "white" },
+            "&[data-api-open='true']": { color: "white" },
           }}
           onClick={onMenuOpen}
         >
