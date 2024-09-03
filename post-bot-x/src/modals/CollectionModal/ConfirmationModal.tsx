@@ -25,7 +25,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
           left: "50%",
           transform: "translate(-50%, -50%)",
           width: 400,
-          bgcolor: "#2e2b2b",
+          bgcolor: "rgb(29 28 28)",
           color: "#FFFFFF",
           boxShadow: 24,
           py: 2,
@@ -48,7 +48,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             sx={{
               color: "white",
               "&:hover": {
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                backgroundColor: "rgb(29 28 28)",
               },
               borderRadius: "8px",
             }}
@@ -73,7 +73,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
               color: "white",
               borderRadius: "8px",
               border: "none",
-              backgroundColor: "rgba(255, 255, 255, 0.1)",
+              backgroundColor: "rgb(29 28 28)",
               "&:hover": {
                 backgroundColor: "rgba(255, 255, 255, 0.2)",
                 border: "none",
@@ -86,7 +86,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             onClick={onConfirm}
             variant="contained"
             sx={{
-              color: "black",
+              color: "#151414",
               borderRadius: "8px",
               backgroundColor: "#ff665b",
               "&:hover": {

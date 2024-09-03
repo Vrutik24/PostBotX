@@ -7,7 +7,7 @@ export const UserBox = styled(Box)(({ theme }) => ({
   width: "50px",
   display: "flex",
   justifyContent: "flex-start",
-  color: "#63a626", // green
+  color: "#4CAF50", // green
 }));
 
 export const UserContainer = styled(Box)(({ theme }) => ({
@@ -22,7 +22,7 @@ export const UserOption = styled(Typography)(({ theme }) => ({
 }));
 
 export const Avatar = styled(MUIAvatar)(({ theme }) => ({
-  backgroundColor: "#63a626", // green
+  backgroundColor: "#4CAF50", // green
   color: "#fff",
   width: 40,
   height: 40,
@@ -32,6 +32,6 @@ export const Avatar = styled(MUIAvatar)(({ theme }) => ({
 
 export const LogoutButton = styled(Button)(({ theme }) => ({
   backgroundColor: "#7ed33b", // light green
-  color: "#040719", // black
+  color: "#151414", // #151414
   marginTop: theme.spacing(2),
 }));

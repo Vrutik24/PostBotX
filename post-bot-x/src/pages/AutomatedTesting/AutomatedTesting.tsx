@@ -22,7 +22,10 @@ import { TestingTypeList } from "../../dropdown-list/testing-type-list";
 import APITestingBody from "../../components/APITestingBody/APITestingBody";
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
 import { APIRequestPayload } from "../../types/APIRequestPayload";
-import { automatedPostWrite, automatedPostRead } from "../../api/AutomatedTestService";
+import {
+  automatedPostWrite,
+  automatedPostRead,
+} from "../../api/AutomatedTestService";
 import { manualPostWrite, manualPostRead } from "../../api/ManualTestService";
 import ResponseComponent from "../../components/ResponseComponent/ResponseComponent";
 
@@ -53,20 +56,18 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
       headers: formik.values.headers,
     };
     if (apiPayload.isAutomated) {
-      if (["Post", "Patch", "Put"].includes(apiPayload.apiType) ) {
+      if (["Post", "Patch", "Put"].includes(apiPayload.apiType)) {
         try {
-          const results =  await automatedPostWrite(apiPayload);
+          const results = await automatedPostWrite(apiPayload);
           console.log(results);
         } catch (error) {
           console.error(`Error calling ${apiPayload.apiType} method:`, error);
         }
       } else {
-        try
-        {
+        try {
           const results = await automatedPostRead(apiPayload);
           console.log(results);
-        }
-        catch (error) {
+        } catch (error) {
           console.error(`Error calling ${apiPayload.apiType} method:`, error);
         }
       }
@@ -78,7 +79,6 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
         } catch (error) {
           console.error(`Error calling ${apiPayload.apiType} method:`, error);
         }
-        
       } else {
         try {
           const results = await manualPostRead(apiPayload);
@@ -88,7 +88,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
         }
       }
     }
-  }
+  };
 
   return (
     <APITestingPage>
@@ -100,25 +100,62 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
               value={testingMethod}
               sx={{
                 color: "white",
-                border: "1px solid gray",
+                border: "none",
                 height: "50px",
-                backgroundColor: "transparent",
+                backgroundColor: "#151414",
                 borderRadius: "4px",
-
+                paddingLeft: "10px",
+                "& .MuiSelect-icon": {
+                  color: "white",
+                },
                 "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "gray",
+                  border: "none",
                 },
                 "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "gray",
+                  border: "none",
                 },
                 "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "gray",
+                  border: "none",
+                },
+              }}
+              MenuProps={{
+                PaperProps: {
+                  sx: {
+                    backgroundColor: "#252525",
+                    color: "white",
+                    width: "150px",
+                    "& .MuiMenu-list": {
+                      padding: 0,
+                    },
+                  },
                 },
               }}
               onChange={handleChange}
             >
               {TestingTypeList.map((testingType: string) => (
-                <MenuItem key={testingType} value={testingType}>
+                <MenuItem
+                  key={testingType}
+                  value={testingType}
+                  sx={{
+                    margin: "10px",
+                    padding: "10px",
+                    borderRadius: "4px",
+                    "&:hover": {
+                      backgroundColor: "#383737",
+                      color: "white",
+                    },
+                    "&.Mui-selected, &.Mui-selected:hover, &.Mui-focusVisible":
+                      {
+                        backgroundColor: "#4CAF50",
+                        color: "black",
+                      },
+                    "&.MuiButtonBase-root": {
+                      "&.Mui-selected, &.Mui-selected:hover": {
+                        backgroundColor: "#4CAF50", // Ensure this matches the above color
+                      },
+                    },
+                  }}
+                >
                   {testingType}
                 </MenuItem>
               ))}
@@ -142,12 +179,39 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
               "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                 borderColor: "transparent",
               },
+            }}MenuProps={{
+              PaperProps: {
+                sx: {
+                  backgroundColor: "#252525",
+                  color: "white",
+                },
+              },
             }}
             onChange={formik.handleChange}
             IconComponent={(props) => <ArrowDropDown sx={{ color: "white" }} />}
           >
             {RequestTypeList.map((requestType: any) => (
-              <MenuItem key={requestType.name} value={requestType.name}>
+              <MenuItem
+                key={requestType.name}
+                value={requestType.name}
+                sx={{
+                  margin: "10px",
+                  borderRadius: "4px",
+                  "&:hover": {
+                    backgroundColor: "#383737",
+                    color: "white",
+                  },
+                  "&.Mui-selected, &.Mui-selected:hover, &.Mui-focusVisible": {
+                    backgroundColor: "#4CAF50",
+                    color: "black",
+                  },
+                  "&.MuiButtonBase-root": {
+                    "&.Mui-selected, &.Mui-selected:hover": {
+                      backgroundColor: "#4CAF50", // Ensure this matches the above color
+                    },
+                  },
+                }}
+              >
                 {requestType.name}
               </MenuItem>
             ))}
@@ -184,7 +248,15 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
             }}
           />
           <Button
-            sx={{ backgroundColor: "green", color: "white", width: "100px" }}
+            sx={{
+              backgroundColor: "#4CAF50",
+              color: "white",
+              width: "100px",
+              margin: "0 10px",
+              "&:hover": {
+                backgroundColor: "darkgreen",
+              },
+            }}
             onClick={() => {
               testApi();
               setIsVisible(true);
@@ -201,7 +273,6 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
       {isVisible && (
         <ResponseComponent response="" setIsVisible={setIsVisible} />
       )}
-      
     </APITestingPage>
   );
 };

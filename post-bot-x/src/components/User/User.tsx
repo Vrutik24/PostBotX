@@ -1,9 +1,16 @@
 import React, { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { UserBox, UserContainer, UserOption, Avatar, LogoutButton } from "./UserStyle";
-import { Popover, Typography, Box } from "@mui/material";
+import {
+  UserBox,
+  UserContainer,
+  UserOption,
+  Avatar,
+  LogoutButton,
+} from "./UserStyle";
+import { Popover, Typography, Box, Button } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { ArrowForward, Login } from "@mui/icons-material";
 
 const User = () => {
   const { currentUser, logOut } = useAuth();
@@ -62,7 +69,12 @@ const User = () => {
                 horizontal: "left",
               }}
             >
-              <Box p={2} display="flex" flexDirection="column" alignItems="center">
+              <Box
+                p={2}
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+              >
                 {/* Display Name in larger and bold font */}
                 <Typography variant="h6" fontWeight="bold">
                   {currentUser.displayName}
@@ -83,7 +95,26 @@ const User = () => {
             </Popover>
           </>
         ) : (
-          <UserOption onClick={handleLoginClick}>Login</UserOption>
+          <UserOption onClick={handleLoginClick}>
+            <Button
+              variant="contained"
+              endIcon={<ArrowForward />}
+              sx={{
+                backgroundColor: "transparent",
+                color: "#4CAF50",
+                padding: "10px 20px",
+                borderRadius: "16px",
+                boxShadow: "none",
+                "&:hover": {
+                  backgroundColor: "#4CAF50",
+                  color: "#151414",
+                  borderRadius: "16px",
+                },
+              }}
+            >
+              Login
+            </Button>
+          </UserOption>
         )}
       </UserContainer>
     </UserBox>

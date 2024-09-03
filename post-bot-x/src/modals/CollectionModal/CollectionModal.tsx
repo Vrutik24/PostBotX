@@ -27,7 +27,7 @@ const style = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 400,
-  bgcolor: "#2e2b2b",
+  bgcolor: "rgb(29 28 28)",
   color: "#FFFFFF",
   boxShadow: 24,
   py: 2,
@@ -89,7 +89,7 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
               sx={{
                 color: "white",
                 "&:hover": {
-                  backgroundColor: "rgba(255, 255, 255, 0.1)",
+                  backgroundColor: "rgb(29 28 28)",
                 },
                 borderRadius: "8px",
               }}
@@ -109,7 +109,7 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
             sx={{
               "& .MuiInputBase-input": {
                 color: "white",
-                border: "1px solid rgba(255, 255, 255, 0.1)",
+                border: "1px solid #2b2b2b",
                 borderRadius: "8px",
               },
               "& .MuiOutlinedInput-root": {
@@ -131,7 +131,7 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
                 color: "white",
                 borderRadius: "8px",
                 border: "none",
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                backgroundColor: "#2b2b2b",
                 "&:hover": {
                   backgroundColor: "rgba(255, 255, 255, 0.2)",
                   border: "none",
@@ -147,21 +147,19 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
               sx={{
                 color: "white",
                 borderRadius: "8px",
-                backgroundColor: "green",
+                backgroundColor: "#4CAF50",
                 "&:hover": {
-                  backgroundColor: selectedCollection
-                    ? "darkgreen"
-                    : "rgba(255, 255, 255, 0.1)",
+                  backgroundColor: "darkgreen",
                 },
                 "&.Mui-disabled": {
-                  backgroundColor: "rgba(255, 255, 255, 0.1)",
+                  backgroundColor: "#252525",
                   color: "#FFFFFF50",
                 },
               }}
               disabled={Boolean(formik.errors.name) || loading}
             >
               {loading ? (
-                <CircularProgress size={24} sx={{ color: "green" }} />
+                <CircularProgress size={24} sx={{ color: "#4CAF50" }} />
               ) : selectedCollection ? (
                 "Save"
               ) : (

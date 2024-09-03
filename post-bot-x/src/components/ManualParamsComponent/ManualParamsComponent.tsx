@@ -69,7 +69,15 @@ const ManualParamsComponent = () => {
             },
             index: number
           ) => (
-            <TableRow key={index} sx={{ verticalAlign: "top" }}>
+            <TableRow
+              key={index}
+              sx={{
+                verticalAlign: "middle",
+                "&:hover .delete-icon": {
+                  visibility: "visible",
+                },
+              }}
+            >
               <TableCell sx={{ borderBottom: "none" }}>
                 <OutlinedInput
                   value={`${formik.values.manualQueryParameters[index].key}`}
@@ -77,10 +85,8 @@ const ManualParamsComponent = () => {
                   name={`manualQueryParameters.${index}.key`}
                   sx={{
                     height: "40px",
-                    border: "1px solid gray",
-                    "&.Mui-focused": {
-                      border: "1px solid blue",
-                    },
+                    border: "2px solid #2b2b2b",
+
                     "& .MuiInputBase-input": {
                       color: "#FFA24E",
                     },
@@ -125,12 +131,9 @@ const ManualParamsComponent = () => {
                       name={`manualQueryParameters.${index}.value.${valIndex}`}
                       sx={{
                         height: "40px",
-                        border: "1px solid gray",
-                        "&.Mui-focused": {
-                          border: "1px solid blue",
-                        },
+                        border: "2px solid #2b2b2b",
                         "& .MuiInputBase-input": {
-                          color: "white",
+                          color: "#FFA24E",
                         },
                         "& .MuiInputBase-input::placeholder": {
                           color: "gray",
@@ -176,10 +179,16 @@ const ManualParamsComponent = () => {
                   </TableCell>
                 </Box>
               ))}
-              <TableCell sx={{ borderBottom: "none", paddingTop: "25px" }}>
+              <TableCell sx={{ borderBottom: "none", padding: 0 }}>
                 {formik.values.manualQueryParameters.length > 1 && (
                   <Delete
-                    sx={{ cursor: "pointer", color: "gray" }}
+                    className="delete-icon"
+                    sx={{
+                      cursor: "pointer",
+                      color: "gray",
+                      fontSize: 20,
+                      visibility: "hidden",
+                    }}
                     onClick={() => {
                       deleteManualQueryParameter(index);
                     }}

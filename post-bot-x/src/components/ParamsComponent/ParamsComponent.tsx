@@ -86,7 +86,14 @@ const ParamsComponent = () => {
       <TableBody>
         {formik.values.queryParameters.map(
           (param: { key: string; value: string[] }, index: number) => (
-            <TableRow key={index}>
+            <TableRow
+              key={index}
+              sx={{
+                "&:hover .delete-icon": {
+                  visibility: "visible",
+                },
+              }}
+            >
               <TableCell sx={{ borderBottom: "none" }}>
                 <OutlinedInput
                   value={param.key}
@@ -94,10 +101,8 @@ const ParamsComponent = () => {
                   name={`queryParameters.${index}.key`}
                   sx={{
                     height: "40px",
-                    border: "1px solid gray",
-                    "&.Mui-focused": {
-                      border: "1px solid blue",
-                    },
+                    border: "2px solid #2b2b2b",
+
                     "& .MuiInputBase-input": {
                       color: "#FFA24E",
                     },
@@ -118,12 +123,10 @@ const ParamsComponent = () => {
                   name={`queryParameters.${index}.value.0`}
                   sx={{
                     height: "40px",
-                    border: "1px solid gray",
-                    "&.Mui-focused": {
-                      border: "1px solid blue",
-                    },
+                    border: "2px solid #2b2b2b",
+
                     "& .MuiInputBase-input": {
-                      color: "white",
+                      color: "#FFA24E",
                     },
                     "& .MuiInputBase-input::placeholder": {
                       color: "gray",
@@ -135,7 +138,7 @@ const ParamsComponent = () => {
                   fullWidth
                 />
               </TableCell>
-              <TableCell sx={{ borderBottom: "none" }}>
+              <TableCell sx={{ borderBottom: "none", padding: 0 }}>
                 {formik.values.queryParameters.length > 1 &&
                   !(
                     index === formik.values.queryParameters.length - 1 &&
@@ -143,7 +146,13 @@ const ParamsComponent = () => {
                     isEmptyField(param.value[0])
                   ) && (
                     <Delete
-                      sx={{ cursor: "pointer", color: "gray" }}
+                      className="delete-icon"
+                      sx={{
+                        cursor: "pointer",
+                        color: "gray",
+                        fontSize: 20,
+                        visibility: "hidden",
+                      }}
                       onClick={() => {
                         deleteQueryParameter(index);
                       }}

@@ -133,7 +133,6 @@ const CollectionNavbar = () => {
       } else if (action === "delete") {
         setCollectionToDelete(selectedCollection);
         setIsConfirmationModalOpen(true);
-        //handleAction(undefined, selectedCollection.collectionId);
       }
     }
   };
@@ -151,21 +150,15 @@ const CollectionNavbar = () => {
     setIsConfirmationModalOpen(false);
   };
 
-  const handleOpenHeadersModal = () => {
+  const handleOpenHeadersModal = async () => {
     setIsHeadersModalOpen(true);
   };
 
   const handleCloseHeadersModal = () => {
     setIsHeadersModalOpen(false);
+    setSelectedCollection(undefined);
   };
 
-  const handleSaveHeaders = (
-    headers: { key: string; value: string[] | string }[]
-  ) => {
-    // Save headers logic
-    console.log("Headers saved:", headers);
-    handleCloseHeadersModal();
-  };
 
   return (
     <CollectionNavbarBox>
@@ -207,9 +200,8 @@ const CollectionNavbar = () => {
         sx={{
           "& .MuiPaper-root": {
             my: 1.5,
-            backgroundColor: "#1a1a1a",
-            border: "1px solid #2e2b2b",
-            boxShadow: "0px 2px 4px #2e2b2b",
+            backgroundColor: "rgb(29 28 28)",
+            border: "1px solid rgb(29 28 28)",
             px: 1,
             py: 1,
             width: "max-content",
@@ -221,7 +213,7 @@ const CollectionNavbar = () => {
             color: "white",
             borderRadius: "8px",
             "&:hover": {
-              backgroundColor: "#333333",
+              backgroundColor: "#252525",
             },
           }}
           onClick={handleMenuClose}
@@ -236,7 +228,7 @@ const CollectionNavbar = () => {
             color: "white",
             borderRadius: "8px",
             "&:hover": {
-              backgroundColor: "#333333",
+              backgroundColor: "#252525",
             },
           }}
           onClick={handleOpenHeadersModal}
@@ -251,7 +243,7 @@ const CollectionNavbar = () => {
             color: "white",
             borderRadius: "8px",
             "&:hover": {
-              backgroundColor: "#333333",
+              backgroundColor: "#252525",
             },
           }}
           onClick={() => handleMenuAction("rename")}
@@ -266,7 +258,7 @@ const CollectionNavbar = () => {
             color: "white",
             borderRadius: "8px",
             "&:hover": {
-              backgroundColor: "#333333",
+              backgroundColor: "#252525",
             },
           }}
           onClick={() => handleMenuAction("share")}
@@ -276,13 +268,13 @@ const CollectionNavbar = () => {
           </ListItemIcon>
           Share
         </MenuItem>
-        <Divider sx={{ backgroundColor: "#2e2b2b" }} />
+        <Divider sx={{ backgroundColor: "rgba(255, 255, 255, 0.1)" }} />
         <MenuItem
           sx={{
             color: "white",
             borderRadius: "8px",
             "&:hover": {
-              backgroundColor: "#333333",
+              backgroundColor: "#252525",
             },
           }}
           onClick={() => handleMenuAction("delete")}
@@ -314,11 +306,12 @@ const CollectionNavbar = () => {
           collectionName={collectionToDelete.name}
         />
       )}
-      {isHeadersModalOpen && (
+      {isHeadersModalOpen && selectedCollection && (
         <HeadersModal
           open={isHeadersModalOpen}
           onClose={handleCloseHeadersModal}
-          onSave={handleSaveHeaders}
+          //onSave={handleSaveHeaders}
+          selectedCollection={selectedCollection}
         />
       )}
     </CollectionNavbarBox>

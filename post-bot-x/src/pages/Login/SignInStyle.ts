@@ -33,7 +33,7 @@ export const ErrorMessage = styled(Typography)(({ theme }) => ({
 export const SignInButton = styled(Button)(({ theme }) => ({
   marginTop: theme.spacing(2),
   marginBottom: theme.spacing(2),
-  backgroundColor: "#63a626",
+  backgroundColor: "#4CAF50",
   color: "#fff",
   "&:hover": {
     backgroundColor: "#7ed33b", // Light green
