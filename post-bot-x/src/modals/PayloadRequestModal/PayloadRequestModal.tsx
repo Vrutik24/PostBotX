@@ -29,7 +29,7 @@ const style = {
   transform: "translate(-50%, -50%)",
   width: 700,
   maxHeight: '100vh',
-  bgcolor: "#2e2b2b",
+  bgcolor: "rgb(29 28 28)",
   color: "#FFFFFF",
   boxShadow: 24,
   py: 2,
@@ -102,7 +102,7 @@ const PayloadRequestModal = ({
               sx={{
                 color: "white",
                 "&:hover": {
-                  backgroundColor: "rgba(255, 255, 255, 0.1)",
+                  backgroundColor: "rgb(29 28 28)",
                 },
                 borderRadius: "8px",
               }}
@@ -161,7 +161,7 @@ const PayloadRequestModal = ({
                 color: "white",
                 borderRadius: "8px",
                 border: "none",
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                backgroundColor: "rgb(29 28 28)",
                 "&:hover": {
                   backgroundColor: "rgba(255, 255, 255, 0.2)",
                   border: "none",
@@ -178,7 +178,7 @@ const PayloadRequestModal = ({
               sx={{
                 color: "white",
                 borderRadius: "8px",
-                backgroundColor:"rgba(255, 255, 255, 0.1)",
+                backgroundColor:"rgb(29 28 28)",
                 "&:hover": {
                   backgroundColor: "rgba(255, 255, 255, 0.2)",
                 },

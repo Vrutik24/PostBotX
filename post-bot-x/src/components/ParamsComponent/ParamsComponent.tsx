@@ -21,21 +21,63 @@ const ParamsComponent = () => {
   };
 
   const deleteQueryParameter = (i: number) => {
-    if (formik.values.queryParameters.length === 1) {
-      formik.setFieldValue(
-        "queryParameters",
-        formik.initialValues.queryParameters
-      );
-      resetRowFlags();
+    const newQueryParameters = formik.values.queryParameters.filter(
+      (_, index) => index !== i
+    );
+    formik.setFieldValue(
+      "queryParameters",
+      newQueryParameters.length
+        ? newQueryParameters
+        : formik.initialValues.queryParameters
+    );
+    resetRowFlags();
+  };
+
+  const isEmptyField = (value: string) => !value || value === "";
+
+  const isRowEmpty = (
+    queryParameters: QueryParameter[],
+    index: number,
+    field: "key" | "value.0",
+    value: string
+  ) => {
+    return (
+      isEmptyField(value) &&
+      (field === "key"
+        ? isEmptyField(queryParameters[index].value[0])
+        : isEmptyField(queryParameters[index].key))
+    );
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    index: number,
+    field: "key" | "value.0"
+  ) => {
+    const { queryParameters } = formik.values;
+    const isLastRow = index === queryParameters.length - 1;
+    const newValue = e.target.value;
+
+    if (isRowEmpty(queryParameters, index, field, newValue) && !isLastRow) {
+      deleteQueryParameter(index);
     } else {
-      const newQueryParameters = formik.values.queryParameters.filter(
-        (
-          queryParameter: QueryParameter,
-          index
-        ) => index !== i
-      );
-      formik.setFieldValue("queryParameters", newQueryParameters);
-      resetRowFlags();
+      if (
+        isLastRow &&
+        !rowAddedFlags[index] &&
+        (queryParameters[index].key || newValue)
+      ) {
+        setRowAddedFlags((prevFlags) => {
+          const updatedFlags = [...prevFlags];
+          updatedFlags[index] = true;
+          return updatedFlags;
+        });
+        formik.setFieldValue("queryParameters", [
+          ...queryParameters,
+          { key: "", value: [""] },
+        ]);
+      }
+
+      formik.setFieldValue(`queryParameters.${index}.${field}`, newValue);
     }
   };
 
@@ -44,18 +86,23 @@ const ParamsComponent = () => {
       <TableBody>
         {formik.values.queryParameters?.map(
           (param: { key: string; value: string[] }, index: number) => (
-            <TableRow key={index}>
+            <TableRow
+              key={index}
+              sx={{
+                "&:hover .delete-icon": {
+                  visibility: "visible",
+                },
+              }}
+            >
               <TableCell sx={{ borderBottom: "none" }}>
                 <OutlinedInput
-                  value={`${formik.values.queryParameters[index].key}`}
+                  value={param.key}
                   id={`queryParameters.${index}.key`}
                   name={`queryParameters.${index}.key`}
                   sx={{
                     height: "40px",
-                    border: "1px solid gray",
-                    "&.Mui-focused": {
-                      border: "1px solid blue",
-                    },
+                    border: "2px solid #2b2b2b",
+
                     "& .MuiInputBase-input": {
                       color: "#FFA24E",
                     },
@@ -64,85 +111,53 @@ const ParamsComponent = () => {
                       opacity: 1,
                     },
                   }}
-                  onChange={(e) => {
-                    console.log("e", e.target.value);
-                    if (
-                      index === formik.values.queryParameters.length - 1 &&
-                      !rowAddedFlags[index] &&
-                      e.target.value
-                    ) {
-                      setRowAddedFlags((prevFlags) => {
-                        const updatedFlags = [...prevFlags];
-                        updatedFlags[index] = true;
-                        return updatedFlags;
-                      });
-                      formik.setFieldValue("queryParameters", [
-                        ...formik.values.queryParameters,
-                        { key: "", value: [""] },
-                      ]);
-                    }
-                    formik.setFieldValue(
-                      `queryParameters.${index}.key`,
-                      e.target.value
-                    );
-                  }}
+                  onChange={(e) => handleInputChange(e, index, "key")}
                   placeholder="Key"
                   fullWidth
                 />
               </TableCell>
               <TableCell sx={{ borderBottom: "none" }}>
                 <OutlinedInput
-                  value={`${formik.values.queryParameters[index].value[0]}`}
+                  value={param.value[0]}
                   id={`queryParameters.${index}.value.0`}
                   name={`queryParameters.${index}.value.0`}
                   sx={{
                     height: "40px",
-                    border: "1px solid gray",
-                    "&.Mui-focused": {
-                      border: "1px solid blue",
-                    },
+                    border: "2px solid #2b2b2b",
+
                     "& .MuiInputBase-input": {
-                      color: "white",
+                      color: "#FFA24E",
                     },
                     "& .MuiInputBase-input::placeholder": {
                       color: "gray",
                       opacity: 1,
                     },
                   }}
-                  onChange={(e) => {
-                    if (
-                      index === formik.values.queryParameters.length - 1 &&
-                      !rowAddedFlags[index] &&
-                      e.target.value
-                    ) {
-                      setRowAddedFlags((prevFlags) => {
-                        const updatedFlags = [...prevFlags];
-                        updatedFlags[index] = true;
-                        return updatedFlags;
-                      });
-                      formik.setFieldValue("queryParameters", [
-                        ...formik.values.queryParameters,
-                        { key: "", value: [""] },
-                      ]);
-                    }
-                    formik.setFieldValue(
-                      `queryParameters.${index}.value.0`,
-                      e.target.value
-                    );
-                  }}
+                  onChange={(e) => handleInputChange(e, index, "value.0")}
                   placeholder="Value"
                   fullWidth
                 />
               </TableCell>
-              <TableCell sx={{ borderBottom: "none" }}>
-                {formik.values.queryParameters.length > 1 && (
-                  <Delete
-                    sx={{ cursor: "pointer", color: "gray" }}
-                    onClick={() => {
-                      deleteQueryParameter(index);
-                    }}
-                  />
-                )}
+              <TableCell sx={{ borderBottom: "none", padding: 0 }}>
+                {formik.values.queryParameters.length > 1 &&
+                  !(
+                    index === formik.values.queryParameters.length - 1 &&
+                    isEmptyField(param.key) &&
+                    isEmptyField(param.value[0])
+                  ) && (
+                    <Delete
+                      className="delete-icon"
+                      sx={{
+                        cursor: "pointer",
+                        color: "gray",
+                        fontSize: 20,
+                        visibility: "hidden",
+                      }}
+                      onClick={() => {
+                        deleteQueryParameter(index);
+                      }}
+                    />
+                  )}
               </TableCell>
             </TableRow>
           )

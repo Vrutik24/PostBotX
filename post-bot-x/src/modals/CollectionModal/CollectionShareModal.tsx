@@ -13,7 +13,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Collection } from "../../types";
 
 interface CollectionShareModalProps {
-  collection?: Collection;
+  selectedCollection?: Collection;
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (
@@ -29,7 +29,7 @@ const style = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 400,
-  bgcolor: "#2e2b2b",
+  bgcolor: "rgb(29 28 28)",
   color: "#FFFFFF",
   boxShadow: 24,
   py: 2,
@@ -39,7 +39,7 @@ const style = {
 };
 
 const CollectionShareModal: React.FC<CollectionShareModalProps> = ({
-  collection,
+  selectedCollection,
   isOpen,
   onClose,
   onSubmit,
@@ -74,13 +74,13 @@ const CollectionShareModal: React.FC<CollectionShareModalProps> = ({
       return;
     }
 
-    if (collection) {
+    if (selectedCollection) {
       setIsLoading(true);
       try {
         await onSubmit(
           receiverEmail.trim(),
-          collection.collectionId,
-          collection.name
+          selectedCollection.collectionId,
+          selectedCollection.name
         );
         setSuccessMessage("Collection shared successfully!");
         setErrorMessage("");
@@ -113,7 +113,7 @@ const CollectionShareModal: React.FC<CollectionShareModalProps> = ({
             sx={{
               color: "white",
               "&:hover": {
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                backgroundColor: "rgb(29 28 28)",
               },
               borderRadius: "8px",
             }}
@@ -130,7 +130,7 @@ const CollectionShareModal: React.FC<CollectionShareModalProps> = ({
           sx={{
             "& .MuiInputBase-input": {
               color: "white",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
+              border: "1px solid rgb(29 28 28)",
               borderRadius: "8px",
             },
             "& .MuiOutlinedInput-root": {
@@ -152,7 +152,7 @@ const CollectionShareModal: React.FC<CollectionShareModalProps> = ({
               color: "white",
               borderRadius: "8px",
               border: "none",
-              backgroundColor: "rgba(255, 255, 255, 0.1)",
+              backgroundColor: "rgb(29 28 28)",
               "&:hover": {
                 backgroundColor: "rgba(255, 255, 255, 0.2)",
                 border: "none",
@@ -167,16 +167,16 @@ const CollectionShareModal: React.FC<CollectionShareModalProps> = ({
             sx={{
               color: "white",
               borderRadius: "8px",
-              backgroundColor: collection
-                ? "green"
-                : "rgba(255, 255, 255, 0.1)",
+              backgroundColor: selectedCollection
+                ? "#4CAF50"
+                : "rgb(29 28 28)",
               "&:hover": {
-                backgroundColor: collection
+                backgroundColor: selectedCollection
                   ? "darkgreen"
-                  : "rgba(255, 255, 255, 0.1)",
+                  : "rgb(29 28 28)",
               },
               "&.Mui-disabled": {
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                backgroundColor: "rgb(29 28 28)",
                 color: "#FFFFFF50",
               },
             }}
@@ -196,7 +196,7 @@ const CollectionShareModal: React.FC<CollectionShareModalProps> = ({
         )}
         {successMessage && (
           <Alert
-            sx={{ marginTop: 2, backgroundColor: "#4caf50", color: "white" }} // Styling for success alert
+            sx={{ marginTop: 2, backgroundColor: "#4CAF50", color: "white" }} // Styling for success alert
             severity="success"
           >
             {successMessage}

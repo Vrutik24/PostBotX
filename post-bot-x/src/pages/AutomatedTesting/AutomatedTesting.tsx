@@ -60,7 +60,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
     collectionName,
     apiName,
     setAPIName,
-    fetchRequestsForCollections
+    fetchRequestsForCollections,
   } = useAPITestFormikContext();
   const handleChange = (event: SelectChangeEvent) => {
     setTestingMethod(event.target.value as "Automated" | "Manual");
@@ -199,22 +199,101 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
               )}
             </>
           </Box>
-          <Box display="flex" alignItems={"center"} gap={"20px"}>
-            <Button
-              variant="contained"
-              size="large"
-              color="success"
-              sx={{ display: "flex", alignItems: "center", gap: "2px" }}
-              endIcon={
-                <IconButton sx={{ color: "white" }}>
-                  <Save fontSize="small" />
-                </IconButton>
-              }
-              onClick={() => updateAPIById()}
-            >
-              Save
-            </Button>
-            <SelectTestingMethodButton />
+          <Box display={"flex"} alignItems={"center"} gap={"20px"}>
+            <Box display="flex" alignItems={"center"} gap={"20px"}>
+              <Button
+                variant="contained"
+                // size="large"
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "2px",
+                  // backgroundColor: "#4CAF50",
+                  backgroundColor: '#151414',
+                  color: "white",
+                  width: "100px",
+                  margin: "0 10px",
+                  "&:hover": {
+                    backgroundColor: "#4CAF50",
+                  },
+                }}
+                endIcon={
+                  <IconButton sx={{ color: "white" }}>
+                    <Save fontSize="small" />
+                  </IconButton>
+                }
+                onClick={() => updateAPIById()}
+              >
+                Save
+              </Button>
+              {/* <SelectTestingMethodButton /> */}
+            </Box>
+            <FormControl sx={{ width: "150px" }}>
+              <Select
+                value={testingMethod}
+                sx={{
+                  color: "white",
+                  border: "none",
+                  height: "50px",
+                  backgroundColor: "#151414",
+                  borderRadius: "4px",
+                  paddingLeft: "10px",
+                  "& .MuiSelect-icon": {
+                    color: "white",
+                  },
+                  "& .MuiOutlinedInput-notchedOutline": {
+                    border: "none",
+                  },
+                  "&:hover .MuiOutlinedInput-notchedOutline": {
+                    border: "none",
+                  },
+                  "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                    border: "none",
+                  },
+                }}
+                MenuProps={{
+                  PaperProps: {
+                    sx: {
+                      backgroundColor: "#252525",
+                      color: "white",
+                      width: "150px",
+                      "& .MuiMenu-list": {
+                        padding: 0,
+                      },
+                    },
+                  },
+                }}
+                onChange={handleChange}
+              >
+                {TestingTypeList.map((testingType: string) => (
+                  <MenuItem
+                    key={testingType}
+                    value={testingType}
+                    sx={{
+                      margin: "10px",
+                      padding: "10px",
+                      borderRadius: "4px",
+                      "&:hover": {
+                        backgroundColor: "#383737",
+                        color: "white",
+                      },
+                      "&.Mui-selected, &.Mui-selected:hover, &.Mui-focusVisible":
+                        {
+                          backgroundColor: "#4CAF50",
+                          color: "black",
+                        },
+                      "&.MuiButtonBase-root": {
+                        "&.Mui-selected, &.Mui-selected:hover": {
+                          backgroundColor: "#4CAF50", // Ensure this matches the above color
+                        },
+                      },
+                    }}
+                  >
+                    {testingType}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
           </Box>
         </CollectionInfoBox>
         <HeaderContentBox>
@@ -235,24 +314,45 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
                 borderColor: "transparent",
               },
             }}
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  backgroundColor: "#252525",
+                  color: "white",
+                },
+              },
+            }}
             onChange={formik.handleChange}
             IconComponent={(props) => (
               <ArrowDropDown sx={{ color: apiTypeColor }} />
             )}
           >
-            {RequestTypeList.map((requestType: any) => {
-              return (
-                <MenuItem
-                  key={requestType.name}
-                  value={requestType.name}
-                  sx={{
-                    color: requestType.color,
-                  }}
-                >
-                  {requestType.name}
-                </MenuItem>
-              );
-            })}
+            {RequestTypeList.map((requestType: any) => (
+              <MenuItem
+                key={requestType.name}
+                value={requestType.name}
+                sx={{
+                  color: requestType.color,
+                  margin: "10px",
+                  borderRadius: "4px",
+                  "&:hover": {
+                    backgroundColor: "#383737",
+                    color: "white",
+                  },
+                  "&.Mui-selected, &.Mui-selected:hover, &.Mui-focusVisible": {
+                    backgroundColor: "#4CAF50",
+                    color: "black",
+                  },
+                  "&.MuiButtonBase-root": {
+                    "&.Mui-selected, &.Mui-selected:hover": {
+                      backgroundColor: "#4CAF50", // Ensure this matches the above color
+                    },
+                  },
+                }}
+              >
+                {requestType.name}
+              </MenuItem>
+            ))}
           </Select>
           <Divider
             orientation="vertical"
@@ -287,19 +387,14 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
           />
           <Button
             sx={{
-              backgroundColor: "#2E7D32",
+              backgroundColor: "#4CAF50",
               color: "white",
-              width: "150px",
-              paddingX: "20px",
+              width: "100px",
+              margin: "0 10px",
               "&:hover": {
-                backgroundColor: "darkGreen",
+                backgroundColor: "darkgreen",
               },
             }}
-            endIcon={
-              <IconButton sx={{ color: "white" }}>
-                <Send fontSize="small" />
-              </IconButton>
-            }
             onClick={() => {
               testApi();
               setIsVisible(true);

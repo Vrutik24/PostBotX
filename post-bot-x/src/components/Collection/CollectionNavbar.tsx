@@ -6,12 +6,12 @@ import {
   CollectionNavbarContainer,
   CollectionNavbarTitle,
 } from "./CollectionNavbarStyle";
-import { useState, useEffect, MouseEvent } from "react";
+import { useState, useEffect, MouseEvent, useCallback } from "react";
 import CollectionBox from "./CollectionBox";
 import CollectionModal from "../../modals/CollectionModal/CollectionModal";
 import { useCollection } from "../../contexts/CollectionContext";
 import { API, Collection } from "../../types";
-import { Box, Divider, IconButton, Menu, MenuItem } from "@mui/material";
+import { Box, Divider, ListItemIcon, IconButton, Menu, MenuItem } from "@mui/material";
 import CollectionShareModal from "../../modals/CollectionModal/CollectionShareModal";
 import { useAPI } from "../../contexts/APIContext";
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
@@ -19,7 +19,13 @@ import { CreateAPIDetail } from "../../types";
 import { CollectionWithAPIRequests } from "../../types";
 import APIRequestsBox from "./APIRequestsBox/APIRequestsBox";
 import APIRenameModal from "../../modals/APIRenameModal/APIRenameModal";
-import { AddCircle } from "@mui/icons-material";
+import { AddCircle, AddBoxOutlined,
+  DeleteOutlineRounded,
+  EditOutlined,
+  LibraryAddOutlined,
+  ShareRounded } from "@mui/icons-material";
+import ConfirmationModal from "../../modals/CollectionModal/ConfirmationModal";
+import HeadersModal from "../../modals/CollectionModal/HeadersModal";
 
 const CollectionNavbar = () => {
   const navigateTo = useNavigate();
@@ -42,12 +48,16 @@ const CollectionNavbar = () => {
     setSelectedAPIId,
     setCurrentCollectionId
   } = useAPITestFormikContext();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isShareModalOpen, setShareIsModalOpen] = useState(false);
   const [isAPIModalOpen, setIsAPIModalOpen] = useState(false);
-  const [selectedCollection, setSelectedCollection] = useState<Collection>();
   const [selectedAPI, setSelectedAPI] = useState<API>();
-  const [anchorEl, setAnchorEl] = useState<HTMLElement>();
+  
+  const [isCollectionModalOpen, setIsCollectionModalOpen] = useState(false);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const [isShareModalOpen, setShareIsModalOpen] = useState(false);
+  const [isHeadersModalOpen, setIsHeadersModalOpen] = useState(false);
+  // const [collections, setCollections] = useState<Collection[]>([]);
+  const [selectedCollection, setSelectedCollection] = useState<Collection>();
+  const [collectionToDelete, setCollectionToDelete] = useState<Collection>();
   const [action, setAction] = useState("");
   const [apiAnchorEl, setAPIAnchorEl] = useState<HTMLElement>();
 
@@ -84,20 +94,26 @@ const CollectionNavbar = () => {
     } catch (error) {
       console.error("Failed to create API request", error);
     }
+  }
+
+  // useEffect(() => {
+  //   fetchCollections();
+  // }, [fetchCollections]);
+
+  const handleCollectionModalOpen = (collection?: Collection) => {
+    setSelectedCollection(collection);
+    setIsCollectionModalOpen(true);
   };
 
   useEffect(() => {
     fetchRequestsForCollections();
   }, [collections]);
 
-  const handleModalOpen = (collection?: Collection) => {
-    setSelectedCollection(collection);
-    setIsModalOpen(true);
-  };
-  const handleModalClose = () => {
-    setIsModalOpen(false);
+  const handleCollectionModalClose = () => {
+    setIsCollectionModalOpen(false);
     setSelectedCollection(undefined);
   };
+
   const handleShareModalOpen = (collection?: Collection) => {
     setSelectedCollection(collection);
     setShareIsModalOpen(true);
@@ -119,12 +135,10 @@ const CollectionNavbar = () => {
       } else if (id) {
         await deleteCollection(id);
       } else if (name) {
-        console.log(name);
         await createCollection(name);
       }
-      fetchCollections();
-      // fetchRequestsForCollections();
-      handleModalClose();
+      await fetchCollections();
+      handleCollectionModalClose();
     } catch (error) {
       console.error("Failed to process collection action:", error);
     }
@@ -137,7 +151,7 @@ const CollectionNavbar = () => {
   ) => {
     try {
       await shareCollection(receiverEmail, collectionId, collectionName);
-      handleModalClose();
+      handleCollectionModalClose();
     } catch (error: any) {
       throw new Error(error.message);
     }
@@ -145,30 +159,53 @@ const CollectionNavbar = () => {
 
   const handleMenuOpen = (
     event: MouseEvent<HTMLElement>,
-    collection?: Collection
+    collection: Collection
   ) => {
     event.preventDefault();
-    setAnchorEl(event.currentTarget);
     setSelectedCollection(collection);
   };
 
-  const handleMenuAction = (action: "rename" | "delete" | "share") => {
-    setAnchorEl(undefined);
+  const handleMenuClose = () => {
+    setSelectedCollection(undefined);
+  };
 
+  const handleMenuAction = (action: "rename" | "delete" | "share") => {
     if (selectedCollection) {
       if (action === "rename") {
         setAction("Rename");
-        handleModalOpen(selectedCollection);
+        handleCollectionModalOpen(selectedCollection);
       } else if (action === "share") {
         setAction("Share");
         handleShareModalOpen(selectedCollection);
       } else if (action === "delete") {
-        handleAction(undefined, selectedCollection.collectionId);
+        setCollectionToDelete(selectedCollection);
+        setIsConfirmationModalOpen(true);
       }
     }
   };
 
-  const handleMenuClose = () => setAnchorEl(undefined);
+  const handleDeleteConfirm = async () => {
+    if (collectionToDelete) {
+      await handleAction(undefined, collectionToDelete.collectionId);
+      setCollectionToDelete(undefined);
+    }
+    setIsConfirmationModalOpen(false);
+  };
+
+  const handleDeleteCancel = () => {
+    setCollectionToDelete(undefined);
+    setIsConfirmationModalOpen(false);
+  };
+
+  const handleOpenHeadersModal = async () => {
+    setIsHeadersModalOpen(true);
+  };
+
+  const handleCloseHeadersModal = () => {
+    setIsHeadersModalOpen(false);
+    setSelectedCollection(undefined);
+  };
+
 
   // API Menu changes
 
@@ -226,7 +263,7 @@ const CollectionNavbar = () => {
         </CollectionNavbarTitle>
         <AddCollectionButton
           variant="contained"
-          onClick={() => handleModalOpen()}
+          onClick={() => handleCollectionModalOpen()}
           endIcon={
             <IconButton sx={{ color: "white" }}>
               <AddCircle fontSize="small" />
@@ -242,7 +279,8 @@ const CollectionNavbar = () => {
                 <CollectionBox
                   key={collection.collectionId}
                   collection={collection}
-                  anchorEl={anchorEl}
+                  selectedCollection={selectedCollection}
+                  // anchorEl={anchorEl}
                   createAPIRequest={createAPIRequest}
                   onMenuOpen={(e) => handleMenuOpen(e, collection)}
                 />
@@ -311,8 +349,10 @@ const CollectionNavbar = () => {
         </MenuItem>
       </Menu>
       <Menu
-        anchorEl={anchorEl}
-        open={Boolean(anchorEl)}
+        anchorEl={document.querySelector(
+          `[data-collection-id='${selectedCollection?.collectionId}']`
+        )}
+        open={Boolean(selectedCollection?.collectionId)}
         onClose={handleMenuClose}
         anchorOrigin={{
           vertical: "bottom",
@@ -325,12 +365,11 @@ const CollectionNavbar = () => {
         sx={{
           "& .MuiPaper-root": {
             my: 1.5,
-            backgroundColor: "#1a1a1a",
-            border: "1px solid #2e2b2b",
-            boxShadow: "0px 2px 4px #2e2b2b",
+            backgroundColor: "rgb(29 28 28)",
+            border: "1px solid rgb(29 28 28)",
             px: 1,
             py: 1,
-            width: "150px",
+            width: "max-content",
           },
         }}
       >
@@ -339,14 +378,29 @@ const CollectionNavbar = () => {
             color: "white",
             borderRadius: "8px",
             "&:hover": {
-              backgroundColor: "#333333",
+              backgroundColor: "#252525",
             },
           }}
           onClick={handleMenuClose}
         >
-          {/* <ListItemIcon sx={{ color: "white" }}>
-            <AddIcon sx={{ fontSize: "20px" }} />
-          </ListItemIcon> */}
+          <ListItemIcon sx={{ color: "rgba(255, 255, 255, 0.5)" }}>
+            <AddBoxOutlined sx={{ fontSize: "20px" }} />
+          </ListItemIcon>
+          Create a Request
+        </MenuItem>
+        <MenuItem
+          sx={{
+            color: "white",
+            borderRadius: "8px",
+            "&:hover": {
+              backgroundColor: "#252525",
+            },
+          }}
+          onClick={handleOpenHeadersModal}
+        >
+          <ListItemIcon sx={{ color: "rgba(255, 255, 255, 0.5)" }}>
+            <LibraryAddOutlined sx={{ fontSize: "20px" }} />
+          </ListItemIcon>
           Add Header
         </MenuItem>
         <MenuItem
@@ -354,11 +408,14 @@ const CollectionNavbar = () => {
             color: "white",
             borderRadius: "8px",
             "&:hover": {
-              backgroundColor: "#333333",
+              backgroundColor: "#252525",
             },
           }}
           onClick={() => handleMenuAction("rename")}
         >
+          <ListItemIcon sx={{ color: "rgba(255, 255, 255, 0.5)" }}>
+            <EditOutlined sx={{ fontSize: "20px" }} />
+          </ListItemIcon>
           Rename
         </MenuItem>
         <MenuItem
@@ -366,39 +423,45 @@ const CollectionNavbar = () => {
             color: "white",
             borderRadius: "8px",
             "&:hover": {
-              backgroundColor: "#333333",
+              backgroundColor: "#252525",
             },
           }}
           onClick={() => handleMenuAction("share")}
         >
+          <ListItemIcon sx={{ color: "rgba(255, 255, 255, 0.5)" }}>
+            <ShareRounded sx={{ fontSize: "20px" }} />
+          </ListItemIcon>
           Share
         </MenuItem>
-        <Divider sx={{ backgroundColor: "#2e2b2b" }} />
+        <Divider sx={{ backgroundColor: "rgba(255, 255, 255, 0.1)" }} />
         <MenuItem
           sx={{
             color: "white",
             borderRadius: "8px",
             "&:hover": {
-              backgroundColor: "#333333",
+              backgroundColor: "#252525",
             },
           }}
           onClick={() => handleMenuAction("delete")}
         >
+          <ListItemIcon sx={{ color: "rgba(255, 255, 255, 0.5)" }}>
+            <DeleteOutlineRounded sx={{ fontSize: "20px" }} />
+          </ListItemIcon>
           Delete
         </MenuItem>
       </Menu>
       <CollectionModal
-        isOpen={isModalOpen}
+        isOpen={isCollectionModalOpen}
         action={action}
-        onClose={handleModalClose}
+        onClose={handleCollectionModalClose}
         onSubmit={handleAction}
-        collection={selectedCollection}
+        selectedCollection={selectedCollection}
       />
       <CollectionShareModal
         isOpen={isShareModalOpen}
         onClose={handleShareModalClose}
         onSubmit={handleShareCollection}
-        collection={selectedCollection}
+        selectedCollection={selectedCollection}
       />
       <APIRenameModal
         isOpen={isAPIModalOpen}
@@ -406,6 +469,22 @@ const CollectionNavbar = () => {
         onSubmit={handleAPIAction}
         api={selectedAPI}
       />
+      {collectionToDelete && (
+        <ConfirmationModal
+          isOpen={isConfirmationModalOpen}
+          onClose={handleDeleteCancel}
+          onConfirm={handleDeleteConfirm}
+          collectionName={collectionToDelete.name}
+        />
+      )}
+      {isHeadersModalOpen && selectedCollection && (
+        <HeadersModal
+          open={isHeadersModalOpen}
+          onClose={handleCloseHeadersModal}
+          //onSave={handleSaveHeaders}
+          selectedCollection={selectedCollection}
+        />
+      )}
     </CollectionNavbarBox>
   );
 };

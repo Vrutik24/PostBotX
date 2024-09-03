@@ -1,12 +1,12 @@
 import { styled } from "@mui/material/styles";
 import { Box, Button, Typography } from "@mui/material";
 
-export const CollectionNavbarBox = styled(Box)(({ theme }) => ({
+export const  CollectionNavbarBox = styled(Box)(({ theme }) => ({
   height: "100vh",
   width: "350px",
   // padding: "20px",
-  backgroundColor: "black",
-  borderRight: "2px solid grey",
+  backgroundColor: "#151414",
+  borderRight: "none",
 }));
 
 export const CollectionNavbarContainer = styled(Box)(({ theme }) => ({
@@ -16,7 +16,7 @@ export const CollectionNavbarContainer = styled(Box)(({ theme }) => ({
 export const CollectionNavbarTitle = styled(Typography)(({ theme }) => ({
   fontSize: "25px",
   fontWeight: "bold",
-  color: "#2E7D32",
+  color: "#4CAF50",
   letterSpacing: "5px",
   textAlign: "center",
   cursor: "pointer",
@@ -24,11 +24,11 @@ export const CollectionNavbarTitle = styled(Typography)(({ theme }) => ({
 
 export const AddCollectionButton = styled(Button)(({ theme }) => ({
   marginTop: "20px",
-  backgroundColor: "#2E7D32",
+  backgroundColor: "#4CAF50",
   width: "100%",
-  '&:hover': {
-    backgroundColor: 'darkGreen'
-  }
+  "&:hover": {
+    backgroundColor: "#4cb350",
+  },
 }));
 
 export const CollectionBoxContainer = styled(Box)(({ theme }) => ({

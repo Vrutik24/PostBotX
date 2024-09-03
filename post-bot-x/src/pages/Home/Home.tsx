@@ -23,7 +23,7 @@ const Home = () => {
   return (
     <>
       <HomePage>
-        {/* <Header/> */}
+        <Header />
         <HomeContent>
           <HomeTitleBox>
             <img
@@ -36,6 +36,7 @@ const Home = () => {
               variant="contained"
               endIcon={<Launch />}
               onClick={() => navigateTo("/api-testing")}
+              sx={{ color: "#151414" }}
             >
               Get Started
             </MainButton>
@@ -56,7 +57,7 @@ const Home = () => {
               API Testing
             </Typography>
             <Typography
-              color={"white"}
+              color={"#fff"} // White for feature text
               sx={{ paddingX: "20px", textAlign: "center" }}
             >
               AI enabled API Testing
@@ -67,10 +68,10 @@ const Home = () => {
               Error Analysis
             </Typography>
             <Typography
-              color={"white"}
+              color={"#fff"} // White for feature text
               sx={{ paddingX: "20px", textAlign: "center" }}
             >
-              Will give you detailed analysis of errors found in API Testing
+              Detailed analysis of errors found in API Testing
             </Typography>
           </FeatureContentPaper>
           <FeatureContentPaper variant="outlined">
@@ -78,10 +79,10 @@ const Home = () => {
               Report Generation
             </Typography>
             <Typography
-              color={"white"}
+              color={"#fff"} // White for feature text
               sx={{ paddingX: "20px", textAlign: "center" }}
             >
-              Will generate API Testing result report.
+              Generates comprehensive API Testing result reports.
             </Typography>
           </FeatureContentPaper>
         </FeatureContainer>
