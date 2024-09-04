@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   Divider,
   FormControl,
   IconButton,
@@ -49,6 +50,8 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
 }) => {
   const [apiTypeColor, setAPITypeColor] = useState<string>("#73DC8C");
   const [isEditingAPIName, setIsEditingAPIName] = useState(false);
+  const [isUpdatingAPI, setIsUpdatingAPI] = useState<boolean>(false);
+  const [isTestingAPI, setIsTestingAPI] = useState<boolean>(false);
   const inputRef = useRef(null);
 
   const {
@@ -70,6 +73,10 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
 
   const testApi = async () => {
     await updateAPIById();
+    const isAutomated = testingMethod === "Automated";
+    const isWriteMethod = ["Post", "Patch", "Put"].includes(
+      formik.values.apiType
+    );
     const apiPayload: APIRequestPayload = {
       apiType: formik.values.apiType,
       url: formik.values.url,
@@ -78,46 +85,31 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
         testingMethod == "Automated"
           ? [formik.values.configuredPayload]
           : formik.values.manualPayload,
-      // payload: formik.values.payload,
       queryParameters:
         testingMethod == "Automated"
           ? formik.values.queryParameters
           : formik.values.manualQueryParameters,
       headers: formik.values.headers,
     };
-    if (apiPayload.isAutomated) {
-      if (["Post", "Patch", "Put"].includes(apiPayload.apiType)) {
-        try {
-          const results = await automatedPostWrite(apiPayload);
-          console.log(results);
-        } catch (error) {
-          console.error(`Error calling ${apiPayload.apiType} method:`, error);
-        }
-      } else {
-        try {
-          const results = await automatedPostRead(apiPayload);
-          console.log(results);
-        } catch (error) {
-          console.error(`Error calling ${apiPayload.apiType} method:`, error);
-        }
-      }
-    } else {
-      if (["Post", "Patch", "Put"].includes(apiPayload.apiType)) {
-        try {
-          const results = await manualPostWrite(apiPayload);
-          console.log(results);
-        } catch (error) {
-          console.error(`Error calling ${apiPayload.apiType} method:`, error);
-        }
-      } else {
-        try {
-          const results = await manualPostRead(apiPayload);
-          console.log(results);
-        } catch (error) {
-          console.error(`Error calling ${apiPayload.apiType} method:`, error);
-        }
-      }
+
+    const executeApiCall = isAutomated
+      ? isWriteMethod
+        ? automatedPostWrite
+        : automatedPostRead
+      : isWriteMethod
+      ? manualPostWrite
+      : manualPostRead;
+
+    try {
+      setIsTestingAPI(true);
+      const results = await executeApiCall(apiPayload);
+      console.log(results);
+    } catch (error) {
+      console.error(`Error calling ${apiPayload.apiType} method:`, error);
+    } finally {
+      setIsTestingAPI(false);
     }
+
   };
 
   const updateAPIById = async () => {
@@ -131,10 +123,6 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
         testingMethod == "Automated"
           ? formik.values.payload
           : formik.values.manualPayload,
-
-      // configuredPayload:
-      //   testingMethod == "Automated" ? formik.values.payload[0] : "",
-      // payload: testingMethod == "Manual" ? formik.values.payload : [""],
       headers: formik.values.headers,
       queryParameters:
         testingMethod == "Automated"
@@ -143,12 +131,18 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
     };
     if (selectedAPIId && apiRequestData && apiRequestData?.collectionId) {
       apiRequestData.name = apiName ? apiName : "untitled";
-      const data = await updateAPI(
-        selectedAPIId,
-        { ...apiRequestData, ...formPayload },
-
-        apiRequestData?.collectionId
-      );
+      try {
+        setIsUpdatingAPI(true);
+        const data = await updateAPI(
+          selectedAPIId,
+          { ...apiRequestData, ...formPayload },
+          apiRequestData?.collectionId
+        );
+      } catch (error) {
+        console.error("Error updating api!");
+      } finally {
+        setIsUpdatingAPI(false);
+      }
       fetchRequestsForCollections();
     }
   };
@@ -170,7 +164,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
     <APITestingPage>
       <ContentBox>
         <CollectionInfoBox>
-          <Box display={"flex"} alignItems={"center"} gap={"10px"}>
+          <Box display={"flex"} alignItems={"center"} gap={"10px"} width={'fit-content'}>
             <Typography sx={{ color: "gray" }}>{collectionName}</Typography>
             <Typography>/</Typography>
             <>
@@ -199,7 +193,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
               )}
             </>
           </Box>
-          <Box display={"flex"} alignItems={"center"} gap={"20px"}>
+          <Box display={"flex"} alignItems={"center"} gap={"10px"}>
             <Box display="flex" alignItems={"center"} gap={"20px"}>
               <Button
                 variant="contained"
@@ -208,20 +202,27 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
                   display: "flex",
                   alignItems: "center",
                   gap: "2px",
-                  // backgroundColor: "#4CAF50",
-                  backgroundColor: '#151414',
+                  backgroundColor: "#151414",
                   color: "white",
                   width: "100px",
                   margin: "0 10px",
                   "&:hover": {
                     backgroundColor: "#4CAF50",
                   },
+                  "&.Mui-disabled": {
+                    color: "gray", 
+                  },
                 }}
                 endIcon={
-                  <IconButton sx={{ color: "white" }}>
-                    <Save fontSize="small" />
-                  </IconButton>
+                  isUpdatingAPI ? (
+                    <CircularProgress size={12} sx={{ color: "white" }} />
+                  ) : (
+                    <IconButton sx={{ color: "white" }}>
+                      <Save fontSize="small" />
+                    </IconButton>
+                  )
                 }
+                disabled={isUpdatingAPI}
                 onClick={() => updateAPIById()}
               >
                 Save
@@ -345,7 +346,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
                   },
                   "&.MuiButtonBase-root": {
                     "&.Mui-selected, &.Mui-selected:hover": {
-                      backgroundColor: "#4CAF50", // Ensure this matches the above color
+                      backgroundColor: "#4CAF50",
                     },
                   },
                 }}
@@ -390,15 +391,30 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
               backgroundColor: "#4CAF50",
               color: "white",
               width: "100px",
+              paddingX: "20px",
               margin: "0 10px",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
               "&:hover": {
                 backgroundColor: "darkgreen",
+              },
+              "&.Mui-disabled": {
+                color: "green", 
               },
             }}
             onClick={() => {
               testApi();
               setIsVisible(true);
             }}
+            endIcon={
+              isTestingAPI ? (
+                <CircularProgress size={12} sx={{ color: "green" }} />
+              ) : (
+                <Send />
+              )
+            }
+            disabled={isTestingAPI}
           >
             Send
           </Button>
