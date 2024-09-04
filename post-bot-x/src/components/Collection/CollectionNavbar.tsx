@@ -11,7 +11,14 @@ import CollectionBox from "./CollectionBox";
 import CollectionModal from "../../modals/CollectionModal/CollectionModal";
 import { useCollection } from "../../contexts/CollectionContext";
 import { API, Collection } from "../../types";
-import { Box, Divider, ListItemIcon, IconButton, Menu, MenuItem } from "@mui/material";
+import {
+  Box,
+  Divider,
+  ListItemIcon,
+  IconButton,
+  Menu,
+  MenuItem,
+} from "@mui/material";
 import CollectionShareModal from "../../modals/CollectionModal/CollectionShareModal";
 import { useAPI } from "../../contexts/APIContext";
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
@@ -19,11 +26,15 @@ import { CreateAPIDetail } from "../../types";
 import { CollectionWithAPIRequests } from "../../types";
 import APIRequestsBox from "./APIRequestsBox/APIRequestsBox";
 import APIRenameModal from "../../modals/APIRenameModal/APIRenameModal";
-import { AddCircle, AddBoxOutlined,
+import {
+  AddCircle,
+  AddBoxOutlined,
   DeleteOutlineRounded,
   EditOutlined,
   LibraryAddOutlined,
-  ShareRounded } from "@mui/icons-material";
+  ShareRounded,
+  ContentCopyOutlined,
+} from "@mui/icons-material";
 import ConfirmationModal from "../../modals/CollectionModal/ConfirmationModal";
 import HeadersModal from "../../modals/CollectionModal/HeadersModal";
 
@@ -46,11 +57,11 @@ const CollectionNavbar = () => {
     collections,
     collectionsWithRequests,
     setSelectedAPIId,
-    setCurrentCollectionId
+    setCurrentCollectionId,
   } = useAPITestFormikContext();
   const [isAPIModalOpen, setIsAPIModalOpen] = useState(false);
   const [selectedAPI, setSelectedAPI] = useState<API>();
-  
+
   const [isCollectionModalOpen, setIsCollectionModalOpen] = useState(false);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [isShareModalOpen, setShareIsModalOpen] = useState(false);
@@ -64,7 +75,6 @@ const CollectionNavbar = () => {
   useEffect(() => {
     fetchCollections();
   }, []);
-
 
   const createAPIRequest = async (collectionId: string, id?: string) => {
     const createAPIPayload: CreateAPIDetail = {
@@ -87,18 +97,49 @@ const CollectionNavbar = () => {
     };
     try {
       const data = await createAPI(createAPIPayload, collectionId);
-      console.log("data", data)
       await fetchRequestsForCollections();
       setSelectedAPIId(data);
-      id && setCurrentCollectionId(id)
+      id && setCurrentCollectionId(id);
     } catch (error) {
       console.error("Failed to create API request", error);
     }
-  }
+  };
 
-  // useEffect(() => {
-  //   fetchCollections();
-  // }, [fetchCollections]);
+  const createDuplicateAPIRequest = async (selectedAPI: API | undefined) => {
+    handleAPIMenuClose();
+    const createAPIPayload: CreateAPIDetail = {
+      apiType: selectedAPI?.apiType || "Get",
+      isAutomated: selectedAPI?.isAutomated || true,
+      url: selectedAPI?.url || "",
+      configuredPayload: selectedAPI?.configuredPayload || "",
+      payload: selectedAPI?.payload || [""],
+      headers: selectedAPI?.headers || [
+        {
+          key: "",
+          value: "",
+        },
+      ],
+      queryParameters: selectedAPI?.queryParameters || [
+        {
+          key: "",
+          value: [""],
+        },
+      ],
+    };
+    try {
+      if (selectedAPI) {
+        const data = await createAPI(
+          createAPIPayload,
+          selectedAPI.collectionId
+        );
+        console.log("data", data);
+        await fetchRequestsForCollections();
+        setSelectedAPIId(data);
+      }
+    } catch (error) {
+      console.error("Failed to create API request", error);
+    }
+  };
 
   const handleCollectionModalOpen = (collection?: Collection) => {
     setSelectedCollection(collection);
@@ -206,7 +247,6 @@ const CollectionNavbar = () => {
     setSelectedCollection(undefined);
   };
 
-
   // API Menu changes
 
   const handleAPIModalClose = () => {
@@ -228,10 +268,11 @@ const CollectionNavbar = () => {
       } else if (id) {
         await deleteApiById(id);
       }
-      await fetchRequestsForCollections();
       handleAPIModalClose();
     } catch (error) {
       console.error("Failed to process api action:", error);
+    } finally {
+      fetchRequestsForCollections();
     }
   };
 
@@ -313,12 +354,12 @@ const CollectionNavbar = () => {
         sx={{
           "& .MuiPaper-root": {
             my: 1.5,
-            backgroundColor: "#1a1a1a",
-            border: "1px solid #2e2b2b",
+            backgroundColor: "rgb(29 28 28)",
             boxShadow: "0px 2px 4px #2e2b2b",
+            border: "1px solid rgb(29 28 28)",
             px: 1,
             py: 1,
-            width: "150px",
+            width: "max-content",
           },
         }}
       >
@@ -327,12 +368,30 @@ const CollectionNavbar = () => {
             color: "white",
             borderRadius: "8px",
             "&:hover": {
-              backgroundColor: "#333333",
+              backgroundColor: "#252525",
             },
           }}
           onClick={() => handleAPIMenuAction("rename")}
         >
+          <ListItemIcon sx={{ color: "rgba(255, 255, 255, 0.5)" }}>
+            <EditOutlined sx={{ fontSize: "20px" }} />
+          </ListItemIcon>
           Rename
+        </MenuItem>
+        <MenuItem
+          sx={{
+            color: "white",
+            borderRadius: "8px",
+            "&:hover": {
+              backgroundColor: "#252525",
+            },
+          }}
+          onClick={() => createDuplicateAPIRequest(selectedAPI)}
+        >
+          <ListItemIcon sx={{ color: "rgba(255, 255, 255, 0.5)" }}>
+            <ContentCopyOutlined sx={{ fontSize: "20px" }} />
+          </ListItemIcon>
+          Duplicate
         </MenuItem>
         <Divider sx={{ backgroundColor: "#2e2b2b" }} />
         <MenuItem
@@ -340,11 +399,14 @@ const CollectionNavbar = () => {
             color: "white",
             borderRadius: "8px",
             "&:hover": {
-              backgroundColor: "#333333",
+              backgroundColor: "#252525",
             },
           }}
           onClick={() => handleAPIMenuAction("delete")}
         >
+          <ListItemIcon sx={{ color: "rgba(255, 255, 255, 0.5)" }}>
+            <DeleteOutlineRounded sx={{ fontSize: "20px" }} />
+          </ListItemIcon>
           Delete
         </MenuItem>
       </Menu>
@@ -381,7 +443,15 @@ const CollectionNavbar = () => {
               backgroundColor: "#252525",
             },
           }}
-          onClick={handleMenuClose}
+          onClick={() => {
+            if (selectedCollection?.collectionId) {
+              createAPIRequest(
+                selectedCollection?.collectionId,
+                selectedCollection?.id
+              );
+              handleMenuClose();
+            }
+          }}
         >
           <ListItemIcon sx={{ color: "rgba(255, 255, 255, 0.5)" }}>
             <AddBoxOutlined sx={{ fontSize: "20px" }} />

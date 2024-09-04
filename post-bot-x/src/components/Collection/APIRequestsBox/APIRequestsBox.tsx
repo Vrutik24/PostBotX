@@ -32,9 +32,9 @@ const APIRequestsBox = ({
       display="flex"
       alignItems="center"
       justifyContent={"space-between"}
-      p={1}
-      pl={4}
-      mb={1}
+      p="6px"
+      pl="32px"
+      my={1}
       key={apiRequest.id}
       borderRadius="4px"
       position="relative"
@@ -48,12 +48,14 @@ const APIRequestsBox = ({
       data-api-id={apiRequest.id}
       sx={{
         backgroundColor:
-          anchorEl || apiRequest.id == selectedAPIId
+          apiRequest.id == selectedAPIId
             ? "rgba(255, 255, 255, 0.1)"
-            : "transparent", // Apply hover background if context menu is open
+            : apiRequest.id === selectedAPIId && anchorEl
+            ? "rgb(29 28 28)"
+            : "transparent",
         cursor: "pointer",
         "&:hover, &[data-api-open='true']": {
-          backgroundColor: "rgba(255, 255, 255, 0.1)", // Lighter background color on hover
+          backgroundColor: "rgb(29 28 28)",
         },
         "&:hover .collection-actions, &[data-api-open='true'] .collection-actions":
           {
