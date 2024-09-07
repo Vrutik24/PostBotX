@@ -38,6 +38,7 @@ interface FormikContextType {
   fetchRequestsForCollections: () => void;
   collections: Collection[];
   collectionsWithRequests: CollectionWithAPIRequests[];
+  loadingAPIData: boolean;
   // setAPIRequestTypeName: (apiRequestTypeName: string) => void;
 }
 // Created a context
@@ -62,15 +63,13 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
   const [collectionsWithRequests, setCollectionsWithRequests] = useState<
     CollectionWithAPIRequests[]
   >([]);
+  const [loadingAPIData, setLodingAPIData] = useState<boolean>(false);
   // const [apiRequestTypeName, setAPIRequestTypeName] = useState<string>('');
   const { getCollectionById, getCollections } = useCollection();
-
-  console.log("currentCollectionId", currentCollectionId);
 
   const fetchCollections = async () => {
     try {
       const collectionList = await getCollections();
-      console.log("CollectionList >>>> " + collectionList);
       if (collectionList) {
         setCollections(collectionList);
       }
@@ -81,9 +80,7 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
 
   const getAPISByCollectionIdRequest = async (collectionId: string) => {
     try {
-      console.log(collectionId);
       const collectionAPIs = await getApisByCollectionId(collectionId);
-      console.log("collectionAPIs", collectionAPIs);
       return collectionAPIs;
     } catch (error) {
       console.error("Failed to get APIs of this collection", error);
@@ -107,7 +104,6 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
       const collectionData: Collection | undefined = await getCollectionById(
         id
       );
-      console.log("collectionData", collectionData);
       if (collectionData) {
         setCollectionName(collectionData.name);
       }
@@ -123,12 +119,12 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
   }, [currentCollectionId]);
 
   const fetchAPIById = async (id: string) => {
+    setLodingAPIData(true);
     try {
       const apiData: API | undefined = await getApiById(id);
-      console.log("apiData", apiData);
       if (apiData) {
-        // setAPIRequestTypeName(apiData.apiType)
         setAPIName(apiData.name ? apiData.name : "untitled");
+        setLodingAPIData(false);
         setAPIRequestData(apiData);
         setTestingMethod(apiData.isAutomated ? "Automated" : "Manual");
         formik.setValues({
@@ -191,6 +187,8 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
       }
     } catch (error) {
       console.error("Could not fetch API", error);
+    } finally {
+      setLodingAPIData(false);
     }
   };
 
@@ -248,7 +246,8 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
         fetchCollections,
         fetchRequestsForCollections,
         collections,
-        collectionsWithRequests
+        collectionsWithRequests,
+        loadingAPIData,
       }}
     >
       {children}

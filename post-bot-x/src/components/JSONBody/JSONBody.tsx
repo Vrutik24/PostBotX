@@ -1,5 +1,5 @@
 import { Alert, Box, Button, TextField } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { mapJsonToOutput } from "./MapJsonOutput";
 import { prettifyJSON } from "../../utils/PrettifyJson";
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
@@ -7,7 +7,9 @@ import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
 const JSONBody = () => {
   const { formik, apiRequestData } = useAPITestFormikContext();
   const [jsonInput, setJsonInput] = useState(formik.values.payload[0]);
-  const [configuredJson, setConfiguredJson] = useState(formik.values.configuredPayload);
+  const [configuredJson, setConfiguredJson] = useState(
+    formik.values.configuredPayload
+  );
   const [errorMessage, setErrorMessage] = useState<string>("");
   const handleInputChange = (e: any) => {
     setJsonInput(e.target.value);
@@ -19,8 +21,11 @@ const JSONBody = () => {
       const configuredJson = mapJsonToOutput(parsedJson);
       const configuredStringifyJson = JSON.stringify(configuredJson);
       setErrorMessage("");
-      setConfiguredJson(prettifyJSON(configuredStringifyJson));
-      formik.setFieldValue(`configuredPayload`, prettifyJSON(configuredStringifyJson));
+      setConfiguredJson(configuredStringifyJson);
+      formik.setFieldValue(
+        `configuredPayload`,
+        prettifyJSON(configuredStringifyJson)
+      );
     } catch (error) {
       setErrorMessage("Invalid Json Format");
       console.error(error);
@@ -31,8 +36,10 @@ const JSONBody = () => {
     formik.setFieldValue(`configuredPayload`, prettifyJSON(e.target.value));
   };
 
-  console.log("configuredJson", configuredJson);
-  console.log("Formik", formik.values);
+  useEffect(() => {
+    setJsonInput(formik.values.payload[0]);
+    setConfiguredJson(formik.values.configuredPayload);
+  }, [formik]);
 
   return (
     <Box display={"flex"} height={"100%"}>

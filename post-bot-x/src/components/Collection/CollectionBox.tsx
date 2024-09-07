@@ -1,14 +1,17 @@
 import React, { MouseEvent } from "react";
-import { Box, Typography, IconButton } from "@mui/material";
+import { Box, Typography, IconButton, Tooltip } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { ArrowRight, MoreHorizRounded } from "@mui/icons-material";
 import { Collection } from "../../types";
+import { on } from "stream";
 
 interface CollectionBoxProps {
   collection: Collection;
   onMenuOpen: (event: MouseEvent<HTMLElement>, collection: Collection) => void;
   createAPIRequest: (collectionId: string, id: string | undefined) => void;
   selectedCollection?: Collection;
+  isCollapsed: boolean;
+  onCollapseToggle: (collectionId: string) => void;
 }
 
 const CollectionBox: React.FC<CollectionBoxProps> = ({
@@ -16,6 +19,8 @@ const CollectionBox: React.FC<CollectionBoxProps> = ({
   onMenuOpen,
   selectedCollection,
   createAPIRequest,
+  isCollapsed,
+  onCollapseToggle,
 }) => {
   const isOpen = selectedCollection?.collectionId === collection.collectionId;
 
@@ -45,6 +50,7 @@ const CollectionBox: React.FC<CollectionBoxProps> = ({
     >
       <IconButton
         size="small"
+        onClick={() => onCollapseToggle(collection.collectionId)}
         sx={{
           color: "rgba(255, 255, 255, 0.5)",
           "&:hover, &[data-context-open='true']": {
@@ -52,11 +58,30 @@ const CollectionBox: React.FC<CollectionBoxProps> = ({
             borderRadius: "8px",
           },
           padding: 0,
+          transform: isCollapsed ? "rotate(90deg)" : "rotate(0deg)",
+          transition: "transform 0.3s",
         }}
       >
         <ArrowRight sx={{ fontSize: "25px" }} />
       </IconButton>
-      <Typography>{collection.name}</Typography>
+      {collection.name.length > 22 ? (
+        <Tooltip
+          title={collection.name}
+          componentsProps={{
+            tooltip: {
+              sx: {
+                backgroundColor: "gray",
+                fontSize: "13px",
+                color: "white",
+              },
+            },
+          }}
+        >
+          <Typography>{collection.name.substring(0, 22) + "..."}</Typography>
+        </Tooltip>
+      ) : (
+        <Typography>{collection.name}</Typography>
+      )}
       <Box
         className="collection-actions"
         display="none"
