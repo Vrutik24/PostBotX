@@ -6,13 +6,13 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import post_botX from "../../assets/PostBot_X_image.png";
 import {
-  SignUpContainer,
   SignUpBox,
   StyledTextField,
   ErrorMessage,
   SignUpButton,
   AlreadyAccountButton,
   LogoImage,
+  SignUpPage,
 } from "./SignUpStyle";
 
 const validationSchema = Yup.object({
@@ -57,67 +57,72 @@ const SignUp: React.FC = () => {
   });
 
   return (
-    <SignUpContainer maxWidth="xs">
-      <SignUpBox>
-        <LogoImage
-          src={post_botX}
-          alt="PostBot_X"
-          onClick={() => navigate("/")}
-        />
-        <form onSubmit={formik.handleSubmit} style={{ width: "100%" }}>
-          <StyledTextField
-            fullWidth
-            id="name"
-            name="name"
-            label="name"
-            value={formik.values.name}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.name && Boolean(formik.errors.name)}
-            helperText={formik.touched.name && formik.errors.name}
+    <>
+      <SignUpPage>
+        <SignUpBox>
+          <LogoImage
+            src={post_botX}
+            alt="PostBot_X"
+            onClick={() => navigate("/")}
           />
-          <StyledTextField
-            fullWidth
-            id="email"
-            name="email"
-            label="Email"
-            value={formik.values.email}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.email && Boolean(formik.errors.email)}
-            helperText={formik.touched.email && formik.errors.email}
-          />
-          <StyledTextField
-            fullWidth
-            id="password"
-            name="password"
-            label="Password"
-            type="password"
-            value={formik.values.password}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.password && Boolean(formik.errors.password)}
-            helperText={formik.touched.password && formik.errors.password}
-          />
-          {error && <ErrorMessage variant="body2">{error}</ErrorMessage>}
-          <SignUpButton
-            type="submit"
-            fullWidth
-            variant="contained"
-            disabled={loading}
+          <form
+            onSubmit={formik.handleSubmit}
+            style={{ maxWidth: "400px", margin: "0 auto" }}
           >
-            {loading ? <CircularProgress size={24} /> : "Sign Up"}
-          </SignUpButton>
-        </form>
-        <AlreadyAccountButton
-          fullWidth
-          variant="text"
-          onClick={() => navigate("/signin")}
-        >
-          Already have an Account
-        </AlreadyAccountButton>
-      </SignUpBox>
-    </SignUpContainer>
+            <StyledTextField
+              fullWidth
+              id="name"
+              name="name"
+              label="name"
+              value={formik.values.name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.name && Boolean(formik.errors.name)}
+              helperText={formik.touched.name && formik.errors.name}
+            />
+            <StyledTextField
+              fullWidth
+              id="email"
+              name="email"
+              label="Email"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.email && Boolean(formik.errors.email)}
+              helperText={formik.touched.email && formik.errors.email}
+            />
+            <StyledTextField
+              fullWidth
+              id="password"
+              name="password"
+              label="Password"
+              type="password"
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.password && Boolean(formik.errors.password)}
+              helperText={formik.touched.password && formik.errors.password}
+            />
+            {error && <ErrorMessage variant="body2">{error}</ErrorMessage>}
+            <SignUpButton
+              type="submit"
+              fullWidth
+              variant="contained"
+              disabled={loading}
+            >
+              {loading ? <CircularProgress size={24} /> : "Sign Up"}
+            </SignUpButton>
+            <AlreadyAccountButton
+              fullWidth
+              variant="text"
+              onClick={() => navigate("/signin")}
+            >
+              Already have an Account
+            </AlreadyAccountButton>
+          </form>
+        </SignUpBox>
+      </SignUpPage>
+    </>
   );
 };
 

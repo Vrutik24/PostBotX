@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Popover, Typography, Box, IconButton, Badge } from "@mui/material";
-import { Check, Close } from "@mui/icons-material";
+import { CheckCircleOutline, CancelOutlined } from "@mui/icons-material"; // Updated Icons
 import { useNotification } from "../../contexts/NotificationContext";
 import { useCollection } from "../../contexts/CollectionContext";
 import { Notification as NotificationType } from "../../types";
-import { BellIcon, NotificationItem, NotificationList, NotificationContainer } from "./NotificationStyle";
+import {
+  BellIcon,
+  NotificationItem,
+  NotificationList,
+  NotificationContainer,
+  AcceptActionButton,
+  DenyActionButton,
+} from "./NotificationStyle";
 import { useAuth } from "../../contexts/AuthContext";
 
 const Notification: React.FC = () => {
@@ -37,7 +44,10 @@ const Notification: React.FC = () => {
     setAnchorEl(null);
   };
 
-  const handleAccept = async (notificationId?: string, collectionId?: string) => {
+  const handleAccept = async (
+    notificationId?: string,
+    collectionId?: string
+  ) => {
     if (!notificationId || !collectionId) {
       return;
     }
@@ -81,40 +91,56 @@ const Notification: React.FC = () => {
           vertical: "top",
           horizontal: "right",
         }}
+        PaperProps={{
+          sx: {
+            overflow: "hidden",
+            borderRadius: 2,
+            bgcolor: "#1D1C1C",
+          },
+        }}
       >
         <NotificationContainer>
-          <Typography variant="h6" gutterBottom>
+          <Typography
+            variant="h6"
+            gutterBottom
+            align="center"
+            fontWeight="bold"
+            sx={{ color: "#4CAF50", paddingBottom: 1 }} // Add some padding below the title
+          >
             Notifications
           </Typography>
           {notifications.length === 0 ? (
-            <Typography variant="body2" color="white">
+            <Typography variant="body2" color="white" align="center">
               You don't have any new notifications.
             </Typography>
           ) : (
             <NotificationList>
               {notifications.map((notification: NotificationType) => (
                 <NotificationItem key={notification.collectionId}>
-                  <Typography variant="body2">
-                    {notification.senderName} shared the collection{" "}
-                    {notification.collectionName}
-                  </Typography>
-                  <Box display="flex" justifyContent="space-between" mt={1}>
-                    <IconButton
-                      size="small"
-                      color="primary"
-                      onClick={() =>
-                        handleAccept(notification.id, notification.collectionId)
-                      }
-                    >
-                      <Check />
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      color="secondary"
-                      onClick={() => handleDeny(notification.id)}
-                    >
-                      <Close />
-                    </IconButton>
+                  <Box padding={1}>
+                    <Typography variant="body2">
+                      {notification.senderName} shared the collection{" "}
+                      {notification.collectionName}
+                    </Typography>
+                    <Box display="flex" justifyContent="center" mt={1}>
+                      <AcceptActionButton
+                        size="small"
+                        onClick={() =>
+                          handleAccept(
+                            notification.id,
+                            notification.collectionId
+                          )
+                        }
+                      >
+                        <CheckCircleOutline fontSize="small" /> Accept
+                      </AcceptActionButton>
+                      <DenyActionButton
+                        size="small"
+                        onClick={() => handleDeny(notification.id)}
+                      >
+                        <CancelOutlined fontSize="small" /> Deny
+                      </DenyActionButton>
+                    </Box>
                   </Box>
                 </NotificationItem>
               ))}
