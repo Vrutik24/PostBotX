@@ -86,11 +86,9 @@ const CollectionNavbar = () => {
   }, []);
 
   useEffect(() => {
-    console.log(isFetchingCollection);
     const createDraftCollection = async () => {
       if (!isFetchingCollection && (collections === null || collections.length === 0)) {
         try{
-          console.log("Creating untitled collection")
           const newCollection = await createCollection("Draft");
           const createAPIPayload: CreateAPIDetail = {
             apiType: "Get",
