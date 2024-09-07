@@ -16,7 +16,7 @@ import generateUniqueId from "./GenerateUniqueId";
 import { Collection, Header, Notification } from "../types";
 
 interface CollectionContextProps {
-  createCollection: (name: string) => Promise<void>;
+  createCollection: (name: string) => Promise<Collection>;
   getCollections: () => Promise<Collection[] | null>;
   getCollectionById: (id: string) => Promise<Collection | undefined>;
   deleteCollection: (collectionId: string) => Promise<void>;
@@ -79,7 +79,7 @@ export const CollectionContextProvider: React.FC<
     }
   };
 
-  const createCollection = async (name: string): Promise<void> => {
+  const createCollection = async (name: string): Promise<Collection> => {
     const collectionId = generateUniqueId();
     const anonymousUserId = createAnonymousUser();
 
@@ -107,6 +107,19 @@ export const CollectionContextProvider: React.FC<
       collectionId,
       createdOn: new Date(),
     });
+    const collectionSnapshot = await getDocs(collection(firestore, "Collection"));
+    let createdCollection: Collection | null = null;
+    collectionSnapshot.forEach(doc => {
+        if (doc.data().collectionId === collectionId) {
+            createdCollection = { id: doc.id, ...doc.data() } as Collection;
+        }
+    });
+
+    if (!createdCollection) {
+        throw new Error("Failed to retrieve the newly created collection.");
+    }
+
+    return createdCollection;
   };
 
   const getCollections = async (): Promise<Collection[] | null> => {
