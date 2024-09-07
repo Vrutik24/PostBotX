@@ -76,10 +76,53 @@ const CollectionNavbar = () => {
   >({});
 
   const [apiActionLoading, setAPIActionLoading] = useState(false);
+  const [isFetchingCollection, setIsFetchingCollection] = useState(true);
+  useEffect(() => {
+    const fetchCollectionAsync = async () => {
+     await fetchCollections();
+     setIsFetchingCollection(false);
+    }
+    fetchCollectionAsync();
+  }, []);
 
   useEffect(() => {
-    fetchCollections();
-  }, []);
+    console.log(isFetchingCollection);
+    const createDraftCollection = async () => {
+      if (!isFetchingCollection && (collections === null || collections.length === 0)) {
+        try{
+          console.log("Creating untitled collection")
+          const newCollection = await createCollection("Draft");
+          const createAPIPayload: CreateAPIDetail = {
+            apiType: "Get",
+            isAutomated: false,
+            url: "",
+            configuredPayload: "",
+            headers: [
+              {
+                key: "",
+                value: "",
+              },
+            ],
+            queryParameters: [
+              {
+                key: "",
+                value: [""],
+              },
+            ],
+          };
+          const data = await createAPI(createAPIPayload, newCollection.collectionId);
+          await fetchCollections();
+          setSelectedAPIId(data);
+          newCollection.id && setCurrentCollectionId(newCollection.id);
+        }
+        catch(error : any){
+          console.log(error.message);
+        }
+        
+      }
+    } 
+    createDraftCollection();
+  }, [collectionsWithRequests,collections,fetchCollections,createAPI,createCollection,isFetchingCollection,setCurrentCollectionId,setSelectedAPIId]);
 
   const createAPIRequest = async (collectionId: string, id?: string) => {
     setAPIActionLoading(true);
