@@ -60,7 +60,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
     setTestingMethod,
     apiRequestData,
     selectedAPIId,
-    collectionName,
+    currentCollection,
     apiName,
     setAPIName,
     fetchRequestsForCollections,
@@ -164,7 +164,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
       <ContentBox>
         <CollectionInfoBox>
           <Box display={"flex"} alignItems={"center"} gap={"10px"} width={'60%'}>
-            <Typography sx={{ color: "gray" }}>{collectionName}</Typography>
+            <Typography sx={{ color: "gray" }}>{currentCollection?.name || "Collection"}</Typography>
             <Typography>/</Typography>
             <>
               {isEditingAPIName ? (
