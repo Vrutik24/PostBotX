@@ -1,6 +1,6 @@
-import { MouseEvent } from "react";
+import { MouseEvent, useMemo } from "react";
 import { MoreHorizRounded } from "@mui/icons-material";
-import { Box, IconButton, Typography } from "@mui/material";
+import { Box, IconButton, Tooltip, Typography } from "@mui/material";
 import { API } from "../../../types";
 import getAPIColor from "../../../utils/GetAPIColor";
 import { useAPITestFormikContext } from "../../../contexts/APITestFormikContext";
@@ -24,8 +24,20 @@ const APIRequestsBox = ({
     selectedAPIId,
     setCurrentCollectionId,
     apiName,
+    loadingAPIData,
   } = useAPITestFormikContext();
   const apiTypeColor = getAPIColor(apiRequest.apiType);
+
+  const displayedName = useMemo(() => {
+    if (selectedAPIId === apiRequest.id) {
+      const name = loadingAPIData
+        ? apiRequest.name || "untitled"
+        : apiName || "untitled";
+      return name;
+    } else {
+      return apiRequest.name || "untitled";
+    }
+  }, [loadingAPIData, selectedAPIId, apiRequest.id, apiName, apiRequest.name]);
 
   return (
     <Box
@@ -70,15 +82,26 @@ const APIRequestsBox = ({
         <Typography color={apiTypeColor} fontSize={"14px"}>
           {apiRequest.apiType}
         </Typography>
-        <Typography fontSize={"16px"}>
-          {selectedAPIId == apiRequest.id
-            ? apiName
-              ? apiName
-              : "untitled"
-            : apiRequest.name
-            ? apiRequest.name
-            : "untitled"}
-        </Typography>
+        {displayedName?.length > 18 ? (
+          <Tooltip
+            title={displayedName}
+            componentsProps={{
+              tooltip: {
+                sx: {
+                  backgroundColor: "gray",
+                  fontSize: "13px",
+                  color: "white",
+                }
+              }
+            }}
+          >
+            <Typography fontSize={"16px"}>
+              {displayedName.substring(0, 18) + "..."}
+            </Typography>
+          </Tooltip>
+        ) : (
+          <Typography fontSize={"16px"}>{displayedName}</Typography>
+        )}
       </Box>
 
       <Box

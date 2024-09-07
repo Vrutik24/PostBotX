@@ -96,7 +96,6 @@ const ManualParamsComponent = () => {
                     },
                   }}
                   onChange={(e) => {
-                    console.log("e", e.target.value);
                     if (
                       index ===
                         formik.values.manualQueryParameters.length - 1 &&

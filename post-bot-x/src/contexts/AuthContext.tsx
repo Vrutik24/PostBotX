@@ -71,7 +71,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       };
       await addDoc(collection(firestore, "User"), newUser);
     } catch (error: unknown) {
-      console.log(error);
       if (error instanceof Error) {
         throw new Error(error.message);
       } else {

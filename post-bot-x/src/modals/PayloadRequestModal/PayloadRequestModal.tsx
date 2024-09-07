@@ -62,8 +62,6 @@ const PayloadRequestModal = ({
     payloadRequestFormik.setFieldValue("payload", requestModal.request);
   }, [requestModal]);
 
-  console.log("payloadRequestFormik", payloadRequestFormik.initialValues);
-
   return (
     <Modal
       open={requestModal.isOpen}

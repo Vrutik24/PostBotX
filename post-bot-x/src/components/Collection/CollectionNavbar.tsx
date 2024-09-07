@@ -71,6 +71,9 @@ const CollectionNavbar = () => {
   const [collectionToDelete, setCollectionToDelete] = useState<Collection>();
   const [action, setAction] = useState("");
   const [apiAnchorEl, setAPIAnchorEl] = useState<HTMLElement>();
+  const [collapsedCollections, setCollapsedCollections] = useState<
+    Record<string, boolean>
+  >({});
 
   useEffect(() => {
     fetchCollections();
@@ -132,7 +135,6 @@ const CollectionNavbar = () => {
           createAPIPayload,
           selectedAPI.collectionId
         );
-        console.log("data", data);
         await fetchRequestsForCollections();
         setSelectedAPIId(data);
       }
@@ -296,6 +298,15 @@ const CollectionNavbar = () => {
 
   const handleAPIMenuClose = () => setAPIAnchorEl(undefined);
 
+  // Made Collections collapsible
+
+  const handleCollapseToggle = (collectionId: string) => {
+    setCollapsedCollections((prevState) => ({
+      ...prevState,
+      [collectionId]: !prevState[collectionId],
+    }));
+  };
+
   return (
     <CollectionNavbarBox>
       <CollectionNavbarContainer>
@@ -324,16 +335,23 @@ const CollectionNavbar = () => {
                   // anchorEl={anchorEl}
                   createAPIRequest={createAPIRequest}
                   onMenuOpen={(e) => handleMenuOpen(e, collection)}
+                  isCollapsed={
+                    collapsedCollections[collection.collectionId] || false
+                  }
+                  onCollapseToggle={() =>
+                    handleCollapseToggle(collection.collectionId)
+                  }
                 />
-                {collection.apiRequests?.map((request: API) => (
-                  <APIRequestsBox
-                    key={request.id}
-                    apiRequest={request}
-                    colId={collection.id}
-                    anchorEl={apiAnchorEl}
-                    onMenuOpen={(e) => handleAPIMenuOpen(e, request)}
-                  />
-                ))}
+                {!collapsedCollections[collection.collectionId] &&
+                  collection.apiRequests?.map((request: API) => (
+                    <APIRequestsBox
+                      key={request.id}
+                      apiRequest={request}
+                      colId={collection.id}
+                      anchorEl={apiAnchorEl}
+                      onMenuOpen={(e) => handleAPIMenuOpen(e, request)}
+                    />
+                  ))}
               </Box>
             )
           )}

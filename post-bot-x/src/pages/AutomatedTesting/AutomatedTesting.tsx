@@ -103,7 +103,6 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
     try {
       setIsTestingAPI(true);
       const results = await executeApiCall(apiPayload);
-      console.log(results);
     } catch (error) {
       console.error(`Error calling ${apiPayload.apiType} method:`, error);
     } finally {
@@ -164,7 +163,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
     <APITestingPage>
       <ContentBox>
         <CollectionInfoBox>
-          <Box display={"flex"} alignItems={"center"} gap={"10px"} width={'fit-content'}>
+          <Box display={"flex"} alignItems={"center"} gap={"10px"} width={'60%'}>
             <Typography sx={{ color: "gray" }}>{collectionName}</Typography>
             <Typography>/</Typography>
             <>
@@ -176,7 +175,6 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
                   sx={{ color: "white", height: "40px" }}
                   onChange={(e) => setAPIName(e.target.value)}
                   onBlur={handleAPINameBlur}
-                  fullWidth
                 />
               ) : (
                 <Typography

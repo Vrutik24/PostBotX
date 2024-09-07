@@ -91,7 +91,6 @@ export const CollectionContextProvider: React.FC<
       }
     }
 
-    console.log("Create Collection >>>" + userId);
     const newCollection: Collection = {
       name,
       createdById: userId,
@@ -192,8 +191,6 @@ export const CollectionContextProvider: React.FC<
           updatedById: userId,
           updatedOn: new Date(),
         });
-
-        console.log(`Collection ${collectionId} renamed to ${newName}`);
       } else {
         console.error(`Collection with ID ${collectionId} not found`);
       }
@@ -259,9 +256,6 @@ export const CollectionContextProvider: React.FC<
           updatedOn: new Date(),
         });
 
-        console.log(
-          `Headers for Collection ${collectionId} updated successfully`
-        );
       } else {
         console.error(`Collection with ID ${collectionId} not found`);
       }
@@ -321,8 +315,6 @@ export const CollectionContextProvider: React.FC<
       };
 
       await addDoc(collection(firestore, "Notification"), notification);
-
-      console.log("Collection shared successfully.");
     } catch (error) {
       console.error("Error sharing collection:", error);
       throw error;
@@ -337,7 +329,6 @@ export const CollectionContextProvider: React.FC<
         throw new Error(`You need to login first to accept the collection`);
       }
       const user = await getUserByEmailAsync(currentUser.email);
-      console.log(user?.id);
       await addDoc(collection(firestore, "UserCollection"), {
         userId: user?.id,
         collectionId,
@@ -352,7 +343,6 @@ export const CollectionContextProvider: React.FC<
   const denyCollectionRequest = async (id: string): Promise<void> => {
     try {
       await deleteDoc(doc(firestore, "Notification", id));
-      console.log(`Notification ${id} deleted successfully.`);
     } catch (error) {
       console.error("Error deleting notification: ", error);
     }
