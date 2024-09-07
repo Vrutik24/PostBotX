@@ -75,11 +75,14 @@ const CollectionNavbar = () => {
     Record<string, boolean>
   >({});
 
+  const [apiActionLoading, setAPIActionLoading] = useState(false);
+
   useEffect(() => {
     fetchCollections();
   }, []);
 
   const createAPIRequest = async (collectionId: string, id?: string) => {
+    setAPIActionLoading(true);
     const createAPIPayload: CreateAPIDetail = {
       apiType: "Get",
       isAutomated: true,
@@ -106,10 +109,14 @@ const CollectionNavbar = () => {
     } catch (error) {
       console.error("Failed to create API request", error);
     }
+    finally{
+      setAPIActionLoading(false);
+    }
   };
 
   const createDuplicateAPIRequest = async (selectedAPI: API | undefined) => {
     handleAPIMenuClose();
+    setAPIActionLoading(true);
     const createAPIPayload: CreateAPIDetail = {
       apiType: selectedAPI?.apiType || "Get",
       isAutomated: selectedAPI?.isAutomated || true,
@@ -140,6 +147,9 @@ const CollectionNavbar = () => {
       }
     } catch (error) {
       console.error("Failed to create API request", error);
+    }
+    finally{
+      setAPIActionLoading(false);
     }
   };
 
@@ -265,15 +275,18 @@ const CollectionNavbar = () => {
 
   const handleAPIAction = async (name?: string, id?: string) => {
     try {
+      setAPIActionLoading(true);
       if (id && name) {
         await updateAPIName(id, name);
       } else if (id) {
         await deleteApiById(id);
       }
+      await fetchCollections();
       handleAPIModalClose();
     } catch (error) {
       console.error("Failed to process api action:", error);
     } finally {
+      setAPIActionLoading(false);
       fetchRequestsForCollections();
     }
   };
@@ -341,6 +354,7 @@ const CollectionNavbar = () => {
                   onCollapseToggle={() =>
                     handleCollapseToggle(collection.collectionId)
                   }
+                  apiActionLoading = {apiActionLoading}
                 />
                 {!collapsedCollections[collection.collectionId] &&
                   collection.apiRequests?.map((request: API) => (

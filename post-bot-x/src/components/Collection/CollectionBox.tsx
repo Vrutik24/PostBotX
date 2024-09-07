@@ -1,5 +1,11 @@
 import React, { MouseEvent } from "react";
-import { Box, Typography, IconButton, Tooltip } from "@mui/material";
+import {
+  Box,
+  Typography,
+  IconButton,
+  Tooltip,
+  CircularProgress,
+} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { ArrowRight, MoreHorizRounded } from "@mui/icons-material";
 import { Collection } from "../../types";
@@ -12,6 +18,7 @@ interface CollectionBoxProps {
   selectedCollection?: Collection;
   isCollapsed: boolean;
   onCollapseToggle: (collectionId: string) => void;
+  apiActionLoading: boolean;
 }
 
 const CollectionBox: React.FC<CollectionBoxProps> = ({
@@ -21,6 +28,7 @@ const CollectionBox: React.FC<CollectionBoxProps> = ({
   createAPIRequest,
   isCollapsed,
   onCollapseToggle,
+  apiActionLoading,
 }) => {
   const isOpen = selectedCollection?.collectionId === collection.collectionId;
 
@@ -107,7 +115,14 @@ const CollectionBox: React.FC<CollectionBoxProps> = ({
             createAPIRequest(collection.collectionId, collection.id)
           }
         >
-          <AddIcon sx={{ fontSize: "20px" }} />
+          {apiActionLoading ? ( // Check if the loading state is true
+            <CircularProgress
+              size={20} // Adjust size to match the button size
+              sx={{ color: "white" }} // Style for the progress circle
+            />
+          ) : (
+            <AddIcon sx={{ fontSize: "20px" }} />
+          )}
         </IconButton>
         <IconButton
           size="small"
