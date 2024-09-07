@@ -12,6 +12,16 @@ import { Popover, Typography, Box, Button } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { ArrowForward, Login } from "@mui/icons-material";
 
+const style = {
+  bgcolor: "rgb(29 28 28)",
+  color: "#FFFFFF",
+  boxShadow: 24,
+  py: 2,
+  px: 3,
+  border: "none",
+  borderRadius: 2,
+};
+
 const User = () => {
   const { currentUser, logOut } = useAuth();
   const navigate = useNavigate();
@@ -60,30 +70,36 @@ const User = () => {
               open={open}
               anchorEl={anchorEl}
               onClose={handleClose}
+              marginThreshold={8} 
               anchorOrigin={{
                 vertical: "bottom",
-                horizontal: "left",
+                horizontal: "center", 
               }}
               transformOrigin={{
                 vertical: "top",
-                horizontal: "left",
+                horizontal: "right",
+              }}
+              PaperProps={{
+                sx: {
+                  overflow: "hidden", 
+                  borderRadius: 2, 
+                  bgcolor: "#1D1C1C", 
+                },
               }}
             >
               <Box
-                p={2}
+                p={3}
                 display="flex"
                 flexDirection="column"
                 alignItems="center"
+                color="#FFFFFF"
               >
-                {/* Display Name in larger and bold font */}
-                <Typography variant="h6" fontWeight="bold">
+                <Typography variant="h6" fontWeight="bold" gutterBottom>
                   {currentUser.displayName}
                 </Typography>
-                {/* Email in a smaller font */}
-                <Typography variant="body2" color="textSecondary">
+                <Typography variant="body2" gutterBottom>
                   {currentUser.email}
                 </Typography>
-                {/* Logout Button with Logout Icon */}
                 <LogoutButton
                   startIcon={<LogoutIcon />}
                   onClick={handleLogout}

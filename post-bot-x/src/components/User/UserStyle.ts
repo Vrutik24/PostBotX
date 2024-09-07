@@ -31,7 +31,11 @@ export const Avatar = styled(MUIAvatar)(({ theme }) => ({
 }));
 
 export const LogoutButton = styled(Button)(({ theme }) => ({
-  backgroundColor: "#7ed33b", // light green
-  color: "#151414", // #151414
+  backgroundColor: "#e53935", 
+  color: "#ffffff", 
   marginTop: theme.spacing(2),
+  '&:hover': {
+    backgroundColor: "#b71c1c", 
+  },
 }));
+
