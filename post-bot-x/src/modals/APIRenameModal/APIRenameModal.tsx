@@ -6,12 +6,13 @@ import {
   TextField,
   Button,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { API, Collection } from "../../types";
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
 
-interface CollectionModalProps {
+interface APIRenameModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (newName: string, id?: string) => void;
@@ -24,7 +25,7 @@ const style = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 400,
-  bgcolor: "#2e2b2b",
+  bgcolor: "rgb(29 28 28)",
   color: "#FFFFFF",
   boxShadow: 24,
   py: 2,
@@ -33,7 +34,7 @@ const style = {
   borderRadius: 2,
 };
 
-const APIRenameModal: React.FC<CollectionModalProps> = ({
+const APIRenameModal: React.FC<APIRenameModalProps> = ({
   isOpen,
   onClose,
   onSubmit,
@@ -43,13 +44,20 @@ const APIRenameModal: React.FC<CollectionModalProps> = ({
   useEffect(() => {
     setCurrentAPIName(api?.name || "");
   }, [api]);
-
+  const [loading, setLoading] = useState(false);
   const handleNameChange = (event: ChangeEvent<HTMLInputElement>) => {
     setCurrentAPIName(event.target.value);
   };
 
-  const handleSubmit = () => {
-    onSubmit(currentAPIName.trim(), api?.id);
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      await onSubmit(currentAPIName.trim(), api?.id);
+    } catch {
+      console.log("API rename failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -62,15 +70,13 @@ const APIRenameModal: React.FC<CollectionModalProps> = ({
             alignItems: "center",
           }}
         >
-          <Typography>
-            Rename API
-          </Typography>
+          <Typography>Rename API</Typography>
           <IconButton
             onClick={onClose}
             sx={{
               color: "white",
               "&:hover": {
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                backgroundColor: "rgb(29 28 28)",
               },
               borderRadius: "8px",
             }}
@@ -87,7 +93,7 @@ const APIRenameModal: React.FC<CollectionModalProps> = ({
           sx={{
             "& .MuiInputBase-input": {
               color: "white",
-              border: "1px solid rgba(255, 255, 255, 0.1)",
+              border: "1px solid #2b2b2b",
               borderRadius: "8px",
             },
             "& .MuiOutlinedInput-root": {
@@ -109,12 +115,13 @@ const APIRenameModal: React.FC<CollectionModalProps> = ({
               color: "white",
               borderRadius: "8px",
               border: "none",
-              backgroundColor: "rgba(255, 255, 255, 0.1)",
+              backgroundColor: "#2b2b2b",
               "&:hover": {
                 backgroundColor: "rgba(255, 255, 255, 0.2)",
                 border: "none",
               },
             }}
+            disabled={loading}
           >
             Cancel
           </Button>
@@ -124,18 +131,22 @@ const APIRenameModal: React.FC<CollectionModalProps> = ({
             sx={{
               color: "white",
               borderRadius: "8px",
-              backgroundColor:  "rgba(255, 255, 255, 0.1)",
+              backgroundColor: "#4CAF50",
               "&:hover": {
-                backgroundColor: "rgba(255, 255, 255, 0.2)",
+                backgroundColor: "darkgreen",
               },
               "&.Mui-disabled": {
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                backgroundColor: "#252525",
                 color: "#FFFFFF50",
               },
             }}
-            disabled={currentAPIName.trim() === ""}
+            disabled={currentAPIName.trim() === ""  || loading}
           >
-            Save
+            {loading ? (
+              <CircularProgress size={24} sx={{ color: "#4CAF50" }} />
+            ) : (
+              "Save"
+            )}
           </Button>
         </Box>
       </Box>
