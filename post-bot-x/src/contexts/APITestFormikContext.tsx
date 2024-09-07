@@ -151,6 +151,7 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
                 {
                   key: "",
                   value: "",
+                  isChecked: false,
                 },
               ],
           queryParameters: apiData.isAutomated
@@ -160,12 +161,14 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
                   {
                     key: "",
                     value: [""],
+                    isChecked: false,
                   },
                 ]
             : [
                 {
                   key: "",
                   value: [""],
+                  isChecked: false,
                 },
               ],
           manualQueryParameters: !apiData.isAutomated
@@ -175,12 +178,14 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
                   {
                     key: "",
                     value: [""],
+                    isChecked: false,
                   },
                 ]
             : [
                 {
                   key: "",
                   value: [""],
+                  isChecked: false,
                 },
               ],
         });
@@ -208,18 +213,21 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
       {
         key: "",
         value: "",
+        isChecked: false,
       },
     ],
     queryParameters: [
       {
         key: "",
         value: [""],
+        isChecked: false,
       },
     ],
     manualQueryParameters: [
       {
         key: "",
         value: [""],
+        isChecked: false,
       },
     ],
   };

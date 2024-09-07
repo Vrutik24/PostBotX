@@ -11,6 +11,7 @@ import {
   Table,
   OutlinedInput,
   CircularProgress,
+  Checkbox,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -40,7 +41,7 @@ type HeadersModalProps = {
   selectedCollection: Collection;
 };
 
-const defaultHeaders: Header[] = [{ key: "", value: "" }];
+const defaultHeaders: Header[] = [{ key: "", value: "", isChecked: false }];
 
 const HeadersModal: React.FC<HeadersModalProps> = ({
   open,
@@ -54,7 +55,10 @@ const HeadersModal: React.FC<HeadersModalProps> = ({
     const fetchCollection = async () => {
       const collection = await getCollectionById(selectedCollection.id || "");
       if (collection) {
-        setHeaders([...collection.headers, { key: "", value: "" }]);
+        setHeaders([
+          ...collection.headers,
+          { key: "", value: "", isChecked: false },
+        ]);
         setLoading(false);
       }
     };
@@ -77,8 +81,18 @@ const HeadersModal: React.FC<HeadersModalProps> = ({
     const updatedHeaders = [...headers];
     updatedHeaders[index][field] = value;
 
+    // Check if the key or value is empty and uncheck the checkbox if true
+    if (field === "key" && (!value || value.trim() === "")) {
+      updatedHeaders[index].isChecked = false;
+    } else if (field === "value" && (!value || value.trim() === "")) {
+      updatedHeaders[index].isChecked = false;
+    } else {
+      // If both fields are filled, you may want to ensure the checkbox is checked
+      updatedHeaders[index].isChecked = true;
+    }
+
     if (index === headers.length - 1 && value.trim() !== "") {
-      updatedHeaders.push({ key: "", value: "" });
+      updatedHeaders.push({ key: "", value: "", isChecked: false });
     }
 
     if (
@@ -96,12 +110,17 @@ const HeadersModal: React.FC<HeadersModalProps> = ({
     const filteredHeaders = headers.filter(
       (header) => header.key.trim() !== "" || header.value.trim() !== ""
     );
-
+    console.log("filteredHeaders", filteredHeaders);
     await updateCollectionHeaders(
       selectedCollection.collectionId,
       filteredHeaders
     );
     onClose();
+  };
+
+  const handleCheckboxChange = (index: number) => {
+    headers[index].isChecked = !headers[index].isChecked; // Toggle the checked state
+    setHeaders([...headers]);
   };
 
   return (
@@ -161,6 +180,23 @@ const HeadersModal: React.FC<HeadersModalProps> = ({
                       },
                     }}
                   >
+                    <TableCell sx={{ borderBottom: "none", width: "24px" }}>
+                      <Checkbox
+                        checked={
+                          header.key !== "" &&
+                          header.value !== "" &&
+                          header.isChecked
+                        }
+                        onChange={() => handleCheckboxChange(index)}
+                        sx={{
+                          color: "#FFFFFF",
+                          padding: 0,
+                          "&.Mui-checked": {
+                            color: "#FFFFFF",
+                          },
+                        }}
+                      />
+                    </TableCell>
                     <TableCell sx={{ borderBottom: "none" }}>
                       <OutlinedInput
                         value={header.key}

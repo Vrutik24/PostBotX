@@ -1,4 +1,5 @@
 export interface Header {
-    key: string;
-    value: string;
-  }
+  key: string;
+  value: string;
+  isChecked: boolean;
+}
