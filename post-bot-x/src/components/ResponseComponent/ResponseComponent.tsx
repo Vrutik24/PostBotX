@@ -6,7 +6,7 @@ import ResponseContent from "./ResponseContent";
 import { DragHandle } from "@mui/icons-material";
 
 const ResponseComponent: React.FC<{
-  response: string;
+  response: [] | null;
   setIsVisible: (visible: boolean) => void;
 }> = ({ response, setIsVisible }) => {
   const [height, setHeight] = useState(200);
@@ -18,64 +18,6 @@ const ResponseComponent: React.FC<{
     setIsDragging(true);
     initialYRef.current = e.clientY;
     initialHeightRef.current = height;
-  };
-
-  const resp = {
-    testResults: [
-      {
-        testData:
-          '{\n    "name": "Apple MacBook Pro 16",\n    "data": {\n        "year": 2019,\n        "price": 1849.99,\n        "CPU model": "Intel Core i9",\n        "Hard disk size": "1 TB"\n    }\n}',
-        description:
-          "Positive test case with all fields filled with valid values.",
-        statusCode: 200,
-        responseContent:
-          '{"id":"ff808181918f1dd501918f989ea8007d","name":"Apple MacBook Pro 16","createdAt":"2024-08-26T16:50:29.678+00:00","data":{"year":2019,"price":1849.99,"CPU model":"Intel Core i9","Hard disk size":"1 TB"}}',
-        isSuccessful: true,
-        errorAnalysis: "",
-      },
-      {
-        testData:
-          '{\n    "name": "MacBook",\n    "data": {\n        "year": 2020,\n        "price": 10000,\n        "CPU model": null,\n        "Hard disk size": "512 GB"\n    }\n}',
-        description:
-          "Negative test case with invalid price value and a null CPU model.",
-        statusCode: 200,
-        responseContent:
-          '{"id":"ff808181918f1dd501918f98a2db007e","name":"MacBook","createdAt":"2024-08-26T16:50:30.760+00:00","data":{"year":2020,"price":10000,"CPU model":null,"Hard disk size":"512 GB"}}',
-        isSuccessful: true,
-        errorAnalysis: "",
-      },
-      {
-        testData:
-          '{\n    "name": "MacBook Pro 16 inches with Touch Bar",\n    "data": {\n        "year": 2018,\n        "price": 9999.99,\n        "CPU model": "AMD Ryzen 9",\n        "Hard disk size": "2 TB"\n    }\n}',
-        description:
-          "Positive test case with different valid values for each field.",
-        statusCode: 200,
-        responseContent:
-          '{"id":"ff808181918f1dd501918f98a529007f","name":"MacBook Pro 16 inches with Touch Bar","createdAt":"2024-08-26T16:50:31.348+00:00","data":{"year":2018,"price":9999.99,"CPU model":"AMD Ryzen 9","Hard disk size":"2 TB"}}',
-        isSuccessful: true,
-        errorAnalysis: "",
-      },
-      {
-        testData:
-          '{\n    "name": "Mac",\n    "data": {\n        "year": 2023,\n        "price": -100,\n        "CPU model": "Intel Core i7",\n        "Hard disk size": "500 GB"\n    }\n}',
-        description: "Negative test case with invalid year and price values.",
-        statusCode: 200,
-        responseContent:
-          '{"id":"ff808181918f1dd501918f98a85c0080","name":"Mac","createdAt":"2024-08-26T16:50:32.165+00:00","data":{"year":2023,"price":-100,"CPU model":"Intel Core i7","Hard disk size":"500 GB"}}',
-        isSuccessful: true,
-        errorAnalysis: "",
-      },
-      {
-        testData:
-          '{\n    "name": "Apple MacBook Pro 16 inches",\n    "data": {\n        "year": 2020,\n        "price": 9999,\n        "CPU model": "",\n        "Hard disk size": "1 TB"\n    }\n}',
-        description: "Edge test case with an empty string for CPU model.",
-        statusCode: 200,
-        responseContent:
-          '{"id":"ff808181918f1dd501918f98aa920081","name":"Apple MacBook Pro 16 inches","createdAt":"2024-08-26T16:50:32.734+00:00","data":{"year":2020,"price":9999,"CPU model":"","Hard disk size":"1 TB"}}',
-        isSuccessful: true,
-        errorAnalysis: "",
-      },
-    ],
   };
 
   const handleMouseMove = (e: MouseEvent) => {
@@ -169,8 +111,8 @@ const ResponseComponent: React.FC<{
           </IconButton>
         </Box>
       </div>
-      {resp ? (
-        <ResponseContent testResults={resp.testResults} />
+      {response ? (
+        <ResponseContent testResults={response} />
       ) : (
         <div
           style={{
