@@ -13,16 +13,13 @@ export const NotificationContainer = styled(Box)(({ theme }) => ({
 
 // Notification item component with grey background
 export const NotificationItem = styled(Paper)(({ theme }) => ({
-  padding: theme.spacing(2),
-  marginBottom: theme.spacing(2), 
   width: "100%",
   display: "flex",
   flexDirection: "column",
-  backgroundColor: "#151414", // Darker grey
+  backgroundColor: "transparent", // Darker grey
   color: "#fff", // White text for contrast
-  borderRadius: "8px", // Increase border radius
-  justifyContent:"center",
-  alignItems:"center",
+  justifyContent: "center",
+  alignItems: "left",
 }));
 
 export const NotificationList = styled(Box)(({ theme }) => ({
@@ -37,28 +34,28 @@ export const NotificationList = styled(Box)(({ theme }) => ({
   marginTop: theme.spacing(1), // Adds some spacing from the title
   /* Custom scrollbar styling */
   "&::-webkit-scrollbar": {
-    width: "6px", // Width of the scrollbar
-  },
-  "&::-webkit-scrollbar-track": {
-    backgroundColor: "#1D1C1C", // Background color of the scrollbar track
+    width: "4px",
   },
   "&::-webkit-scrollbar-thumb": {
-    backgroundColor: "#4CAF50", // Light green color for the scrollbar thumb
-    borderRadius: "8px", // Rounded corners of the scrollbar thumb
+    backgroundColor: "gray",
+    borderRadius: "4px",
+  },
+  "&::-webkit-scrollbar-thumb:hover": {
+    backgroundColor: "#555",
   },
 }));
 
-
 // Styled Bell Icon
 export const BellIcon = styled(NotificationsIcon)(({ theme }) => ({
-  color: "#4CAF50", // Green color
-  width: 40, // Adjusted width
-  height: 40, // Adjusted height
+  color: "#d9d7d7", 
+  width: 30, // Adjusted width
+  height: 30, // Adjusted height
   cursor: "pointer",
 }));
 
 export const AcceptActionButton = styled(Button)(({ theme }) => ({
-  color: "#4CAF50",
+  background: "#4CAF50",
+  color: "#FFF",
   textTransform: "none", // Prevent text from being all caps
   display: "flex",
   alignItems: "center",
@@ -66,13 +63,14 @@ export const AcceptActionButton = styled(Button)(({ theme }) => ({
   "& .MuiSvgIcon-root": {
     marginRight: theme.spacing(0.5),
   },
-  '&:hover': {
-    color: "#127807", 
+  "&:hover": {
+    backgroundColor: "darkgreen",
   },
 }));
 
 export const DenyActionButton = styled(Button)(({ theme }) => ({
-  color: "#d61529",
+  background: "#FFFFFF33",
+  color: "#FFF",
   textTransform: "none", // Prevent text from being all caps
   display: "flex",
   alignItems: "center",
@@ -80,8 +78,7 @@ export const DenyActionButton = styled(Button)(({ theme }) => ({
   "& .MuiSvgIcon-root": {
     marginRight: theme.spacing(0.5),
   },
-  '&:hover': {
-    color: "#873109", 
+  "&:hover": {
+    background: "#FFFFFF70",
   },
 }));
-
