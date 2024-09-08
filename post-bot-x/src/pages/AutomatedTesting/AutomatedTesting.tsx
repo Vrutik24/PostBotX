@@ -76,12 +76,8 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
     setTestingMethod(event.target.value as "Automated" | "Manual");
   };
 
-  const {
-    automatedPostWrite,
-    automatedPostRead,
-  } = useAutomatedAPICalls();
-  const { manualPostRead, manualPostWrite } =
-    useManualAPICalls();
+  const { automatedPostWrite, automatedPostRead } = useAutomatedAPICalls();
+  const { manualPostRead, manualPostWrite } = useManualAPICalls();
 
   const { updateAPI } = useAPI();
 
@@ -93,6 +89,15 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
       : setCheckedGlobalHeaders([]);
   }, [currentCollection]);
 
+  const isValidPayload = (payload: string[]) =>
+    payload.some((item) => item !== "");
+
+  const getPayload = (payload: string[] | undefined): string[] | null =>
+    Array.isArray(payload) && isValidPayload(payload) ? payload : null;
+
+  const getCheckedItems = <T extends { isChecked: boolean }>(items: T[]) =>
+    items.filter((item) => item.isChecked);
+
   const testApi = async () => {
     setResponseData(null);
     await updateAPIById();
@@ -100,19 +105,28 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
     const isWriteMethod = ["Post", "Patch", "Put"].includes(
       formik.values.apiType
     );
+    const headersPayload = [
+      ...checkedGlobalHeaders,
+      ...getCheckedItems(formik.values.headers),
+    ];
+    const queryParameters = getCheckedItems(formik.values.queryParameters);
+    const manualQueryParameters = getCheckedItems(
+      formik.values.manualQueryParameters
+    );
+    const automatedPayload = getPayload(
+      formik.values.configuredPayload?.trim()
+        ? [formik.values.configuredPayload.trim()]
+        : []
+    );
+    const manualPayload = getPayload(formik.values.manualPayload);
     const apiPayload: APIRequestPayload = {
       apiType: formik.values.apiType,
       url: formik.values.url,
       isAutomated: testingMethod == "Automated" ? true : false,
-      payload:
-        testingMethod == "Automated"
-          ? [formik.values.configuredPayload]
-          : formik.values.manualPayload,
+      payload: testingMethod == "Automated" ? automatedPayload : manualPayload,
       queryParameters:
-        testingMethod == "Automated"
-          ? formik.values.queryParameters
-          : formik.values.manualQueryParameters,
-      headers: [...checkedGlobalHeaders, ...formik.values.headers],
+        testingMethod == "Automated" ? queryParameters : manualQueryParameters,
+      headers: headersPayload,
     };
 
     const cancelTokenSource = axios.CancelToken.source();
@@ -166,7 +180,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
           apiRequestData?.collectionId
         );
       } catch (error) {
-        snackbar.error("Error occurred while updating an api!")
+        snackbar.error("Error occurred while updating an api!");
         console.error("Error updating api!");
       } finally {
         setIsUpdatingAPI(false);

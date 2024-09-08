@@ -5,7 +5,7 @@ export interface APIRequestPayload {
   apiType: string;
   isAutomated: boolean;
   url: string;
-  payload: string[];
+  payload: string[] | null;
   headers: Header[];
   queryParameters: QueryParameter[];
 }
