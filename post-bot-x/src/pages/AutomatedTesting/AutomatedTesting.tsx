@@ -38,6 +38,7 @@ import { Header } from "../../types";
 import axios, { CancelTokenSource } from "axios";
 import { useAutomatedAPICalls } from "../../api/AutomatedTestService";
 import { useManualAPICalls } from "../../api/ManualTestService";
+import CallSnackbar from "../../contexts/CallSnackbar";
 
 interface AutomatedTestingProps {
   setIsVisible: (isVisible: boolean) => void;
@@ -58,8 +59,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
   );
   const inputRef = useRef(null);
   const cancelTokenSourceRef = useRef<CancelTokenSource | null>(null);
-
-  // const { showMessage } = useCallSnackbar()
+  const snackbar = CallSnackbar();
 
   const {
     formik,
@@ -79,10 +79,8 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
   const {
     automatedPostWrite,
     automatedPostRead,
-    automatedTestRead,
-    automatedTestWrite,
   } = useAutomatedAPICalls();
-  const { manualPostRead, manualPostWrite, manualTestRead, manualTestWrite } =
+  const { manualPostRead, manualPostWrite } =
     useManualAPICalls();
 
   const { updateAPI } = useAPI();
@@ -134,7 +132,6 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
       setIsVisible(true);
       setResponseData(results);
     } catch (error) {
-      // snackbar.error(`Error calling ${apiPayload.apiType} method:`);
       setIsVisible(false);
       console.error(`Error calling ${apiPayload.apiType} method:`, error);
     } finally {
@@ -169,6 +166,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
           apiRequestData?.collectionId
         );
       } catch (error) {
+        snackbar.error("Error occurred while updating an api!")
         console.error("Error updating api!");
       } finally {
         setIsUpdatingAPI(false);

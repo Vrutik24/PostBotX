@@ -1,13 +1,12 @@
-import { Alert, Box, Button, TextField } from "@mui/material";
+import { Box, Button, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { mapJsonToOutput } from "./MapJsonOutput";
 import { prettifyJSON } from "../../utils/PrettifyJson";
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
-// import CallSnackbar from "../../utils/Callsnackbar";
 import CallSnackbar from "../../contexts/CallSnackbar";
 
 const JSONBody = () => {
-  const { formik, apiRequestData } = useAPITestFormikContext();
+  const { formik } = useAPITestFormikContext();
   const [jsonInput, setJsonInput] = useState(formik.values.payload[0]);
   const [configuredJson, setConfiguredJson] = useState(
     formik.values.configuredPayload
@@ -26,7 +25,6 @@ const JSONBody = () => {
   const configureJsonObject = (json: string) => {
     try {
       const parsedJson = JSON.parse(json);
-      snackbar.error("Please enter valid Json object!")
       const configuredJson = mapJsonToOutput(parsedJson);
       const configuredStringifyJson = JSON.stringify(configuredJson, null, 2);
       setConfiguredJson(configuredStringifyJson);
