@@ -12,7 +12,7 @@ const Header = () => {
       display="flex"
       alignItems="center"
       justifyContent="flex-end"
-      width="90%"
+      width="100%"
       sx={{
         position: "absolute",
         top: 12,
@@ -20,7 +20,7 @@ const Header = () => {
         cursor: "pointer",
       }}
     >
-      <Box display="flex" alignItems="center" gap={1}>
+      <Box display="flex" alignItems="center" gap={1} sx={{ marginRight: 2 }}>
         {currentUser && <Notification />}
         <User />
       </Box>

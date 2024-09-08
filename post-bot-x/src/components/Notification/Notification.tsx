@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Popover, Typography, Box, IconButton, Badge } from "@mui/material";
-import { CheckCircleOutline, CancelOutlined } from "@mui/icons-material"; // Updated Icons
+import {
+  Popover,
+  Typography,
+  Box,
+  IconButton,
+  Badge,
+  Divider,
+  Avatar,
+} from "@mui/material";
 import { useNotification } from "../../contexts/NotificationContext";
 import { useCollection } from "../../contexts/CollectionContext";
 import { Notification as NotificationType } from "../../types";
@@ -68,6 +75,17 @@ const Notification: React.FC = () => {
     );
   };
 
+  const getUserInitials = (senderName: string) => {
+    if (senderName) {
+      const nameParts = senderName.split(" ");
+      if (nameParts.length > 1) {
+        return `${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase();
+      }
+      return nameParts[0][0].toUpperCase();
+    }
+    return "";
+  };
+
   const open = Boolean(anchorEl);
   const id = open ? "notification-popover" : undefined;
 
@@ -97,38 +115,67 @@ const Notification: React.FC = () => {
           vertical: "top",
           horizontal: "right",
         }}
-        PaperProps={{
-          sx: {
-            overflow: "hidden",
-            borderRadius: 2,
-            bgcolor: "#1D1C1C",
+        slotProps={{
+          paper: {
+            sx: {
+              overflow: "hidden",
+              borderRadius: 2,
+              bgcolor: "#1D1C1C",
+              ml: 7,
+            },
           },
         }}
       >
         <NotificationContainer>
           <Typography
-            variant="h6"
+            variant="body1"
             gutterBottom
-            align="center"
-            fontWeight="bold"
-            sx={{ color: "#4CAF50", paddingBottom: 1 }} // Add some padding below the title
+            align="left"
+            sx={{ color: "#FFFFFF", paddingBottom: 1 }} // Add some padding below the title
           >
-            Notifications
+            Notifications ({notifications.length})
           </Typography>
+          <Divider
+            sx={{
+              width: "100%",
+              mb: 2,
+              backgroundColor: "#FFFFFF33",
+            }}
+          />
           {notifications.length === 0 ? (
-            <Typography variant="body2" color="white" align="center">
+            <Typography variant="body2" color="#FFFFFF50" align="center">
               You don't have any new notifications.
             </Typography>
           ) : (
             <NotificationList>
               {notifications.map((notification: NotificationType) => (
-                <NotificationItem key={notification.collectionId}>
+                <NotificationItem
+                  key={notification.collectionId}
+                  sx={{
+                    boxShadow: "none",
+                    marginBottom: 1,
+                  }}
+                >
                   <Box padding={1}>
-                    <Typography variant="body2">
-                      {notification.senderName} shared the collection{" "}
-                      {notification.collectionName}
-                    </Typography>
-                    <Box display="flex" justifyContent="center" mt={1}>
+                    <Box sx={{ display: "flex", alignItems: "center" }}>
+                      <Avatar
+                        sx={{
+                          backgroundColor: "#d9d7d7",
+                          color: "black",
+                          mr: 3,
+                        }}
+                      >
+                        {getUserInitials(notification.senderName)}
+                      </Avatar>
+                      <Typography variant="body2">
+                        <Box component="span" sx={{ fontWeight: "bold" }}>
+                          {notification.senderName}
+                        </Box>
+                        {` shared the collection '${notification.collectionName}'`}
+                      </Typography>
+                    </Box>
+
+                    <Box display="flex" justifyContent="left" ml={8}>
                       <AcceptActionButton
                         size="small"
                         onClick={() =>
@@ -138,13 +185,13 @@ const Notification: React.FC = () => {
                           )
                         }
                       >
-                        <CheckCircleOutline fontSize="small" /> Accept
+                        Accept
                       </AcceptActionButton>
                       <DenyActionButton
                         size="small"
                         onClick={() => handleDeny(notification.id)}
                       >
-                        <CancelOutlined fontSize="small" /> Deny
+                        Deny
                       </DenyActionButton>
                     </Box>
                   </Box>
