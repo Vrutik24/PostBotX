@@ -42,7 +42,7 @@ import { useAPI } from "../../contexts/APIContext";
 import getAPIColor from "../../utils/GetAPIColor";
 import { useEffect, useRef, useState } from "react";
 import SelectTestingMethodButton from "../../components/SelectTestingMethodButton/SelectTestingMethodButton";
-import { API } from "../../types";
+import { API, Header } from "../../types";
 import axios, { CancelTokenSource } from "axios";
 // import CallSnackbar from "../../utils/Callsnackbar";
 import CallSnackbar from "../../contexts/CallSnackbar";
@@ -61,6 +61,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
   const [isUpdatingAPI, setIsUpdatingAPI] = useState<boolean>(false);
   const [isTestingAPI, setIsTestingAPI] = useState<boolean>(false);
   const [responseData, setResponseData] = useState(null);
+  const [checkedGlobalHeaders, setCheckedGlobalHeaders] = useState<Header[]>([]);
   const inputRef = useRef(null);
   const cancelTokenSourceRef = useRef<CancelTokenSource | null>(null);
 
@@ -85,6 +86,12 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
 
   const { updateAPI } = useAPI();
 
+  useEffect(() => {
+    currentCollection?.headers ? setCheckedGlobalHeaders(
+      currentCollection?.headers.filter((x) => x.isChecked)
+    ) : setCheckedGlobalHeaders([]); ;
+  }, [currentCollection]);
+
   const testApi = async () => {
     setResponseData(null);
     await updateAPIById();
@@ -104,7 +111,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
         testingMethod == "Automated"
           ? formik.values.queryParameters
           : formik.values.manualQueryParameters,
-      headers: formik.values.headers,
+      headers: [...checkedGlobalHeaders, ...formik.values.headers],
     };
 
     const cancelTokenSource = axios.CancelToken.source();

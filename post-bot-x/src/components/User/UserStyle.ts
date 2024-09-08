@@ -6,14 +6,13 @@ export const UserBox = styled(Box)(({ theme }) => ({
   height: "50px",
   width: "50px",
   display: "flex",
-  justifyContent: "flex-start",
+  justifyContent: "flex-end",
   color: "#4CAF50", // green
 }));
 
 export const UserContainer = styled(Box)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
-  gap: "15px",
   margin: "auto",
 }));
 

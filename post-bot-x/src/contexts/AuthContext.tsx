@@ -60,6 +60,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Update display name
       await updateProfile(user, { displayName: name });
       const existingAnonymousUserId = localStorage.getItem("anonymousUserId");
+      if (existingAnonymousUserId) {
+        localStorage.removeItem("anonymousUserId");
+      }
       const id = existingAnonymousUserId
         ? existingAnonymousUserId
         : generateUniqueId();

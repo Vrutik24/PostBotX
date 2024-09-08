@@ -8,7 +8,7 @@ import {
   Avatar,
   LogoutButton,
 } from "./UserStyle";
-import { Popover, Typography, Box, Button } from "@mui/material";
+import { Popover, Typography, Box, Button, Divider } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { ArrowForward, Login, Person } from "@mui/icons-material";
 
@@ -62,7 +62,6 @@ const User: React.FC<UserPorps> = ({ isAnonymousUser }) => {
 
   const open = Boolean(anchorEl); // Popover open state
   const id = open ? "user-popover" : undefined;
-
   return (
     <UserBox>
       <UserContainer>
@@ -83,11 +82,14 @@ const User: React.FC<UserPorps> = ({ isAnonymousUser }) => {
                 vertical: "top",
                 horizontal: "right",
               }}
-              PaperProps={{
-                sx: {
-                  overflow: "hidden",
-                  borderRadius: 2,
-                  bgcolor: "#1D1C1C",
+              slotProps={{
+                paper: {
+                  sx: {
+                    overflow: "hidden",
+                    borderRadius: 2,
+                    bgcolor: "#1D1C1C",
+                    
+                  },
                 },
               }}
             >
@@ -98,19 +100,39 @@ const User: React.FC<UserPorps> = ({ isAnonymousUser }) => {
                 alignItems="center"
                 color="#FFFFFF"
               >
-                <Typography variant="h6" fontWeight="bold" gutterBottom>
+                <Typography variant="body1" fontWeight="bold" gutterBottom>
                   {currentUser.displayName}
                 </Typography>
-                <Typography variant="body2" gutterBottom>
+                <Typography
+                  variant="body2"
+                  gutterBottom
+                  sx={{ color: "#FFFFFF99" }}
+                >
                   {currentUser.email}
                 </Typography>
-                <LogoutButton
-                  startIcon={<LogoutIcon />}
+                <Divider
+                  sx={{
+                    width: "100%",
+                    my: 2,
+                    backgroundColor: "#FFFFFF33",
+                  }}
+                />
+                <Button
                   onClick={handleLogout}
-                  variant="contained"
+                  variant="text"
+                  sx={{
+                    textTransform: "capitalize",
+                    color: "#FFFFFF",
+                    backgroundColor: "#FFFFFF33",
+                    textAlign: "left",
+                    px: 2,
+                    "&:hover": {
+                      backgroundColor: "#FFFFFF50",
+                    },
+                  }}
                 >
-                  Logout
-                </LogoutButton>
+                  Log out
+                </Button>
               </Box>
             </Popover>
           </>
@@ -135,6 +157,7 @@ const User: React.FC<UserPorps> = ({ isAnonymousUser }) => {
                     color: "#151414",
                     borderRadius: "16px",
                   },
+
                 }}
               >
                 Login
