@@ -18,6 +18,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { Collection, Header } from "../../types";
 import { useCollection } from "../../contexts/CollectionContext";
 import { Delete } from "@mui/icons-material";
+import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
 
 const modalStyle = {
   position: "absolute" as const,
@@ -49,20 +50,21 @@ const HeadersModal: React.FC<HeadersModalProps> = ({
   selectedCollection,
 }) => {
   const { updateCollectionHeaders, getCollectionById } = useCollection();
+  const { setCurrentCollection } = useAPITestFormikContext();
   const [headers, setHeaders] = useState<Header[]>(defaultHeaders);
   const [loading, setLoading] = useState<boolean>(true);
+  const fetchCollection = async () => {
+    const collection = await getCollectionById(selectedCollection.id || "");
+    if (collection) {
+      setHeaders([
+        ...collection.headers,
+        { key: "", value: "", isChecked: false },
+      ]);
+      setLoading(false);
+      setCurrentCollection(collection);
+    }
+  };
   useEffect(() => {
-    const fetchCollection = async () => {
-      const collection = await getCollectionById(selectedCollection.id || "");
-      if (collection) {
-        setHeaders([
-          ...collection.headers,
-          { key: "", value: "", isChecked: false },
-        ]);
-        setLoading(false);
-      }
-    };
-
     fetchCollection();
   }, [getCollectionById, selectedCollection]);
 
@@ -115,6 +117,7 @@ const HeadersModal: React.FC<HeadersModalProps> = ({
       selectedCollection.collectionId,
       filteredHeaders
     );
+    fetchCollection();
     onClose();
   };
 

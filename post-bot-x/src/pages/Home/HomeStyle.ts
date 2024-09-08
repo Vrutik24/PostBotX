@@ -5,7 +5,7 @@ import { Login } from "@mui/icons-material"; // Import Login icon
 export const HomePage = styled(Box)(({ theme }) => ({
   height: "100vh",
   width: "100%",
-  backgroundColor: '#151414', // Dark background
+  backgroundColor: "#151414", // Dark background
   overflow: "hidden", // Prevent scrolling
   position: "relative", // To position the login icon absolutely
   display: "flex",
@@ -42,6 +42,9 @@ export const MainButton = styled(Button)(({ theme }) => ({
   padding: "15px",
   borderRadius: "20px",
   cursor: "pointer",
+  "&:hover": {
+    backgroundColor: "#006400",
+  },
 }));
 
 export const Description = styled(Typography)(({ theme }) => ({
@@ -58,7 +61,7 @@ export const Description = styled(Typography)(({ theme }) => ({
 export const FeaturePage = styled(Box)(({ theme }) => ({
   height: "calc(100vh - 100px)", // Adjust height to fit within viewport
   width: "100%", // Changed from 100vw to 100%
-  backgroundColor: '#151414', // Dark background
+  backgroundColor: "#151414", // Dark background
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
@@ -82,7 +85,7 @@ export const FeatureContentPaper = styled(Paper)(({ theme }) => ({
   gap: "10px",
   alignItems: "center",
   justifyContent: "center",
-  backgroundColor: '#151414', // Dark background for feature cards
+  backgroundColor: "#151414", // Dark background for feature cards
   border: `3px solid #4CAF50`, // Light green border
   color: "#4CAF50", // Light green text
   padding: "20px",
