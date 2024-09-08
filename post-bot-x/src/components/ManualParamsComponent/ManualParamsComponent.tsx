@@ -71,24 +71,31 @@ const ManualParamsComponent = () => {
     const { manualQueryParameters } = formik.values;
     const isLastRow = index === manualQueryParameters.length - 1;
     const newValue = e.target.value;
-
-    // For checking the specific value field
+    const updatedManualQueryParameters = [...manualQueryParameters];
     const fieldKey = field.startsWith("value") ? "value" : "key";
 
-    // Check if the key or any value is empty, uncheck the checkbox if true
-    if (fieldKey === "key" && isEmptyField(newValue)) {
-      manualQueryParameters[index].isChecked = false;
-    } else if (
-      fieldKey === "value" &&
-      areAllValuesEmpty(manualQueryParameters[index].value)
-    ) {
-      manualQueryParameters[index].isChecked = false;
+    if (field.startsWith("value")) {
+      const valueIndex = parseInt(field.split(".")[1]);
+      updatedManualQueryParameters[index].value[valueIndex] = newValue;
     } else {
-      manualQueryParameters[index].isChecked = true;
+      updatedManualQueryParameters[index].key = newValue;
+    }
+
+    // Calculate if all values in the row are empty
+    const areValuesEmpty = areAllValuesEmpty(
+      updatedManualQueryParameters[index].value
+    );
+    const isKeyEmpty = isEmptyField(updatedManualQueryParameters[index].key);
+
+    // Update the checkbox state based on the new values
+    if (isKeyEmpty || areValuesEmpty) {
+      updatedManualQueryParameters[index].isChecked = false;
+    } else {
+      updatedManualQueryParameters[index].isChecked = true;
     }
 
     if (
-      isRowEmpty(manualQueryParameters, index, fieldKey, newValue) &&
+      isRowEmpty(updatedManualQueryParameters, index, fieldKey, newValue) &&
       !isLastRow
     ) {
       deleteManualQueryParameter(index);
@@ -96,7 +103,7 @@ const ManualParamsComponent = () => {
       if (
         isLastRow &&
         !rowAddedFlags[index] &&
-        (manualQueryParameters[index].key || newValue)
+        (updatedManualQueryParameters[index].key || newValue)
       ) {
         setRowAddedFlags((prevFlags) => {
           const updatedFlags = [...prevFlags];
@@ -104,7 +111,7 @@ const ManualParamsComponent = () => {
           return updatedFlags;
         });
         formik.setFieldValue("manualQueryParameters", [
-          ...manualQueryParameters,
+          ...updatedManualQueryParameters,
           { key: "", value: [""] },
         ]);
       }
