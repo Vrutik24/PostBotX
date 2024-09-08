@@ -1,62 +1,71 @@
 import apiClient from "./axios";
 import { APIRequestPayload } from "../types/APIRequestPayload";
 import { CancelToken } from "axios";
-import CallSnackbar from "../utils/Callsnackbar";
+import CallSnackbar from "../contexts/CallSnackbar";
 
-export const automatedTestWrite = async (
-  payload: APIRequestPayload,
-  cancelToken: CancelToken
-) => {
-  try {
-    const response = await apiClient.post("automated/write", payload, {
-      cancelToken,
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error occurred while processing the request!");
-    CallSnackbar.error("Error occurred while processing the request");
-    throw error;
-  }
-};
+export const useAutomatedAPICalls = () => {
+  const snackbar = CallSnackbar();
 
-export const automatedTestRead = async (
-  payload: APIRequestPayload,
-  cancelToken: CancelToken
-) => {
-  try {
-    const response = await apiClient.post("automated/read", payload, {
-      cancelToken,
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error occurred while processing the request!");
-    CallSnackbar.error("Error occurred while processing the request");
-    throw error;
-  }
-};
+  const automatedTestWrite = async (
+    payload: APIRequestPayload,
+    cancelToken: CancelToken
+  ) => {
+    try {
+      const response = await apiClient.post("automated/write", payload, {
+        cancelToken,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error occurred while processing the request!");
+      snackbar.error("Error occurred while processing the request");
+      throw error;
+    }
+  };
 
-export const automatedPostWrite = async (
-  payload: APIRequestPayload,
-  cancelToken: CancelToken
-) => {
-  try {
-    const data = await automatedTestWrite(payload, cancelToken);
-    return data;
-  } catch (error) {
-    console.error("Error occurred while processing the request", error);
-    CallSnackbar.error("Error occurred while processing the request")
-  }
-};
+  const automatedTestRead = async (
+    payload: APIRequestPayload,
+    cancelToken: CancelToken
+  ) => {
+    try {
+      const response = await apiClient.post("automated/read", payload, {
+        cancelToken,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error occurred while processing the request!");
+      snackbar.error("Error occurred while processing the request");
+      throw error;
+    }
+  };
 
-export const automatedPostRead = async (
-  payload: APIRequestPayload,
-  cancelToken: CancelToken
-) => {
-  try {
-    const data = await automatedTestRead(payload, cancelToken);
-    return data;
-  } catch (error) {
-    console.error("Error occurred while processing the request", error);
-    CallSnackbar.error("Error occurred while processing the request")
-  }
+  const automatedPostWrite = async (
+    payload: APIRequestPayload,
+    cancelToken: CancelToken
+  ) => {
+    try {
+      const data = await automatedTestWrite(payload, cancelToken);
+      return data;
+    } catch (error) {
+      console.error("Error occurred while processing the request", error);
+    }
+  };
+
+  const automatedPostRead = async (
+    payload: APIRequestPayload,
+    cancelToken: CancelToken
+  ) => {
+    try {
+      const data = await automatedTestRead(payload, cancelToken);
+      return data;
+    } catch (error) {
+      console.error("Error occurred while processing the request", error);
+    }
+  };
+
+  return {
+    automatedTestWrite,
+    automatedTestRead,
+    automatedPostWrite,
+    automatedPostRead,
+  };
 };

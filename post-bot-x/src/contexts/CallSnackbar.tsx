@@ -1,4 +1,4 @@
-import { useSnackbar, SnackbarProvider } from "notistack";
+import { useSnackbar } from "notistack";
 import { Button } from "@mui/material";
 
 type TAnchorOrigin = {
