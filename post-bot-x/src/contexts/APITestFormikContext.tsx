@@ -29,11 +29,11 @@ interface FormikContextType {
   setTestingMethod: (method: "Automated" | "Manual") => void;
   setSelectedAPIId: (apiId: string) => void;
   setCurrentCollectionId: (collectionId: string) => void;
-  apiRequestData: API | undefined;
-  selectedAPIId: string | undefined;
-  collectionName: string;
-  apiName: string | undefined;
-  setAPIName: (apiName: string | undefined) => void;
+  apiRequestData?: API;
+  selectedAPIId?: string;
+  currentCollection?: Collection;
+  apiName?: string;
+  setAPIName: (apiName?: string) => void;
   fetchCollections: () => void;
   fetchRequestsForCollections: () => void;
   collections: Collection[];
@@ -57,7 +57,7 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
   const [selectedAPIId, setSelectedAPIId] = useState<string>();
   const [currentCollectionId, setCurrentCollectionId] = useState<string>();
   const [apiRequestData, setAPIRequestData] = useState<API | undefined>();
-  const [collectionName, setCollectionName] = useState("Collection");
+  const [currentCollection, setCurrentCollection] = useState<Collection>();
   const [apiName, setAPIName] = useState<string | undefined>("");
   const [collections, setCollections] = useState<Collection[]>([]);
   const [collectionsWithRequests, setCollectionsWithRequests] = useState<
@@ -105,7 +105,7 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
         id
       );
       if (collectionData) {
-        setCollectionName(collectionData.name);
+        setCurrentCollection(collectionData);
       }
     } catch (error) {
       console.error("Could not fetch collection!");
@@ -151,6 +151,7 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
                 {
                   key: "",
                   value: "",
+                  isChecked: false,
                 },
               ],
           queryParameters: apiData.isAutomated
@@ -160,12 +161,14 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
                   {
                     key: "",
                     value: [""],
+                    isChecked: false,
                   },
                 ]
             : [
                 {
                   key: "",
                   value: [""],
+                  isChecked: false,
                 },
               ],
           manualQueryParameters: !apiData.isAutomated
@@ -175,12 +178,14 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
                   {
                     key: "",
                     value: [""],
+                    isChecked: false,
                   },
                 ]
             : [
                 {
                   key: "",
                   value: [""],
+                  isChecked: false,
                 },
               ],
         });
@@ -208,18 +213,21 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
       {
         key: "",
         value: "",
+        isChecked: false,
       },
     ],
     queryParameters: [
       {
         key: "",
         value: [""],
+        isChecked: false,
       },
     ],
     manualQueryParameters: [
       {
         key: "",
         value: [""],
+        isChecked: false,
       },
     ],
   };
@@ -240,7 +248,7 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
         setCurrentCollectionId,
         apiRequestData,
         selectedAPIId,
-        collectionName,
+        currentCollection,
         apiName,
         setAPIName,
         fetchCollections,

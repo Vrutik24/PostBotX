@@ -1,7 +1,7 @@
 import { styled } from "@mui/material/styles";
 import { Box, Button, Typography } from "@mui/material";
 
-export const  CollectionNavbarBox = styled(Box)(({ theme }) => ({
+export const CollectionNavbarBox = styled(Box)(({ theme }) => ({
   height: "100vh",
   width: "350px",
   // padding: "20px",
@@ -33,4 +33,16 @@ export const AddCollectionButton = styled(Button)(({ theme }) => ({
 
 export const CollectionBoxContainer = styled(Box)(({ theme }) => ({
   marginTop: "20px",
+  overflowY: "auto",
+  height: "calc(100vh - 170px)",
+  "&::-webkit-scrollbar": {
+    width: "4px",
+  },
+  "&::-webkit-scrollbar-thumb": {
+    backgroundColor: "gray",
+    borderRadius: "4px",
+  },
+  "&::-webkit-scrollbar-thumb:hover": {
+    backgroundColor: "#555",
+  },
 }));

@@ -60,7 +60,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
     setTestingMethod,
     apiRequestData,
     selectedAPIId,
-    collectionName,
+    currentCollection,
     apiName,
     setAPIName,
     fetchRequestsForCollections,
@@ -164,7 +164,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
       <ContentBox>
         <CollectionInfoBox>
           <Box display={"flex"} alignItems={"center"} gap={"10px"} width={'60%'}>
-            <Typography sx={{ color: "gray" }}>{collectionName}</Typography>
+            <Typography sx={{ color: "gray" }}>{currentCollection?.name || "Collection"}</Typography>
             <Typography>/</Typography>
             <>
               {isEditingAPIName ? (
@@ -303,6 +303,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
             sx={{
               color: apiTypeColor,
               borderColor: "transparent",
+              textTransform: "uppercase",
               "& .MuiOutlinedInput-notchedOutline": {
                 borderColor: "transparent",
               },
@@ -334,17 +335,16 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
                   color: requestType.color,
                   margin: "10px",
                   borderRadius: "4px",
+                  textTransform: "uppercase",
                   "&:hover": {
-                    backgroundColor: "#383737",
-                    color: "white",
+                    backgroundColor: "#38373790",
                   },
                   "&.Mui-selected, &.Mui-selected:hover, &.Mui-focusVisible": {
-                    backgroundColor: "#4CAF50",
-                    color: "black",
+                    backgroundColor: "#383737",
                   },
                   "&.MuiButtonBase-root": {
                     "&.Mui-selected, &.Mui-selected:hover": {
-                      backgroundColor: "#4CAF50",
+                      backgroundColor: "#383737",
                     },
                   },
                 }}

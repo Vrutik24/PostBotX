@@ -86,9 +86,11 @@ const ResponseComponent: React.FC<{
     ) {
       const newHeight =
         initialHeightRef.current + (initialYRef.current - e.clientY);
-      if (newHeight > 0) {
-        setHeight(newHeight);
-      }
+      const clampedHeight = Math.max(
+        20,
+        Math.min(newHeight, window.innerHeight)
+      );
+      setHeight(clampedHeight);
     }
   };
 
@@ -141,6 +143,7 @@ const ResponseComponent: React.FC<{
         <Box
           onMouseDown={handleMouseDown}
           sx={{
+            backgroundColor: "white",
             height: "20px",
             cursor: "row-resize",
             position: "relative",

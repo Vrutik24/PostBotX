@@ -79,16 +79,19 @@ const CollectionNavbar = () => {
   const [isFetchingCollection, setIsFetchingCollection] = useState(true);
   useEffect(() => {
     const fetchCollectionAsync = async () => {
-     await fetchCollections();
-     setIsFetchingCollection(false);
-    }
+      await fetchCollections();
+      setIsFetchingCollection(false);
+    };
     fetchCollectionAsync();
   }, []);
 
   useEffect(() => {
     const createDraftCollection = async () => {
-      if (!isFetchingCollection && (collections === null || collections.length === 0)) {
-        try{
+      if (
+        !isFetchingCollection &&
+        (collections === null || collections.length === 0)
+      ) {
+        try {
           const newCollection = await createCollection("Draft");
           const createAPIPayload: CreateAPIDetail = {
             apiType: "Get",
@@ -99,28 +102,40 @@ const CollectionNavbar = () => {
               {
                 key: "",
                 value: "",
+                isChecked: false,
               },
             ],
             queryParameters: [
               {
                 key: "",
                 value: [""],
+                isChecked: false,
               },
             ],
           };
-          const data = await createAPI(createAPIPayload, newCollection.collectionId);
+          const data = await createAPI(
+            createAPIPayload,
+            newCollection.collectionId
+          );
           await fetchCollections();
           setSelectedAPIId(data);
           newCollection.id && setCurrentCollectionId(newCollection.id);
-        }
-        catch(error : any){
+        } catch (error: any) {
           console.log(error.message);
         }
-        
       }
-    } 
+    };
     createDraftCollection();
-  }, [collectionsWithRequests,collections,fetchCollections,createAPI,createCollection,isFetchingCollection,setCurrentCollectionId,setSelectedAPIId]);
+  }, [
+    collectionsWithRequests,
+    collections,
+    fetchCollections,
+    createAPI,
+    createCollection,
+    isFetchingCollection,
+    setCurrentCollectionId,
+    setSelectedAPIId,
+  ]);
 
   const createAPIRequest = async (collectionId: string, id?: string) => {
     setAPIActionLoading(true);
@@ -133,12 +148,14 @@ const CollectionNavbar = () => {
         {
           key: "",
           value: "",
+          isChecked: false,
         },
       ],
       queryParameters: [
         {
           key: "",
           value: [""],
+          isChecked: false,
         },
       ],
     };
@@ -149,8 +166,7 @@ const CollectionNavbar = () => {
       id && setCurrentCollectionId(id);
     } catch (error) {
       console.error("Failed to create API request", error);
-    }
-    finally{
+    } finally {
       setAPIActionLoading(false);
     }
   };
@@ -168,12 +184,14 @@ const CollectionNavbar = () => {
         {
           key: "",
           value: "",
+          isChecked: false,
         },
       ],
       queryParameters: selectedAPI?.queryParameters || [
         {
           key: "",
           value: [""],
+          isChecked: false,
         },
       ],
     };
@@ -188,8 +206,7 @@ const CollectionNavbar = () => {
       }
     } catch (error) {
       console.error("Failed to create API request", error);
-    }
-    finally{
+    } finally {
       setAPIActionLoading(false);
     }
   };
@@ -395,7 +412,7 @@ const CollectionNavbar = () => {
                   onCollapseToggle={() =>
                     handleCollapseToggle(collection.collectionId)
                   }
-                  apiActionLoading = {apiActionLoading}
+                  apiActionLoading={apiActionLoading}
                 />
                 {!collapsedCollections[collection.collectionId] &&
                   collection.apiRequests?.map((request: API) => (
@@ -428,10 +445,8 @@ const CollectionNavbar = () => {
           "& .MuiPaper-root": {
             my: 1.5,
             backgroundColor: "rgb(29 28 28)",
-            boxShadow: "0px 2px 4px #2e2b2b",
             border: "1px solid rgb(29 28 28)",
             px: 1,
-            py: 1,
             width: "max-content",
           },
         }}
@@ -466,7 +481,7 @@ const CollectionNavbar = () => {
           </ListItemIcon>
           Duplicate
         </MenuItem>
-        <Divider sx={{ backgroundColor: "#2e2b2b" }} />
+        <Divider sx={{ backgroundColor: "rgba(255, 255, 255, 0.1)" }} />
         <MenuItem
           sx={{
             color: "white",
@@ -503,7 +518,6 @@ const CollectionNavbar = () => {
             backgroundColor: "rgb(29 28 28)",
             border: "1px solid rgb(29 28 28)",
             px: 1,
-            py: 1,
             width: "max-content",
           },
         }}
@@ -544,7 +558,7 @@ const CollectionNavbar = () => {
           <ListItemIcon sx={{ color: "rgba(255, 255, 255, 0.5)" }}>
             <LibraryAddOutlined sx={{ fontSize: "20px" }} />
           </ListItemIcon>
-          Add Header
+          Manage Headers
         </MenuItem>
         <MenuItem
           sx={{

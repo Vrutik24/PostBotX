@@ -107,16 +107,18 @@ export const CollectionContextProvider: React.FC<
       collectionId,
       createdOn: new Date(),
     });
-    const collectionSnapshot = await getDocs(collection(firestore, "Collection"));
+    const collectionSnapshot = await getDocs(
+      collection(firestore, "Collection")
+    );
     let createdCollection: Collection | null = null;
-    collectionSnapshot.forEach(doc => {
-        if (doc.data().collectionId === collectionId) {
-            createdCollection = { id: doc.id, ...doc.data() } as Collection;
-        }
+    collectionSnapshot.forEach((doc) => {
+      if (doc.data().collectionId === collectionId) {
+        createdCollection = { id: doc.id, ...doc.data() } as Collection;
+      }
     });
 
     if (!createdCollection) {
-        throw new Error("Failed to retrieve the newly created collection.");
+      throw new Error("Failed to retrieve the newly created collection.");
     }
 
     return createdCollection;
@@ -268,7 +270,6 @@ export const CollectionContextProvider: React.FC<
           updatedById: userId,
           updatedOn: new Date(),
         });
-
       } else {
         console.error(`Collection with ID ${collectionId} not found`);
       }
