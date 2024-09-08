@@ -1,5 +1,10 @@
-import React from 'react';
-import './ResponseComponent.css';
+import React, { useState } from "react";
+import "./ResponseComponent.css";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
+import post_botX from "../../assets/PostBot_X_image.png";
+import { Title } from "./ResponseContentStyle";
+import { Box, Button, CircularProgress } from "@mui/material";
 
 interface TestResult {
   testData: string;
@@ -15,7 +20,11 @@ interface ResponseComponentProps {
   testResults: TestResult[];
 }
 
-const ResponseComponent: React.FC<ResponseComponentProps> = ({ testResults }) => {
+const ResponseComponent: React.FC<ResponseComponentProps> = ({
+  testResults,
+}) => {
+  const [isDownLoading, setIsDownloading] = useState(false);
+
   const flattenObject = (obj: any) => {
     return obj.testResults;
   };
@@ -30,10 +39,63 @@ const ResponseComponent: React.FC<ResponseComponentProps> = ({ testResults }) =>
   };
 
   const flattenedResults = flattenObject(testResults);
-  
+
+  const downloadPDF = async () => {
+    setIsDownloading(true);
+    const element = document.getElementById("response-content");
+    if (!element) return;
+    const canvas = await html2canvas(element, {
+      scale: 2, 
+    });
+
+    const imgData = canvas.toDataURL("image/jpeg", 0.5);
+
+    // Calculate the width and height based on the canvas size
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "px",
+      format: [canvas.width*0.8 , canvas.height],
+    });
+
+    // Adjust the width and height to fit the PDF properly
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+    pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
+    pdf.save("TestResults.pdf");
+    setIsDownloading(false);
+  };
+
   return (
     <div className="response-container">
-      <div className="response-content">
+      <Button
+        onClick={downloadPDF}
+        variant="contained"
+        disabled={isDownLoading}
+        sx={{
+          color: "white",
+          borderRadius: "8px",
+          backgroundColor: "#4CAF50",
+          "&:hover": {
+            backgroundColor: "darkgreen",
+          },
+          "&.Mui-disabled": {
+            backgroundColor: "rgb(29 28 28)",
+            color: "#FFFFFF50",
+          },
+        }}
+      >
+        {isDownLoading ? (
+              <CircularProgress size={24} sx={{ color: "white" }} />
+            ) : (
+              "Download Report"
+            )}
+      </Button>
+      <div className="response-content" id="response-content">
+        <Box display="flex" alignItems="center" gap={1} sx={{ margin: 2 }}>
+          <img src={post_botX} alt="Post Bot X" style={{ maxWidth: "50px" }} />
+          <Title>PostBotX</Title>
+        </Box>
         {flattenedResults?.map((result: any, index: number) => (
           <div key={index} className="test-result-card">
             <div className="result-row">
@@ -58,7 +120,7 @@ const ResponseComponent: React.FC<ResponseComponentProps> = ({ testResults }) =>
             </div>
             <div className="result-row">
               <strong>Is Successful:</strong>
-              <p>{result.isSuccessful ? 'Yes' : 'No'}</p>
+              <p>{result.isSuccessful ? "Yes" : "No"}</p>
             </div>
             <div className="result-row">
               <strong>Error Analysis:</strong>
