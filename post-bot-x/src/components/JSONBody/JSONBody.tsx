@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { mapJsonToOutput } from "./MapJsonOutput";
 import { prettifyJSON } from "../../utils/PrettifyJson";
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
+import CallSnackbar from "../../utils/Callsnackbar";
 
 const JSONBody = () => {
   const { formik, apiRequestData } = useAPITestFormikContext();
@@ -10,22 +11,10 @@ const JSONBody = () => {
   const [configuredJson, setConfiguredJson] = useState(
     formik.values.configuredPayload
   );
-  let timeoutId: NodeJS.Timeout;
-  const [errorMessage, setErrorMessage] = useState<string>("");
-
-  const showAlert = (message: string) => {
-    setErrorMessage(message);
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
-    timeoutId = setTimeout(() => {
-      setErrorMessage("");
-    }, 5000);
-  };
 
   const handleInputChange = (e: any) => {
     const updatedJson = e.target.value;
-    if (!updatedJson || updatedJson.trim()=='') {
+    if (!updatedJson || updatedJson.trim() == "") {
       setConfiguredJson("");
       formik.setFieldValue(`configuredPayload`, "");
     }
@@ -37,11 +26,9 @@ const JSONBody = () => {
       const parsedJson = JSON.parse(json);
       const configuredJson = mapJsonToOutput(parsedJson);
       const configuredStringifyJson = JSON.stringify(configuredJson, null, 2);
-      setErrorMessage("");
       setConfiguredJson(configuredStringifyJson);
       formik.setFieldValue(`configuredPayload`, configuredStringifyJson);
     } catch (error) {
-      showAlert("Invalid Json Format");
       setConfiguredJson("");
       formik.setFieldValue(`configuredPayload`, "");
       console.error(error);
@@ -165,14 +152,6 @@ const JSONBody = () => {
           }}
         />
       </Box>
-      {errorMessage && (
-        <Alert
-          sx={{ position: "absolute", bottom: 0, right: 0, margin: "20px" }}
-          severity="error"
-        >
-          {errorMessage}
-        </Alert>
-      )}
     </Box>
   );
 };

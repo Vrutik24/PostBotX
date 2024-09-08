@@ -1,6 +1,7 @@
 import { APIRequestPayload } from "../types/APIRequestPayload";
 import apiClient from "./axios";
 import { CancelToken } from "axios";
+import CallSnackbar from "../utils/Callsnackbar";
 
 export const manualTestWrite = async (
   payload: APIRequestPayload,
@@ -12,7 +13,8 @@ export const manualTestWrite = async (
     });
     return response.data;
   } catch (error) {
-    console.error("Error occurred while processing the request!");
+    console.error("Error occurred while processing the request:", error);
+    CallSnackbar.error("Error occurred while processing the request");
     throw error;
   }
 };
@@ -27,7 +29,8 @@ export const manualTestRead = async (
     });
     return response.data;
   } catch (error) {
-    console.error("Error occurred while processing the request!");
+    console.error("Error occurred while processing the request:", error);
+    CallSnackbar.error("Error occurred while processing the request");
     throw error;
   }
 };
@@ -40,7 +43,8 @@ export const manualPostWrite = async (
     const data = await manualTestWrite(payload, cancelToken);
     return data;
   } catch (error) {
-    console.error("Error occurred while processing the request!");
+    console.error("Error occurred while processing the request:", error);
+    CallSnackbar.error("Error occurred while processing the request");
   }
 };
 
@@ -52,6 +56,7 @@ export const manualPostRead = async (
     const data = await manualTestRead(payload, cancelToken);
     return data;
   } catch (error) {
-    console.error("Error fetching users:", error);
+    console.error("Error occurred while processing the request:", error);
+    CallSnackbar.error("Error occurred while processing the request");
   }
 };

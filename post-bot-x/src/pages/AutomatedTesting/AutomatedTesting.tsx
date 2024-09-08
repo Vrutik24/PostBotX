@@ -39,6 +39,7 @@ import { useEffect, useRef, useState } from "react";
 import SelectTestingMethodButton from "../../components/SelectTestingMethodButton/SelectTestingMethodButton";
 import { API } from "../../types";
 import axios, { CancelTokenSource } from "axios";
+import CallSnackbar from "../../utils/Callsnackbar";
 
 interface AutomatedTestingProps {
   setIsVisible: (isVisible: boolean) => void;
@@ -56,6 +57,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
   const [responseData, setResponseData] = useState(null);
   const inputRef = useRef(null);
   const cancelTokenSourceRef = useRef<CancelTokenSource | null>(null);
+  // const { showMessage } = useCallSnackbar()
 
   const {
     formik,
@@ -114,6 +116,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
       setResponseData(results);
 
     } catch (error) {
+      setIsVisible(false);
       console.error(`Error calling ${apiPayload.apiType} method:`, error);
     } finally {
       setIsTestingAPI(false);

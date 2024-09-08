@@ -16,14 +16,14 @@ function App() {
         <NotificationContextProvider>
           <CollectionContextProvider>
             <APIContextProvider>
-              <BrowserRouter>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/signup" element={<SignUp />} />
-                  <Route path="/signin" element={<SignIn />} />
-                  <Route path="/api-testing" element={<ApiTesting />} />
-                </Routes>
-              </BrowserRouter>
+                <BrowserRouter>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/signup" element={<SignUp />} />
+                    <Route path="/signin" element={<SignIn />} />
+                    <Route path="/api-testing" element={<ApiTesting />} />
+                  </Routes>
+                </BrowserRouter>
             </APIContextProvider>
           </CollectionContextProvider>
         </NotificationContextProvider>
