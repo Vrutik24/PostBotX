@@ -30,7 +30,6 @@ const ResponseComponent: React.FC<ResponseComponentProps> = ({ testResults }) =>
   };
 
   const flattenedResults = flattenObject(testResults);
-  console.log(flattenedResults);
   
   return (
     <div className="response-container">
