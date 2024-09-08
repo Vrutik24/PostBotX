@@ -104,43 +104,51 @@ const CollectionBox: React.FC<CollectionBoxProps> = ({
         pr={1}
         gap={1}
       >
-        <IconButton
-          size="small"
-          sx={{
-            color: "rgba(255, 255, 255, 0.5)",
-            "&:hover, &[data-context-open='true']": {
-              backgroundColor: "rgb(29 28 28)",
-              borderRadius: "8px",
-            },
-            "&[data-context-open='true']": { color: "white" },
-          }}
-          onClick={() =>
-            createAPIRequest(collection.collectionId, collection.id)
-          }
+        <Tooltip title="Create a request" enterDelay={800} enterNextDelay={800}>
+          <IconButton
+            size="small"
+            sx={{
+              color: "rgba(255, 255, 255, 0.5)",
+              "&:hover, &[data-context-open='true']": {
+                backgroundColor: "rgb(29 28 28)",
+                borderRadius: "8px",
+              },
+              "&[data-context-open='true']": { color: "white" },
+            }}
+            onClick={() =>
+              createAPIRequest(collection.collectionId, collection.id)
+            }
+          >
+            {apiActionLoading ? ( // Check if the loading state is true
+              <CircularProgress
+                size={20} // Adjust size to match the button size
+                sx={{ color: "white" }} // Style for the progress circle
+              />
+            ) : (
+              <AddIcon sx={{ fontSize: "20px" }} />
+            )}
+          </IconButton>
+        </Tooltip>
+        <Tooltip
+          title="Collection options"
+          enterDelay={800}
+          enterNextDelay={800}
         >
-          {apiActionLoading ? ( // Check if the loading state is true
-            <CircularProgress
-              size={20} // Adjust size to match the button size
-              sx={{ color: "white" }} // Style for the progress circle
-            />
-          ) : (
-            <AddIcon sx={{ fontSize: "20px" }} />
-          )}
-        </IconButton>
-        <IconButton
-          size="small"
-          sx={{
-            color: "rgba(255, 255, 255, 0.5)",
-            "&:hover, &[data-context-open='true']": {
-              backgroundColor: "rgb(29 28 28)",
-              borderRadius: "8px",
-            },
-            "&[data-context-open='true']": { color: "white" },
-          }}
-          onClick={(e) => onMenuOpen(e, collection)}
-        >
-          <MoreHorizRounded sx={{ fontSize: "20px" }} />
-        </IconButton>
+          <IconButton
+            size="small"
+            sx={{
+              color: "rgba(255, 255, 255, 0.5)",
+              "&:hover, &[data-context-open='true']": {
+                backgroundColor: "rgb(29 28 28)",
+                borderRadius: "8px",
+              },
+              "&[data-context-open='true']": { color: "white" },
+            }}
+            onClick={(e) => onMenuOpen(e, collection)}
+          >
+            <MoreHorizRounded sx={{ fontSize: "20px" }} />
+          </IconButton>
+        </Tooltip>
       </Box>
     </Box>
   );

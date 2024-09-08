@@ -18,6 +18,7 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Tooltip,
 } from "@mui/material";
 import CollectionShareModal from "../../modals/CollectionModal/CollectionShareModal";
 import { useAPI } from "../../contexts/APIContext";
@@ -34,7 +35,8 @@ import {
   LibraryAddOutlined,
   ShareRounded,
   ContentCopyOutlined,
-  Menu as MenuIcon,
+  LastPage,
+  FirstPage,
 } from "@mui/icons-material";
 import ConfirmationModal from "../../modals/CollectionModal/ConfirmationModal";
 import HeadersModal from "../../modals/CollectionModal/HeadersModal";
@@ -137,7 +139,16 @@ const CollectionNavbar = () => {
         console.log(error.message);
       }
     }
-  }, [isFetchingCollection, isDraftCollectionCreated, collections, createCollection, createAPI, fetchCollections, setSelectedAPIId, setCurrentCollectionId]);
+  }, [
+    isFetchingCollection,
+    isDraftCollectionCreated,
+    collections,
+    createCollection,
+    createAPI,
+    fetchCollections,
+    setSelectedAPIId,
+    setCurrentCollectionId,
+  ]);
 
   const createAPIRequest = async (collectionId: string, id?: string) => {
     setAPIActionLoading(true);
@@ -415,12 +426,23 @@ const CollectionNavbar = () => {
         }}
       >
         <Box>
-          <IconButton
-            onClick={handleNavbarCollapseToggle}
-            sx={{ color: "white", width: "100%" }}
+          <Tooltip
+            title={isNavbarCollapsed ? "Expand Navbar" : "Collapse Navbar"}
+            enterDelay={800}
+            enterNextDelay={800}
           >
-            <MenuIcon />
-          </IconButton>
+            <IconButton
+              onClick={handleNavbarCollapseToggle}
+              sx={{ color: "gray", width: "100%" }}
+              size="small"
+            >
+              {isNavbarCollapsed ? (
+                <LastPage fontSize="medium" />
+              ) : (
+                <FirstPage fontSize="medium" />
+              )}
+            </IconButton>
+          </Tooltip>
         </Box>
         <Box
           sx={{

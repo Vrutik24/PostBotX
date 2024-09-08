@@ -87,18 +87,7 @@ const APIRequestsBox = ({
           {apiRequest.apiType}
         </Typography>
         {displayedName?.length > 18 ? (
-          <Tooltip
-            title={displayedName}
-            componentsProps={{
-              tooltip: {
-                sx: {
-                  backgroundColor: "gray",
-                  fontSize: "13px",
-                  color: "white",
-                },
-              },
-            }}
-          >
+          <Tooltip title={displayedName}>
             <Typography fontSize={"16px"}>
               {displayedName.substring(0, 18) + "..."}
             </Typography>
@@ -119,20 +108,22 @@ const APIRequestsBox = ({
         pr={1}
         gap={1}
       >
-        <IconButton
-          size="small"
-          sx={{
-            color: "rgba(255, 255, 255, 0.5)",
-            "&:hover": {
-              backgroundColor: "rgba(255, 255, 255, 0.1)",
-              borderRadius: "8px",
-            },
-            "&[data-api-open='true']": { color: "white" },
-          }}
-          onClick={onMenuOpen}
-        >
-          <MoreHorizRounded sx={{ fontSize: "20px" }} />
-        </IconButton>
+        <Tooltip title="Request options" enterDelay={800} enterNextDelay={800}>
+          <IconButton
+            size="small"
+            sx={{
+              color: "rgba(255, 255, 255, 0.5)",
+              "&:hover": {
+                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                borderRadius: "8px",
+              },
+              "&[data-api-open='true']": { color: "white" },
+            }}
+            onClick={onMenuOpen}
+          >
+            <MoreHorizRounded sx={{ fontSize: "20px" }} />
+          </IconButton>
+        </Tooltip>
       </Box>
     </Box>
   );
