@@ -52,6 +52,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
   const [isEditingAPIName, setIsEditingAPIName] = useState(false);
   const [isUpdatingAPI, setIsUpdatingAPI] = useState<boolean>(false);
   const [isTestingAPI, setIsTestingAPI] = useState<boolean>(false);
+  const [responseData, setResponseData] = useState(null);
   const inputRef = useRef(null);
 
   const {
@@ -72,6 +73,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
   const { updateAPI } = useAPI();
 
   const testApi = async () => {
+    setResponseData(null);
     await updateAPIById();
     const isAutomated = testingMethod === "Automated";
     const isWriteMethod = ["Post", "Patch", "Put"].includes(
@@ -103,6 +105,9 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
     try {
       setIsTestingAPI(true);
       const results = await executeApiCall(apiPayload);
+      setIsVisible(true);
+      setResponseData(results);
+
     } catch (error) {
       console.error(`Error calling ${apiPayload.apiType} method:`, error);
     } finally {
@@ -403,7 +408,6 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
             }}
             onClick={() => {
               testApi();
-              setIsVisible(true);
             }}
             endIcon={
               isTestingAPI ? (
@@ -423,7 +427,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
       </ContentBox>
 
       {isVisible && (
-        <ResponseComponent response="" setIsVisible={setIsVisible} />
+        <ResponseComponent response={responseData} setIsVisible={setIsVisible} />
       )}
     </APITestingPage>
   );
