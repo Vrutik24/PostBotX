@@ -58,6 +58,7 @@ const CollectionNavbar = () => {
     collectionsWithRequests,
     setSelectedAPIId,
     setCurrentCollectionId,
+    setAPIName,
   } = useAPITestFormikContext();
   const [isAPIModalOpen, setIsAPIModalOpen] = useState(false);
   const [selectedAPI, setSelectedAPI] = useState<API>();
@@ -66,7 +67,6 @@ const CollectionNavbar = () => {
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [isShareModalOpen, setShareIsModalOpen] = useState(false);
   const [isHeadersModalOpen, setIsHeadersModalOpen] = useState(false);
-  // const [collections, setCollections] = useState<Collection[]>([]);
   const [selectedCollection, setSelectedCollection] = useState<Collection>();
   const [collectionToDelete, setCollectionToDelete] = useState<Collection>();
   const [action, setAction] = useState("");
@@ -141,7 +141,7 @@ const CollectionNavbar = () => {
     setAPIActionLoading(true);
     const createAPIPayload: CreateAPIDetail = {
       apiType: "Get",
-      isAutomated: true,
+      isAutomated: false,
       url: "",
       configuredPayload: "",
       headers: [
@@ -248,10 +248,11 @@ const CollectionNavbar = () => {
       } else if (name) {
         await createCollection(name);
       }
-      await fetchCollections();
       handleCollectionModalClose();
     } catch (error) {
       console.error("Failed to process collection action:", error);
+    } finally {
+      fetchCollections();
     }
   };
 
@@ -336,10 +337,10 @@ const CollectionNavbar = () => {
       setAPIActionLoading(true);
       if (id && name) {
         await updateAPIName(id, name);
+        setAPIName(name);
       } else if (id) {
         await deleteApiById(id);
       }
-      await fetchCollections();
       handleAPIModalClose();
     } catch (error) {
       console.error("Failed to process api action:", error);
@@ -398,7 +399,7 @@ const CollectionNavbar = () => {
         <CollectionBoxContainer>
           {collectionsWithRequests.map(
             (collection: CollectionWithAPIRequests, index) => (
-              <Box key={`Collection ${index}`}>
+              <Box key={`Collection ${collection.id}`}>
                 <CollectionBox
                   key={collection.collectionId}
                   collection={collection}
@@ -417,7 +418,7 @@ const CollectionNavbar = () => {
                 {!collapsedCollections[collection.collectionId] &&
                   collection.apiRequests?.map((request: API) => (
                     <APIRequestsBox
-                      key={request.id}
+                      key={request.id + collection.id}
                       apiRequest={request}
                       colId={collection.id}
                       anchorEl={apiAnchorEl}
