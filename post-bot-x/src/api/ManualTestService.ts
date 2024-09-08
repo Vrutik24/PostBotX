@@ -15,9 +15,18 @@ export const useManualAPICalls = () => {
         cancelToken,
       });
       return response.data;
-    } catch (error) {
-      console.error("Error occurred while processing the request:", error);
-      snackbar.error("Error occurred while processing the request");
+    } catch (error : any) {
+      const errors = error?.response?.data?.errors;
+      if (errors) {
+        const firstErrorKey = Object.keys(errors)[0]; 
+        const firstError = errors[firstErrorKey]?.[0]; 
+  
+        if (firstError) {
+          snackbar.error(firstError); 
+        }
+      } else {
+        snackbar.error(error?.message); 
+      }
       throw error;
     }
   };
@@ -31,9 +40,18 @@ export const useManualAPICalls = () => {
         cancelToken,
       });
       return response.data;
-    } catch (error) {
-      console.error("Error occurred while processing the request:", error);
-      snackbar.error("Error occurred while processing the request");
+    } catch (error : any) {
+      const errors = error?.response?.data?.errors;
+      if (errors ) {
+        const firstErrorKey = Object.keys(errors)[0]; 
+        const firstError = errors[firstErrorKey]?.[0]; 
+  
+        if (firstError) {
+          snackbar.error(firstError); 
+        }
+      } else {
+        snackbar.error(error?.message); 
+      }
       throw error;
     }
   };
@@ -46,7 +64,7 @@ export const useManualAPICalls = () => {
       const data = await manualTestWrite(payload, cancelToken);
       return data;
     } catch (error) {
-      console.error("Error occurred while processing the request:", error);
+      throw error;
     }
   };
 
@@ -58,7 +76,7 @@ export const useManualAPICalls = () => {
       const data = await manualTestRead(payload, cancelToken);
       return data;
     } catch (error) {
-      console.error("Error occurred while processing the request:", error);
+      throw error;
     }
   };
 
