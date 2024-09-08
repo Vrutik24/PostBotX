@@ -4,7 +4,9 @@ import { Box } from "@mui/material";
 export const APITestingPage = styled(Box)(({ theme }) => ({
   backgroundColor: "rgb(29 28 28)",
   height: "100vh",
-  width: "calc(100vw - 350px)",
+  flex: 1, // Allow the container to grow and shrink as needed
+  display: "flex",
+  flexDirection: "column",
 }));
 
 export const ContentBox = styled(Box)(({ theme }) => ({

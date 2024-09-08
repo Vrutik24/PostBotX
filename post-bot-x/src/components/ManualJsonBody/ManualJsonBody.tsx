@@ -33,7 +33,10 @@ const ManualJsonBody = () => {
   };
 
   const addNewPayload = (index: number) => {
-    formik.setFieldValue("manualPayload", [...formik.values.manualPayload, formik.values.manualPayload[index]]);
+    formik.setFieldValue("manualPayload", [
+      ...formik.values.manualPayload,
+      formik.values.manualPayload[index],
+    ]);
   };
 
   const viewAndEditRequest = (index: number, request: string) => {
@@ -119,8 +122,14 @@ const ManualJsonBody = () => {
             {index === formik.values.manualPayload.length - 1 && (
               <Button
                 variant="contained"
-                color="success"
-                sx={{ width: "100px" }}
+                sx={{
+                  width: "100px",
+                  marginBottom: "20px",
+                  backgroundColor: "#4CAF50",
+                  "&:hover": {
+                    backgroundColor: "#006400",
+                  },
+                }}
                 endIcon={<AddCircle />}
                 onClick={() => addNewPayload(index)}
               >
@@ -139,7 +148,10 @@ const ManualJsonBody = () => {
           )}
         </Box>
       ))}
-      <PayloadRequestModal requestModal = {requestModal} setRequestmodal = {setRequestmodal}/>
+      <PayloadRequestModal
+        requestModal={requestModal}
+        setRequestmodal={setRequestmodal}
+      />
     </Box>
   );
 };

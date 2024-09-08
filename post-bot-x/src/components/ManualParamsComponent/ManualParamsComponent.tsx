@@ -1,6 +1,7 @@
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
 import {
   Box,
+  Checkbox,
   IconButton,
   InputAdornment,
   OutlinedInput,
@@ -58,6 +59,13 @@ const ManualParamsComponent = () => {
     formik.setFieldValue(`manualQueryParameters.${index}.value`, newValueArray);
   };
 
+  const handleCheckboxChange = (index: number) => {
+    const manualQueryParameters = [...formik.values.manualQueryParameters];
+    manualQueryParameters[index].isChecked =
+      !manualQueryParameters[index].isChecked; // Toggle the checked state
+    formik.setFieldValue("manualQueryParameters", manualQueryParameters); // Update formik state with new headers
+  };
+
   return (
     <Table>
       <TableBody>
@@ -66,6 +74,7 @@ const ManualParamsComponent = () => {
             param: {
               key: string;
               value: string[];
+              isChecked: boolean;
             },
             index: number
           ) => (
@@ -78,6 +87,23 @@ const ManualParamsComponent = () => {
                 },
               }}
             >
+              <TableCell sx={{ borderBottom: "none", width: "24px" }}>
+                <Checkbox
+                  checked={
+                    param.key !== "" &&
+                    param.value.some((x) => x !== "") &&
+                    param.isChecked
+                  }
+                  onChange={() => handleCheckboxChange(index)}
+                  sx={{
+                    color: "#FFFFFF",
+                    padding: 0,
+                    "&.Mui-checked": {
+                      color: "#FFFFFF",
+                    },
+                  }}
+                />
+              </TableCell>
               <TableCell sx={{ borderBottom: "none" }}>
                 <OutlinedInput
                   value={`${formik.values.manualQueryParameters[index].key}`}
@@ -132,7 +158,7 @@ const ManualParamsComponent = () => {
                         height: "40px",
                         border: "2px solid #2b2b2b",
                         "& .MuiInputBase-input": {
-                          color: "#FFA24E",
+                          color: "#FFF",
                         },
                         "& .MuiInputBase-input::placeholder": {
                           color: "gray",

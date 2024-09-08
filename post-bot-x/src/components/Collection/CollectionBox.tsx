@@ -1,9 +1,14 @@
 import React, { MouseEvent } from "react";
-import { Box, Typography, IconButton, Tooltip } from "@mui/material";
+import {
+  Box,
+  Typography,
+  IconButton,
+  Tooltip,
+  CircularProgress,
+} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { ArrowRight, MoreHorizRounded } from "@mui/icons-material";
 import { Collection } from "../../types";
-import { on } from "stream";
 
 interface CollectionBoxProps {
   collection: Collection;
@@ -12,6 +17,7 @@ interface CollectionBoxProps {
   selectedCollection?: Collection;
   isCollapsed: boolean;
   onCollapseToggle: (collectionId: string) => void;
+  apiActionLoading: boolean;
 }
 
 const CollectionBox: React.FC<CollectionBoxProps> = ({
@@ -21,6 +27,7 @@ const CollectionBox: React.FC<CollectionBoxProps> = ({
   createAPIRequest,
   isCollapsed,
   onCollapseToggle,
+  apiActionLoading,
 }) => {
   const isOpen = selectedCollection?.collectionId === collection.collectionId;
 
@@ -64,24 +71,28 @@ const CollectionBox: React.FC<CollectionBoxProps> = ({
       >
         <ArrowRight sx={{ fontSize: "25px" }} />
       </IconButton>
-      {collection.name.length > 22 ? (
-        <Tooltip
-          title={collection.name}
-          componentsProps={{
-            tooltip: {
-              sx: {
-                backgroundColor: "gray",
-                fontSize: "13px",
-                color: "white",
-              },
+      <Tooltip
+        title={collection.name.length > 22 ? collection.name : ""}
+        componentsProps={{
+          tooltip: {
+            sx: {
+              backgroundColor: "#252525",
+              fontSize: "13px",
+              color: "white",
+              marginLeft: "10px",
             },
-          }}
+          },
+        }}
+      >
+        <Typography
+          sx={{ width: "62%" }}
+          onClick={() => onCollapseToggle(collection.collectionId)}
         >
-          <Typography>{collection.name.substring(0, 22) + "..."}</Typography>
-        </Tooltip>
-      ) : (
-        <Typography>{collection.name}</Typography>
-      )}
+          {collection.name.length > 22
+            ? `${collection.name.substring(0, 22)}...`
+            : collection.name}
+        </Typography>
+      </Tooltip>
       <Box
         className="collection-actions"
         display="none"
@@ -107,7 +118,14 @@ const CollectionBox: React.FC<CollectionBoxProps> = ({
             createAPIRequest(collection.collectionId, collection.id)
           }
         >
-          <AddIcon sx={{ fontSize: "20px" }} />
+          {apiActionLoading ? ( // Check if the loading state is true
+            <CircularProgress
+              size={20} // Adjust size to match the button size
+              sx={{ color: "white" }} // Style for the progress circle
+            />
+          ) : (
+            <AddIcon sx={{ fontSize: "20px" }} />
+          )}
         </IconButton>
         <IconButton
           size="small"

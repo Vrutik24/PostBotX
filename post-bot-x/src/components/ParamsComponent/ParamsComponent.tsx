@@ -1,5 +1,6 @@
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
 import {
+  Checkbox,
   OutlinedInput,
   Table,
   TableBody,
@@ -58,6 +59,16 @@ const ParamsComponent = () => {
     const isLastRow = index === queryParameters.length - 1;
     const newValue = e.target.value;
 
+    // Check if the key or value is empty and uncheck the checkbox if true
+    if (field === "key" && isEmptyField(newValue)) {
+      queryParameters[index].isChecked = false;
+    } else if (field === "value.0" && isEmptyField(newValue)) {
+      queryParameters[index].isChecked = false;
+    } else {
+      // If both fields are filled, you may want to ensure the checkbox is checked
+      queryParameters[index].isChecked = true;
+    }
+
     if (isRowEmpty(queryParameters, index, field, newValue) && !isLastRow) {
       deleteQueryParameter(index);
     } else {
@@ -81,11 +92,20 @@ const ParamsComponent = () => {
     }
   };
 
+  const handleCheckboxChange = (index: number) => {
+    const queryParameters = [...formik.values.queryParameters];
+    queryParameters[index].isChecked = !queryParameters[index].isChecked; // Toggle the checked state
+    formik.setFieldValue("queryParameters", queryParameters); // Update formik state with new headers
+  };
+
   return (
     <Table>
       <TableBody>
         {formik.values.queryParameters?.map(
-          (param: { key: string; value: string[] }, index: number) => (
+          (
+            param: { key: string; value: string[]; isChecked: boolean },
+            index: number
+          ) => (
             <TableRow
               key={index}
               sx={{
@@ -94,6 +114,21 @@ const ParamsComponent = () => {
                 },
               }}
             >
+              <TableCell sx={{ borderBottom: "none", width: "24px" }}>
+                <Checkbox
+                  checked={
+                    param.key !== "" && param.value[0] !== "" && param.isChecked
+                  }
+                  onChange={() => handleCheckboxChange(index)}
+                  sx={{
+                    color: "#FFFFFF",
+                    padding: 0,
+                    "&.Mui-checked": {
+                      color: "#FFFFFF",
+                    },
+                  }}
+                />
+              </TableCell>
               <TableCell sx={{ borderBottom: "none" }}>
                 <OutlinedInput
                   value={param.key}
@@ -126,7 +161,7 @@ const ParamsComponent = () => {
                     border: "2px solid #2b2b2b",
 
                     "& .MuiInputBase-input": {
-                      color: "#FFA24E",
+                      color: "#FFFFFF",
                     },
                     "& .MuiInputBase-input::placeholder": {
                       color: "gray",

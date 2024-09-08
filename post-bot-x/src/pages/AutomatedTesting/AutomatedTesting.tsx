@@ -21,7 +21,7 @@ import {
   ContentBox,
   HeaderContentBox,
 } from "./AutomatedTestingStyle";
-import { ArrowDropDown, Save, Send } from "@mui/icons-material";
+import { ArrowDropDown, CancelScheduleSend, Save, Send } from "@mui/icons-material";
 import { RequestTypeList } from "../../dropdown-list/request-type-list";
 import { TestingTypeList } from "../../dropdown-list/testing-type-list";
 import APITestingBody from "../../components/APITestingBody/APITestingBody";
@@ -38,6 +38,7 @@ import getAPIColor from "../../utils/GetAPIColor";
 import { useEffect, useRef, useState } from "react";
 import SelectTestingMethodButton from "../../components/SelectTestingMethodButton/SelectTestingMethodButton";
 import { API } from "../../types";
+import axios, { CancelTokenSource } from "axios";
 
 interface AutomatedTestingProps {
   setIsVisible: (isVisible: boolean) => void;
@@ -54,6 +55,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
   const [isTestingAPI, setIsTestingAPI] = useState<boolean>(false);
   const [responseData, setResponseData] = useState(null);
   const inputRef = useRef(null);
+  const cancelTokenSourceRef = useRef<CancelTokenSource | null>(null);
 
   const {
     formik,
@@ -61,7 +63,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
     setTestingMethod,
     apiRequestData,
     selectedAPIId,
-    collectionName,
+    currentCollection,
     apiName,
     setAPIName,
     fetchRequestsForCollections,
@@ -94,6 +96,9 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
       headers: formik.values.headers,
     };
 
+    const cancelTokenSource = axios.CancelToken.source();
+    cancelTokenSourceRef.current = cancelTokenSource;
+
     const executeApiCall = isAutomated
       ? isWriteMethod
         ? automatedPostWrite
@@ -104,7 +109,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
 
     try {
       setIsTestingAPI(true);
-      const results = await executeApiCall(apiPayload);
+      const results = await executeApiCall(apiPayload, cancelTokenSource.token);
       setIsVisible(true);
       setResponseData(results);
 
@@ -113,7 +118,6 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
     } finally {
       setIsTestingAPI(false);
     }
-
   };
 
   const updateAPIById = async () => {
@@ -164,12 +168,18 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
     setIsEditingAPIName(false);
   };
 
+  const cancelRequest = () => {
+    if (cancelTokenSourceRef.current) {
+      cancelTokenSourceRef.current.cancel("API request canceled by the user.");
+    }
+  };
+
   return (
     <APITestingPage>
       <ContentBox>
         <CollectionInfoBox>
           <Box display={"flex"} alignItems={"center"} gap={"10px"} width={'60%'}>
-            <Typography sx={{ color: "gray" }}>{collectionName}</Typography>
+            <Typography sx={{ color: "gray" }}>{currentCollection?.name || "Collection"}</Typography>
             <Typography>/</Typography>
             <>
               {isEditingAPIName ? (
@@ -213,7 +223,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
                     backgroundColor: "#4CAF50",
                   },
                   "&.Mui-disabled": {
-                    color: "gray", 
+                    color: "gray",
                   },
                 }}
                 endIcon={
@@ -308,6 +318,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
             sx={{
               color: apiTypeColor,
               borderColor: "transparent",
+              textTransform: "uppercase",
               "& .MuiOutlinedInput-notchedOutline": {
                 borderColor: "transparent",
               },
@@ -339,17 +350,16 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
                   color: requestType.color,
                   margin: "10px",
                   borderRadius: "4px",
+                  textTransform: "uppercase",
                   "&:hover": {
-                    backgroundColor: "#383737",
-                    color: "white",
+                    backgroundColor: "#38373790",
                   },
                   "&.Mui-selected, &.Mui-selected:hover, &.Mui-focusVisible": {
-                    backgroundColor: "#4CAF50",
-                    color: "black",
+                    backgroundColor: "#383737",
                   },
                   "&.MuiButtonBase-root": {
                     "&.Mui-selected, &.Mui-selected:hover": {
-                      backgroundColor: "#4CAF50",
+                      backgroundColor: "#383737",
                     },
                   },
                 }}
@@ -389,37 +399,54 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
               },
             }}
           />
-          <Button
-            sx={{
-              backgroundColor: "#4CAF50",
-              color: "white",
-              width: "100px",
-              paddingX: "20px",
-              margin: "0 10px",
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              "&:hover": {
-                backgroundColor: "darkgreen",
-              },
-              "&.Mui-disabled": {
-                color: "green", 
-              },
-            }}
-            onClick={() => {
-              testApi();
-            }}
-            endIcon={
-              isTestingAPI ? (
-                <CircularProgress size={12} sx={{ color: "green" }} />
-              ) : (
-                <Send />
-              )
-            }
-            disabled={isTestingAPI}
-          >
-            Send
-          </Button>
+          {isTestingAPI ? (
+            <Button
+              sx={{
+                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                color: "white",
+                width: "fit-content",
+                paddingX: "20px",
+                margin: "0 10px",
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                "&:hover": {
+                  backgroundColor: "rgba(255, 255, 255, 0.2)",
+                },
+              }}
+              onClick={() => {
+                cancelRequest();
+              }}
+              endIcon={<CancelScheduleSend />}
+            >
+              Cancel
+            </Button>
+          ) : (
+            <Button
+              sx={{
+                backgroundColor: "#4CAF50",
+                color: "white",
+                width: "100px",
+                paddingX: "20px",
+                margin: "0 10px",
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                "&:hover": {
+                  backgroundColor: "darkgreen",
+                },
+                "&.Mui-disabled": {
+                  color: "green",
+                },
+              }}
+              onClick={() => {
+                testApi();
+              }}
+              endIcon={<Send />}
+            >
+              Send
+            </Button>
+          )}
         </HeaderContentBox>
         <BodyContentBox>
           <APITestingBody />
