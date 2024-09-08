@@ -10,7 +10,7 @@ import {
 } from "./UserStyle";
 import { Popover, Typography, Box, Button } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { ArrowForward, Login } from "@mui/icons-material";
+import { ArrowForward, Login, Person } from "@mui/icons-material";
 
 const style = {
   bgcolor: "rgb(29 28 28)",
@@ -22,7 +22,11 @@ const style = {
   borderRadius: 2,
 };
 
-const User = () => {
+interface UserPorps {
+  isAnonymousUser?: boolean;
+}
+
+const User: React.FC<UserPorps> = ({ isAnonymousUser }) => {
   const { currentUser, logOut } = useAuth();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -70,10 +74,10 @@ const User = () => {
               open={open}
               anchorEl={anchorEl}
               onClose={handleClose}
-              marginThreshold={8} 
+              marginThreshold={8}
               anchorOrigin={{
                 vertical: "bottom",
-                horizontal: "center", 
+                horizontal: "center",
               }}
               transformOrigin={{
                 vertical: "top",
@@ -81,9 +85,9 @@ const User = () => {
               }}
               PaperProps={{
                 sx: {
-                  overflow: "hidden", 
-                  borderRadius: 2, 
-                  bgcolor: "#1D1C1C", 
+                  overflow: "hidden",
+                  borderRadius: 2,
+                  bgcolor: "#1D1C1C",
                 },
               }}
             >
@@ -112,24 +116,30 @@ const User = () => {
           </>
         ) : (
           <UserOption onClick={handleLoginClick}>
-            <Button
-              variant="contained"
-              endIcon={<ArrowForward />}
-              sx={{
-                backgroundColor: "transparent",
-                color: "#4CAF50",
-                padding: "10px 20px",
-                borderRadius: "16px",
-                boxShadow: "none",
-                "&:hover": {
-                  backgroundColor: "#4CAF50",
-                  color: "#151414",
+            {isAnonymousUser ? (
+              <Avatar onClick={handleAvatarClick}>
+                <Person></Person>
+              </Avatar>
+            ) : (
+              <Button
+                variant="contained"
+                endIcon={<ArrowForward />}
+                sx={{
+                  backgroundColor: "transparent",
+                  color: "#4CAF50",
+                  padding: "10px 20px",
                   borderRadius: "16px",
-                },
-              }}
-            >
-              Login
-            </Button>
+                  boxShadow: "none",
+                  "&:hover": {
+                    backgroundColor: "#4CAF50",
+                    color: "#151414",
+                    borderRadius: "16px",
+                  },
+                }}
+              >
+                Login
+              </Button>
+            )}
           </UserOption>
         )}
       </UserContainer>

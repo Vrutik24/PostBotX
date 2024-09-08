@@ -14,7 +14,7 @@ export const UserContainer = styled(Box)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   gap: "15px",
-  marginRight: "20px",
+  margin: "auto",
 }));
 
 export const UserOption = styled(Typography)(({ theme }) => ({
