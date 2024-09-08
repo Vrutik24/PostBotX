@@ -27,7 +27,7 @@ export const AddCollectionButton = styled(Button)(({ theme }) => ({
   backgroundColor: "#4CAF50",
   width: "100%",
   "&:hover": {
-    backgroundColor: "#4cb350",
+    backgroundColor: "#006400",
   },
 }));
 

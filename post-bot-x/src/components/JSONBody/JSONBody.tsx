@@ -10,24 +10,40 @@ const JSONBody = () => {
   const [configuredJson, setConfiguredJson] = useState(
     formik.values.configuredPayload
   );
+  let timeoutId: NodeJS.Timeout;
   const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const showAlert = (message: string) => {
+    setErrorMessage(message);
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    timeoutId = setTimeout(() => {
+      setErrorMessage("");
+    }, 5000);
+  };
+
   const handleInputChange = (e: any) => {
-    setJsonInput(e.target.value);
-    formik.setFieldValue(`payload[0]`, prettifyJSON(e.target.value));
+    const updatedJson = e.target.value;
+    if (!updatedJson || updatedJson.trim()=='') {
+      setConfiguredJson("");
+      formik.setFieldValue(`configuredPayload`, "");
+    }
+    setJsonInput(updatedJson);
+    formik.setFieldValue(`payload[0]`, updatedJson);
   };
   const configureJsonObject = (json: string) => {
     try {
       const parsedJson = JSON.parse(json);
       const configuredJson = mapJsonToOutput(parsedJson);
-      const configuredStringifyJson = JSON.stringify(configuredJson);
+      const configuredStringifyJson = JSON.stringify(configuredJson, null, 2);
       setErrorMessage("");
       setConfiguredJson(configuredStringifyJson);
-      formik.setFieldValue(
-        `configuredPayload`,
-        prettifyJSON(configuredStringifyJson)
-      );
+      formik.setFieldValue(`configuredPayload`, configuredStringifyJson);
     } catch (error) {
-      setErrorMessage("Invalid Json Format");
+      showAlert("Invalid Json Format");
+      setConfiguredJson("");
+      formik.setFieldValue(`configuredPayload`, "");
       console.error(error);
     }
   };
@@ -96,12 +112,17 @@ const JSONBody = () => {
             "&: hover": {
               backgroundColor: "darkgreen",
             },
+            "&.Mui-disabled": {
+              backgroundColor: "#1D1C1C",
+              color: "#808080",
+            },
           }}
           onClick={() => {
             if (jsonInput) {
               configureJsonObject(jsonInput);
             }
           }}
+          disabled={jsonInput.trim() == "" || !jsonInput}
         >
           Configure Json Object
         </Button>

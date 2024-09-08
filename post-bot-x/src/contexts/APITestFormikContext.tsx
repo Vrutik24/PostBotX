@@ -39,7 +39,6 @@ interface FormikContextType {
   collections: Collection[];
   collectionsWithRequests: CollectionWithAPIRequests[];
   loadingAPIData: boolean;
-  // setAPIRequestTypeName: (apiRequestTypeName: string) => void;
 }
 // Created a context
 export const APITestFormikContext = createContext<FormikContextType | null>(
@@ -70,9 +69,7 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
   const fetchCollections = async () => {
     try {
       const collectionList = await getCollections();
-      if (collectionList) {
-        setCollections(collectionList);
-      }
+      collectionList ? setCollections(collectionList) : setCollections([]);
     } catch (error) {
       console.error("Failed to fetch collections:", error);
     }
@@ -96,7 +93,7 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
         return { ...collection, apiRequests };
       })
     );
-    setCollectionsWithRequests(updatedCollections);
+    setCollectionsWithRequests([...updatedCollections]);
   };
 
   const getCollection = async (id: string) => {
