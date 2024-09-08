@@ -445,10 +445,8 @@ const CollectionNavbar = () => {
           "& .MuiPaper-root": {
             my: 1.5,
             backgroundColor: "rgb(29 28 28)",
-            boxShadow: "0px 2px 4px #2e2b2b",
             border: "1px solid rgb(29 28 28)",
             px: 1,
-            py: 1,
             width: "max-content",
           },
         }}
@@ -483,7 +481,7 @@ const CollectionNavbar = () => {
           </ListItemIcon>
           Duplicate
         </MenuItem>
-        <Divider sx={{ backgroundColor: "#2e2b2b" }} />
+        <Divider sx={{ backgroundColor: "rgba(255, 255, 255, 0.1)" }} />
         <MenuItem
           sx={{
             color: "white",
@@ -520,7 +518,6 @@ const CollectionNavbar = () => {
             backgroundColor: "rgb(29 28 28)",
             border: "1px solid rgb(29 28 28)",
             px: 1,
-            py: 1,
             width: "max-content",
           },
         }}
@@ -561,7 +558,7 @@ const CollectionNavbar = () => {
           <ListItemIcon sx={{ color: "rgba(255, 255, 255, 0.5)" }}>
             <LibraryAddOutlined sx={{ fontSize: "20px" }} />
           </ListItemIcon>
-          Add Header
+          Manage Headers
         </MenuItem>
         <MenuItem
           sx={{

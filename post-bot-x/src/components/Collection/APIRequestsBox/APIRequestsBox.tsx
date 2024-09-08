@@ -45,7 +45,7 @@ const APIRequestsBox = ({
       alignItems="center"
       justifyContent={"space-between"}
       p="6px"
-      pl="32px"
+      pl="46px"
       my={1}
       key={apiRequest.id}
       borderRadius="4px"
@@ -79,7 +79,11 @@ const APIRequestsBox = ({
       }}
     >
       <Box display={"flex"} alignItems={"center"} gap={"10px"}>
-        <Typography color={apiTypeColor} fontSize={"14px"}>
+        <Typography
+          color={apiTypeColor}
+          fontSize={"14px"}
+          sx={{ textTransform: "uppercase", pr: 1 }}
+        >
           {apiRequest.apiType}
         </Typography>
         {displayedName?.length > 18 ? (
@@ -91,8 +95,8 @@ const APIRequestsBox = ({
                   backgroundColor: "gray",
                   fontSize: "13px",
                   color: "white",
-                }
-              }
+                },
+              },
             }}
           >
             <Typography fontSize={"16px"}>

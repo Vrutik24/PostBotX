@@ -110,7 +110,7 @@ const HeadersModal: React.FC<HeadersModalProps> = ({
     const filteredHeaders = headers.filter(
       (header) => header.key.trim() !== "" || header.value.trim() !== ""
     );
-    console.log("filteredHeaders", filteredHeaders);
+
     await updateCollectionHeaders(
       selectedCollection.collectionId,
       filteredHeaders

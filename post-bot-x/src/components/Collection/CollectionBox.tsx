@@ -9,7 +9,6 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import { ArrowRight, MoreHorizRounded } from "@mui/icons-material";
 import { Collection } from "../../types";
-import { on } from "stream";
 
 interface CollectionBoxProps {
   collection: Collection;
@@ -72,24 +71,28 @@ const CollectionBox: React.FC<CollectionBoxProps> = ({
       >
         <ArrowRight sx={{ fontSize: "25px" }} />
       </IconButton>
-      {collection.name.length > 22 ? (
-        <Tooltip
-          title={collection.name}
-          componentsProps={{
-            tooltip: {
-              sx: {
-                backgroundColor: "gray",
-                fontSize: "13px",
-                color: "white",
-              },
+      <Tooltip
+        title={collection.name.length > 22 ? collection.name : ""}
+        componentsProps={{
+          tooltip: {
+            sx: {
+              backgroundColor: "#252525",
+              fontSize: "13px",
+              color: "white",
+              marginLeft: "10px",
             },
-          }}
+          },
+        }}
+      >
+        <Typography
+          sx={{ width: "62%" }}
+          onClick={() => onCollapseToggle(collection.collectionId)}
         >
-          <Typography>{collection.name.substring(0, 22) + "..."}</Typography>
-        </Tooltip>
-      ) : (
-        <Typography>{collection.name}</Typography>
-      )}
+          {collection.name.length > 22
+            ? `${collection.name.substring(0, 22)}...`
+            : collection.name}
+        </Typography>
+      </Tooltip>
       <Box
         className="collection-actions"
         display="none"

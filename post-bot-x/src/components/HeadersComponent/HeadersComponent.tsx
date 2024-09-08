@@ -9,11 +9,12 @@ import {
   TableRow,
 } from "@mui/material";
 import { Delete, Visibility, VisibilityOff } from "@mui/icons-material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Header } from "../../types";
 
 const HeadersComponent = () => {
-  const { formik, currentCollection } = useAPITestFormikContext();
+  const { formik, setCurrentCollectionId, currentCollection } =
+    useAPITestFormikContext();
   const [rowAddedFlags, setRowAddedFlags] = useState<boolean[]>([]);
   const [showGlobalHeaders, setShowGlobalHeaders] = useState<boolean>(true);
   const resetRowFlags = () => {
@@ -21,6 +22,12 @@ const HeadersComponent = () => {
       new Array(formik.values.queryParameters.length).fill(false)
     );
   };
+
+  useEffect(() => {
+    if (currentCollection?.collectionId) {
+      setCurrentCollectionId(currentCollection.collectionId);
+    }
+  }, [currentCollection, setCurrentCollectionId]);
 
   const deleteHeader = (i: number) => {
     const newHeaders =
@@ -92,7 +99,7 @@ const HeadersComponent = () => {
     headers[index].isChecked = !headers[index].isChecked; // Toggle the checked state
     formik.setFieldValue("headers", headers); // Update formik state with new headers
   };
-  console.log("currentCollection?.headers", currentCollection?.headers);
+
   return (
     <Table>
       <TableBody>
@@ -131,7 +138,7 @@ const HeadersComponent = () => {
           )}
         </TableRow>
         {showGlobalHeaders &&
-          (currentCollection?.headers ?? []).map(
+          (currentCollection?.headers.filter((x) => x.isChecked) ?? []).map(
             (header: { key: string; value: string }, index: number) => (
               <TableRow key={index}>
                 <TableCell sx={{ borderBottom: "none", width: "24px" }}>
