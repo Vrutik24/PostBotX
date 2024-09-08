@@ -8,6 +8,7 @@ import SignIn from "./pages/Login/SignIn";
 import { CollectionContextProvider } from "./contexts/CollectionContext";
 import { APIContextProvider } from "./contexts/APIContext";
 import { NotificationContextProvider } from "./contexts/NotificationContext";
+import { SnackbarProvider } from "notistack";
 
 function App() {
   return (
@@ -16,14 +17,16 @@ function App() {
         <NotificationContextProvider>
           <CollectionContextProvider>
             <APIContextProvider>
-              <BrowserRouter>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/signup" element={<SignUp />} />
-                  <Route path="/signin" element={<SignIn />} />
-                  <Route path="/api-testing" element={<ApiTesting />} />
-                </Routes>
-              </BrowserRouter>
+              <SnackbarProvider maxSnack={3}>
+                <BrowserRouter>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/signup" element={<SignUp />} />
+                    <Route path="/signin" element={<SignIn />} />
+                    <Route path="/api-testing" element={<ApiTesting />} />
+                  </Routes>
+                </BrowserRouter>
+              </SnackbarProvider>
             </APIContextProvider>
           </CollectionContextProvider>
         </NotificationContextProvider>
