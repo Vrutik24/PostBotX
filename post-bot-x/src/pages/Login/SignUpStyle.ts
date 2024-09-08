@@ -27,21 +27,27 @@ export const SignUpForm = styled(Box)(({ theme }) => ({
 export const StyledTextField = styled(TextField)(({ theme }) => ({
   margin: theme.spacing(1, 0),
   "& .MuiInputBase-root": {
-    color: "#4CAF50", // Light grey text color for input
+    color: "white",
   },
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
-      borderColor: "#4CAF50",
+      borderColor: "#9a9e96", // Default border color
     },
     "&:hover fieldset": {
-      borderColor: "#4ee324",
+      borderColor: "#b1b5ac", // Hover state border color
     },
     "&.Mui-focused fieldset": {
-      borderColor: "#4ee324",
+      borderColor: "#b1b5ac", // Focus state border color
+    },
+    "&.Mui-error fieldset": {
+      borderColor: "#9a9e96", // Error state border color (same as default to prevent red border)
     },
   },
   "& .MuiInputLabel-root": {
-    color: "#4CAF50",
+    color: "#b1b5ac", // Label color
+  },
+  "& .MuiFormHelperText-root.Mui-error": {
+    color: "#9c2406", // Error message text color
   },
 }));
 

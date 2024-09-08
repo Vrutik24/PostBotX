@@ -79,6 +79,7 @@ const CollectionNavbar = () => {
   >({});
   const [apiActionLoading, setAPIActionLoading] = useState(false);
   const [isFetchingCollection, setIsFetchingCollection] = useState(true);
+  const [isDraftCollectionCreated, setIsDraftCollectionCreated] = useState(false);
   const [isNavbarCollapsed, setIsNavbarCollapsed] = useState(false);
   const { currentUser } = useAuth();
 
@@ -97,10 +98,11 @@ const CollectionNavbar = () => {
   useEffect(() => {
     const createDraftCollection = async () => {
       if (
-        !isFetchingCollection &&
+        !isFetchingCollection && !isDraftCollectionCreated &&
         (collections === null || collections.length === 0)
       ) {
         try {
+          setIsDraftCollectionCreated(true);
           const newCollection = await createCollection("Draft");
           const createAPIPayload: CreateAPIDetail = {
             apiType: "Get",
@@ -144,6 +146,7 @@ const CollectionNavbar = () => {
     isFetchingCollection,
     setCurrentCollectionId,
     setSelectedAPIId,
+    isDraftCollectionCreated
   ]);
 
   const createAPIRequest = async (collectionId: string, id?: string) => {

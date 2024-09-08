@@ -5,8 +5,6 @@ import {
   Divider,
   FormControl,
   IconButton,
-  InputLabel,
-  Menu,
   MenuItem,
   OutlinedInput,
   Select,
@@ -21,24 +19,26 @@ import {
   ContentBox,
   HeaderContentBox,
 } from "./AutomatedTestingStyle";
-import { ArrowDropDown, CancelScheduleSend, Save, Send } from "@mui/icons-material";
+import {
+  ArrowDropDown,
+  CancelScheduleSend,
+  Save,
+  Send,
+} from "@mui/icons-material";
 import { RequestTypeList } from "../../dropdown-list/request-type-list";
 import { TestingTypeList } from "../../dropdown-list/testing-type-list";
 import APITestingBody from "../../components/APITestingBody/APITestingBody";
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
 import { APIRequestPayload } from "../../types/APIRequestPayload";
-import {
-  automatedPostWrite,
-  automatedPostRead,
-} from "../../api/AutomatedTestService";
-import { manualPostWrite, manualPostRead } from "../../api/ManualTestService";
 import ResponseComponent from "../../components/ResponseComponent/ResponseComponent";
 import { useAPI } from "../../contexts/APIContext";
 import getAPIColor from "../../utils/GetAPIColor";
 import { useEffect, useRef, useState } from "react";
-import SelectTestingMethodButton from "../../components/SelectTestingMethodButton/SelectTestingMethodButton";
-import { API } from "../../types";
+import { Header } from "../../types";
 import axios, { CancelTokenSource } from "axios";
+import { useAutomatedAPICalls } from "../../api/AutomatedTestService";
+import { useManualAPICalls } from "../../api/ManualTestService";
+import CallSnackbar from "../../contexts/CallSnackbar";
 
 interface AutomatedTestingProps {
   setIsVisible: (isVisible: boolean) => void;
@@ -54,8 +54,12 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
   const [isUpdatingAPI, setIsUpdatingAPI] = useState<boolean>(false);
   const [isTestingAPI, setIsTestingAPI] = useState<boolean>(false);
   const [responseData, setResponseData] = useState(null);
+  const [checkedGlobalHeaders, setCheckedGlobalHeaders] = useState<Header[]>(
+    []
+  );
   const inputRef = useRef(null);
   const cancelTokenSourceRef = useRef<CancelTokenSource | null>(null);
+  const snackbar = CallSnackbar();
 
   const {
     formik,
@@ -72,7 +76,22 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
     setTestingMethod(event.target.value as "Automated" | "Manual");
   };
 
+  const {
+    automatedPostWrite,
+    automatedPostRead,
+  } = useAutomatedAPICalls();
+  const { manualPostRead, manualPostWrite } =
+    useManualAPICalls();
+
   const { updateAPI } = useAPI();
+
+  useEffect(() => {
+    currentCollection?.headers
+      ? setCheckedGlobalHeaders(
+          currentCollection?.headers.filter((x) => x.isChecked)
+        )
+      : setCheckedGlobalHeaders([]);
+  }, [currentCollection]);
 
   const testApi = async () => {
     setResponseData(null);
@@ -93,7 +112,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
         testingMethod == "Automated"
           ? formik.values.queryParameters
           : formik.values.manualQueryParameters,
-      headers: formik.values.headers,
+      headers: [...checkedGlobalHeaders, ...formik.values.headers],
     };
 
     const cancelTokenSource = axios.CancelToken.source();
@@ -112,8 +131,8 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
       const results = await executeApiCall(apiPayload, cancelTokenSource.token);
       setIsVisible(true);
       setResponseData(results);
-
     } catch (error) {
+      setIsVisible(false);
       console.error(`Error calling ${apiPayload.apiType} method:`, error);
     } finally {
       setIsTestingAPI(false);
@@ -147,6 +166,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
           apiRequestData?.collectionId
         );
       } catch (error) {
+        snackbar.error("Error occurred while updating an api!")
         console.error("Error updating api!");
       } finally {
         setIsUpdatingAPI(false);
@@ -178,8 +198,15 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
     <APITestingPage>
       <ContentBox>
         <CollectionInfoBox>
-          <Box display={"flex"} alignItems={"center"} gap={"10px"} width={'60%'}>
-            <Typography sx={{ color: "gray" }}>{currentCollection?.name || "Collection"}</Typography>
+          <Box
+            display={"flex"}
+            alignItems={"center"}
+            gap={"10px"}
+            width={"60%"}
+          >
+            <Typography sx={{ color: "gray" }}>
+              {currentCollection?.name || "Collection"}
+            </Typography>
             <Typography>/</Typography>
             <>
               {isEditingAPIName ? (
@@ -210,7 +237,6 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
             <Box display="flex" alignItems={"center"} gap={"20px"}>
               <Button
                 variant="contained"
-                // size="large"
                 sx={{
                   display: "flex",
                   alignItems: "center",
@@ -240,7 +266,6 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
               >
                 Save
               </Button>
-              {/* <SelectTestingMethodButton /> */}
             </Box>
             <FormControl sx={{ width: "150px" }}>
               <Select
@@ -454,7 +479,10 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
       </ContentBox>
 
       {isVisible && (
-        <ResponseComponent response={responseData} setIsVisible={setIsVisible} />
+        <ResponseComponent
+          response={responseData}
+          setIsVisible={setIsVisible}
+        />
       )}
     </APITestingPage>
   );

@@ -32,6 +32,7 @@ interface FormikContextType {
   apiRequestData?: API;
   selectedAPIId?: string;
   currentCollection?: Collection;
+  setCurrentCollection: (collection: Collection) => void;
   apiName?: string;
   setAPIName: (apiName?: string) => void;
   fetchCollections: () => void;
@@ -246,6 +247,7 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
         apiRequestData,
         selectedAPIId,
         currentCollection,
+        setCurrentCollection,
         apiName,
         setAPIName,
         fetchCollections,

@@ -1,31 +1,21 @@
-import { Alert, Box, Button, TextField } from "@mui/material";
+import { Box, Button, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { mapJsonToOutput } from "./MapJsonOutput";
 import { prettifyJSON } from "../../utils/PrettifyJson";
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
+import CallSnackbar from "../../contexts/CallSnackbar";
 
 const JSONBody = () => {
-  const { formik, apiRequestData } = useAPITestFormikContext();
+  const { formik } = useAPITestFormikContext();
   const [jsonInput, setJsonInput] = useState(formik.values.payload[0]);
   const [configuredJson, setConfiguredJson] = useState(
     formik.values.configuredPayload
   );
-  let timeoutId: NodeJS.Timeout;
-  const [errorMessage, setErrorMessage] = useState<string>("");
-
-  const showAlert = (message: string) => {
-    setErrorMessage(message);
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
-    timeoutId = setTimeout(() => {
-      setErrorMessage("");
-    }, 5000);
-  };
+  const snackbar = CallSnackbar();
 
   const handleInputChange = (e: any) => {
     const updatedJson = e.target.value;
-    if (!updatedJson || updatedJson.trim()=='') {
+    if (!updatedJson || updatedJson.trim() == "") {
       setConfiguredJson("");
       formik.setFieldValue(`configuredPayload`, "");
     }
@@ -37,12 +27,11 @@ const JSONBody = () => {
       const parsedJson = JSON.parse(json);
       const configuredJson = mapJsonToOutput(parsedJson);
       const configuredStringifyJson = JSON.stringify(configuredJson, null, 2);
-      setErrorMessage("");
       setConfiguredJson(configuredStringifyJson);
       formik.setFieldValue(`configuredPayload`, configuredStringifyJson);
     } catch (error) {
-      showAlert("Invalid Json Format");
       setConfiguredJson("");
+      snackbar.error("Please enter valid Json object!")
       formik.setFieldValue(`configuredPayload`, "");
       console.error(error);
     }
@@ -165,14 +154,6 @@ const JSONBody = () => {
           }}
         />
       </Box>
-      {errorMessage && (
-        <Alert
-          sx={{ position: "absolute", bottom: 0, right: 0, margin: "20px" }}
-          severity="error"
-        >
-          {errorMessage}
-        </Alert>
-      )}
     </Box>
   );
 };

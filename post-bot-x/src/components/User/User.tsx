@@ -157,6 +157,7 @@ const User: React.FC<UserPorps> = ({ isAnonymousUser }) => {
                     color: "#151414",
                     borderRadius: "16px",
                   },
+
                 }}
               >
                 Login
