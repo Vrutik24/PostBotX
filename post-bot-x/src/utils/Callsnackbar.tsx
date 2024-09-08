@@ -13,6 +13,7 @@ const CallSnackbar = {
       variant: 'success',
       anchorOrigin: anchorOrigin,
       autoHideDuration: 6000,
+      // maxSnack: 1
     });
   },
   error(message?: string, anchorOrigin: TAnchorOrigin = { vertical: 'bottom', horizontal: 'right' }) {
@@ -21,6 +22,7 @@ const CallSnackbar = {
       anchorOrigin: anchorOrigin,
       autoHideDuration: 6000,
       persist: true,
+      // maxSnack: 3
     });
   },
   warn(message?: string, anchorOrigin: TAnchorOrigin = { vertical: 'bottom', horizontal: 'right' }) {
@@ -40,6 +42,7 @@ const CallSnackbar = {
           GO!
         </Button>
       ),
+      // maxSnack: 1
     });
   }
 };

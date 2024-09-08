@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { mapJsonToOutput } from "./MapJsonOutput";
 import { prettifyJSON } from "../../utils/PrettifyJson";
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
-import CallSnackbar from "../../utils/Callsnackbar";
+// import CallSnackbar from "../../utils/Callsnackbar";
+import CallSnackbar from "../../contexts/CallSnackbar";
 
 const JSONBody = () => {
   const { formik, apiRequestData } = useAPITestFormikContext();
@@ -11,6 +12,7 @@ const JSONBody = () => {
   const [configuredJson, setConfiguredJson] = useState(
     formik.values.configuredPayload
   );
+  const snackbar = CallSnackbar();
 
   const handleInputChange = (e: any) => {
     const updatedJson = e.target.value;
@@ -24,12 +26,14 @@ const JSONBody = () => {
   const configureJsonObject = (json: string) => {
     try {
       const parsedJson = JSON.parse(json);
+      snackbar.error("Please enter valid Json object!")
       const configuredJson = mapJsonToOutput(parsedJson);
       const configuredStringifyJson = JSON.stringify(configuredJson, null, 2);
       setConfiguredJson(configuredStringifyJson);
       formik.setFieldValue(`configuredPayload`, configuredStringifyJson);
     } catch (error) {
       setConfiguredJson("");
+      snackbar.error("Please enter valid Json object!")
       formik.setFieldValue(`configuredPayload`, "");
       console.error(error);
     }

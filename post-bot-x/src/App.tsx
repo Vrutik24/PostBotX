@@ -8,6 +8,7 @@ import SignIn from "./pages/Login/SignIn";
 import { CollectionContextProvider } from "./contexts/CollectionContext";
 import { APIContextProvider } from "./contexts/APIContext";
 import { NotificationContextProvider } from "./contexts/NotificationContext";
+import { SnackbarProvider } from "notistack";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <NotificationContextProvider>
           <CollectionContextProvider>
             <APIContextProvider>
+              <SnackbarProvider maxSnack={3}>
                 <BrowserRouter>
                   <Routes>
                     <Route path="/" element={<Home />} />
@@ -24,6 +26,7 @@ function App() {
                     <Route path="/api-testing" element={<ApiTesting />} />
                   </Routes>
                 </BrowserRouter>
+              </SnackbarProvider>
             </APIContextProvider>
           </CollectionContextProvider>
         </NotificationContextProvider>

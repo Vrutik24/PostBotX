@@ -21,7 +21,12 @@ import {
   ContentBox,
   HeaderContentBox,
 } from "./AutomatedTestingStyle";
-import { ArrowDropDown, CancelScheduleSend, Save, Send } from "@mui/icons-material";
+import {
+  ArrowDropDown,
+  CancelScheduleSend,
+  Save,
+  Send,
+} from "@mui/icons-material";
 import { RequestTypeList } from "../../dropdown-list/request-type-list";
 import { TestingTypeList } from "../../dropdown-list/testing-type-list";
 import APITestingBody from "../../components/APITestingBody/APITestingBody";
@@ -39,7 +44,8 @@ import { useEffect, useRef, useState } from "react";
 import SelectTestingMethodButton from "../../components/SelectTestingMethodButton/SelectTestingMethodButton";
 import { API } from "../../types";
 import axios, { CancelTokenSource } from "axios";
-import CallSnackbar from "../../utils/Callsnackbar";
+// import CallSnackbar from "../../utils/Callsnackbar";
+import CallSnackbar from "../../contexts/CallSnackbar";
 
 interface AutomatedTestingProps {
   setIsVisible: (isVisible: boolean) => void;
@@ -57,6 +63,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
   const [responseData, setResponseData] = useState(null);
   const inputRef = useRef(null);
   const cancelTokenSourceRef = useRef<CancelTokenSource | null>(null);
+
   // const { showMessage } = useCallSnackbar()
 
   const {
@@ -73,6 +80,8 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
   const handleChange = (event: SelectChangeEvent) => {
     setTestingMethod(event.target.value as "Automated" | "Manual");
   };
+
+  const snackbar = CallSnackbar();
 
   const { updateAPI } = useAPI();
 
@@ -114,8 +123,8 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
       const results = await executeApiCall(apiPayload, cancelTokenSource.token);
       setIsVisible(true);
       setResponseData(results);
-
     } catch (error) {
+      // snackbar.error(`Error calling ${apiPayload.apiType} method:`);
       setIsVisible(false);
       console.error(`Error calling ${apiPayload.apiType} method:`, error);
     } finally {
@@ -181,8 +190,15 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
     <APITestingPage>
       <ContentBox>
         <CollectionInfoBox>
-          <Box display={"flex"} alignItems={"center"} gap={"10px"} width={'60%'}>
-            <Typography sx={{ color: "gray" }}>{currentCollection?.name || "Collection"}</Typography>
+          <Box
+            display={"flex"}
+            alignItems={"center"}
+            gap={"10px"}
+            width={"60%"}
+          >
+            <Typography sx={{ color: "gray" }}>
+              {currentCollection?.name || "Collection"}
+            </Typography>
             <Typography>/</Typography>
             <>
               {isEditingAPIName ? (
@@ -457,7 +473,10 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
       </ContentBox>
 
       {isVisible && (
-        <ResponseComponent response={responseData} setIsVisible={setIsVisible} />
+        <ResponseComponent
+          response={responseData}
+          setIsVisible={setIsVisible}
+        />
       )}
     </APITestingPage>
   );
