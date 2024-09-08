@@ -4,7 +4,7 @@ import { Box, Button, Container, TextField, Typography } from "@mui/material";
 export const SignInPage = styled(Box)(({ theme }) => ({
   height: "100vh",
   width: "100%",
-  backgroundColor: '#151414', // Dark background
+  backgroundColor: "#151414", // Dark background
   overflow: "hidden", // Prevent scrolling
   position: "relative", // To position the login icon absolutely
   display: "flex",
@@ -16,36 +16,36 @@ export const SignInPage = styled(Box)(({ theme }) => ({
 export const SignInBox = styled(Box)(({ theme }) => ({
   textAlign: "center",
   width: "100%",
-  margin: "0 auto", 
+  margin: "0 auto",
 }));
 
 export const StyledTextField = styled(TextField)(({ theme }) => ({
   margin: theme.spacing(1, 0),
-  "& .MuiInputBase-root": {
-    color: "white",
+  "& .MuiFormLabel-root": {
+    color: "#b1b5ac",
+    "&.Mui-error, &.Mui-focused": {
+      color: "#b1b5ac", // Label color on error and focus
+    },
+  },
+  "& .MuiInputBase-input": {
+    color: "#fff",
+  },
+  "& .MuiFormHelperText-root": {
+    color: "#9c2406",
   },
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
-      borderColor: "#9a9e96", // Default border color
+      borderColor: "#b1b5ac", // Default border color
     },
-    "&:hover fieldset": {
-      borderColor: "#b1b5ac", // Hover state border color
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: "#b1b5ac", // Focus state border color
-    },
+    "&.Mui-focused fieldset, &.Mui-error:not(.Mui-focused) fieldset, &:hover:not(.Mui-focused) fieldset":
+      {
+        borderColor: "#b1b5ac", // Error state border color (same as default to prevent red border)
+      },
     "&.Mui-error fieldset": {
-      borderColor: "#9a9e96", // Error state border color (same as default to prevent red border)
+      borderColor: "#b1b5ac", // Error state border color (same as default to prevent red border)
     },
-  },
-  "& .MuiInputLabel-root": {
-    color: "#b1b5ac", // Label color
-  },
-  "& .MuiFormHelperText-root.Mui-error": {
-    color: "#9c2406", // Error message text color
   },
 }));
-
 
 export const SignInButton = styled(Button)(({ theme }) => ({
   marginTop: theme.spacing(2),
@@ -53,15 +53,14 @@ export const SignInButton = styled(Button)(({ theme }) => ({
   backgroundColor: "#4CAF50",
   color: "#fff",
   "&:hover": {
-    backgroundColor: "#1f911f", 
+    backgroundColor: "darkgreen",
   },
 }));
 
 export const CreateAccountButton = styled(Button)(({ theme }) => ({
-  color: "#7ed33b", // Light green
-  marginTop: theme.spacing(2),
+  color: "#4CAF50", // Light green
   "&:hover": {
-    backgroundColor: "#3a3d3a", 
+    backgroundColor: "#212121",
   },
 }));
 
@@ -70,10 +69,18 @@ export const LogoImage = styled("img")(({ theme }) => ({
   marginBottom: theme.spacing(4),
   maxWidth: "150px",
   display: "block",
-  margin: "0 auto", 
+  margin: "0 auto",
 }));
 
 export const ErrorMessage = styled(Typography)(({ theme }) => ({
-  color: "#940d06",
-  marginTop: theme.spacing(1),
+  color: "#b1b5ac",
+  width: "300px",
+  margin: `${theme.spacing(2)} auto`,
+  padding: `${theme.spacing(1)} ${theme.spacing(3)}`,
+  backgroundColor: "#D32F2F10",
+  border: "1px solid #D32F2F",
+  borderRadius: "8px",
+  alignItems: "center",
+  justifyContent: "space-between",
+  display: "flex",
 }));
