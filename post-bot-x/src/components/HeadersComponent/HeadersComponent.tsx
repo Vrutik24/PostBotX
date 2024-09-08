@@ -22,11 +22,15 @@ const HeadersComponent = () => {
       new Array(formik.values.queryParameters.length).fill(false)
     );
   };
+  const [checkedGlobalHeaders, setCheckedGlobalHeaders] = useState<Header[]>();
 
   useEffect(() => {
     if (currentCollection?.collectionId) {
       setCurrentCollectionId(currentCollection.collectionId);
     }
+    setCheckedGlobalHeaders(
+      currentCollection?.headers.filter((x) => x.isChecked)
+    );
   }, [currentCollection, setCurrentCollectionId]);
 
   const deleteHeader = (i: number) => {
@@ -104,8 +108,7 @@ const HeadersComponent = () => {
     <Table>
       <TableBody>
         <TableRow>
-          {currentCollection?.headers.filter((x) => x.isChecked).length !==
-            0 && (
+          {checkedGlobalHeaders?.length !== 0 && (
             <TableCell
               colSpan={3}
               align="right"
@@ -132,13 +135,13 @@ const HeadersComponent = () => {
               >
                 {showGlobalHeaders
                   ? `Hide parent collection headers`
-                  : `${currentCollection?.headers?.length} hidden`}
+                  : `${checkedGlobalHeaders?.length} hidden`}
               </Button>
             </TableCell>
           )}
         </TableRow>
         {showGlobalHeaders &&
-          (currentCollection?.headers.filter((x) => x.isChecked) ?? []).map(
+          checkedGlobalHeaders?.map(
             (header: { key: string; value: string }, index: number) => (
               <TableRow key={index}>
                 <TableCell sx={{ borderBottom: "none", width: "24px" }}>
