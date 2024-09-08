@@ -162,7 +162,7 @@ const Notification: React.FC = () => {
                         sx={{
                           backgroundColor: "#d9d7d7",
                           color: "black",
-                          mr: 3,
+                          mr: 2,
                         }}
                       >
                         {getUserInitials(notification.senderName)}
@@ -175,7 +175,7 @@ const Notification: React.FC = () => {
                       </Typography>
                     </Box>
 
-                    <Box display="flex" justifyContent="left" ml={8}>
+                    <Box display="flex" justifyContent="left" ml={7} mt={1}>
                       <AcceptActionButton
                         size="small"
                         onClick={() =>
