@@ -72,8 +72,14 @@ const Notification: React.FC = () => {
   const id = open ? "notification-popover" : undefined;
 
   return (
-    <>
-      <IconButton onClick={handleBellClick}>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <IconButton onClick={handleBellClick} sx={{ margin: "auto" }}>
         <Badge badgeContent={notifications.length} color="error">
           <BellIcon />
         </Badge>
@@ -148,7 +154,7 @@ const Notification: React.FC = () => {
           )}
         </NotificationContainer>
       </Popover>
-    </>
+    </Box>
   );
 };
 
