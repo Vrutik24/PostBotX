@@ -466,7 +466,7 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
                 backgroundColor: "#4CAF50",
                 color: "white",
                 width: "100px",
-                paddingX: "20px",
+                paddingX: "40px",
                 margin: "0 10px",
                 display: "flex",
                 alignItems: "center",

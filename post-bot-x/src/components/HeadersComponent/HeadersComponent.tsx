@@ -108,7 +108,7 @@ const HeadersComponent = () => {
     <Table>
       <TableBody>
         <TableRow>
-          {checkedGlobalHeaders?.length !== 0 && (
+          {checkedGlobalHeaders && checkedGlobalHeaders.length !== 0 && (
             <TableCell
               colSpan={3}
               align="right"

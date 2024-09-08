@@ -13,7 +13,12 @@ import {
 import { useAuth } from "./AuthContext";
 import { firestore } from "../firebase";
 import generateUniqueId from "./GenerateUniqueId";
-import { Collection, Header, Notification } from "../types";
+import {
+  Collection,
+  CreateAPI,
+  Header,
+  Notification,
+} from "../types";
 
 interface CollectionContextProps {
   createCollection: (name: string) => Promise<Collection>;
@@ -107,6 +112,33 @@ export const CollectionContextProvider: React.FC<
       collectionId,
       createdOn: new Date(),
     });
+
+    // Add a default request to the newly created collection
+    const createAPIPayload: CreateAPI = {
+      collectionId: collectionId,
+      apiType: "Get",
+      isAutomated: false,
+      url: "",
+      configuredPayload: "",
+      headers: [
+        {
+          key: "",
+          value: "",
+          isChecked: false,
+        },
+      ],
+      queryParameters: [
+        {
+          key: "",
+          value: [""],
+          isChecked: false,
+        },
+      ],
+      createdById: userId,
+      createdOn: new Date(),
+    };
+    await addDoc(collection(firestore, "API"), createAPIPayload);
+
     const collectionSnapshot = await getDocs(
       collection(firestore, "Collection")
     );

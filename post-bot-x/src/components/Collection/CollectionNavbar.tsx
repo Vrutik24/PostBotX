@@ -63,6 +63,7 @@ const CollectionNavbar = () => {
     setSelectedAPIId,
     setCurrentCollectionId,
     setAPIName,
+    currentCollection,
   } = useAPITestFormikContext();
   const [isAPIModalOpen, setIsAPIModalOpen] = useState(false);
   const [selectedAPI, setSelectedAPI] = useState<API>();
@@ -79,7 +80,8 @@ const CollectionNavbar = () => {
   >({});
   const [apiActionLoading, setAPIActionLoading] = useState(false);
   const [isFetchingCollection, setIsFetchingCollection] = useState(true);
-  const [isDraftCollectionCreated, setIsDraftCollectionCreated] = useState(false);
+  const [isDraftCollectionCreated, setIsDraftCollectionCreated] =
+    useState(false);
   const [isNavbarCollapsed, setIsNavbarCollapsed] = useState(false);
   const { currentUser } = useAuth();
 
@@ -95,59 +97,47 @@ const CollectionNavbar = () => {
     fetchCollectionAsync();
   }, []);
 
-  useEffect(() => {
-    const createDraftCollection = async () => {
-      if (
-        !isFetchingCollection && !isDraftCollectionCreated &&
-        (collections === null || collections.length === 0)
-      ) {
-        try {
-          setIsDraftCollectionCreated(true);
-          const newCollection = await createCollection("Draft");
-          const createAPIPayload: CreateAPIDetail = {
-            apiType: "Get",
-            isAutomated: false,
-            url: "",
-            configuredPayload: "",
-            headers: [
-              {
-                key: "",
-                value: "",
-                isChecked: false,
-              },
-            ],
-            queryParameters: [
-              {
-                key: "",
-                value: [""],
-                isChecked: false,
-              },
-            ],
-          };
-          const data = await createAPI(
-            createAPIPayload,
-            newCollection.collectionId
-          );
-          await fetchCollections();
-          setSelectedAPIId(data);
-          newCollection.id && setCurrentCollectionId(newCollection.id);
-        } catch (error: any) {
-          console.log(error.message);
-        }
+  const createDraftCollection = useCallback(async () => {
+    if (
+      !isFetchingCollection &&
+      !isDraftCollectionCreated &&
+      (collections === null || collections.length === 0)
+    ) {
+      try {
+        setIsDraftCollectionCreated(true);
+        const newCollection = await createCollection("Draft");
+        const createAPIPayload: CreateAPIDetail = {
+          apiType: "Get",
+          isAutomated: false,
+          url: "",
+          configuredPayload: "",
+          headers: [
+            {
+              key: "",
+              value: "",
+              isChecked: false,
+            },
+          ],
+          queryParameters: [
+            {
+              key: "",
+              value: [""],
+              isChecked: false,
+            },
+          ],
+        };
+        const data = await createAPI(
+          createAPIPayload,
+          newCollection.collectionId
+        );
+        await fetchCollections();
+        setSelectedAPIId(data);
+        newCollection.id && setCurrentCollectionId(newCollection.id);
+      } catch (error: any) {
+        console.log(error.message);
       }
-    };
-    createDraftCollection();
-  }, [
-    collectionsWithRequests,
-    collections,
-    fetchCollections,
-    createAPI,
-    createCollection,
-    isFetchingCollection,
-    setCurrentCollectionId,
-    setSelectedAPIId,
-    isDraftCollectionCreated
-  ]);
+    }
+  }, [isFetchingCollection, isDraftCollectionCreated, collections, createCollection, createAPI, fetchCollections, setSelectedAPIId, setCurrentCollectionId]);
 
   const createAPIRequest = async (collectionId: string, id?: string) => {
     setAPIActionLoading(true);
@@ -390,6 +380,25 @@ const CollectionNavbar = () => {
       [collectionId]: !prevState[collectionId],
     }));
   };
+
+  useEffect(() => {
+    if (!isFetchingCollection) {
+      if (
+        collectionsWithRequests === null ||
+        collectionsWithRequests.length === 0
+      ) {
+        fetchCollections();
+      } else if (collections !== null && collections.length === 0) {
+        createDraftCollection();
+      }
+    }
+  }, [
+    isFetchingCollection,
+    collectionsWithRequests,
+    collections,
+    fetchCollections,
+    createDraftCollection,
+  ]);
 
   return (
     <>

@@ -16,19 +16,10 @@ import {
 } from "./SignInStyle";
 import { Close, Visibility, VisibilityOff } from "@mui/icons-material";
 
-const validationSchema = Yup.object({
-  email: Yup.string()
-    .email("Invalid email address")
-    .required("Email is required"),
-  password: Yup.string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Password is required"),
-});
-
 const SignIn: React.FC = () => {
   const { signIn, currentUser } = useAuth();
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string>();
+  const [errorMessage, setErrorMessage] = useState<string>();
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
@@ -41,17 +32,14 @@ const SignIn: React.FC = () => {
       email: "",
       password: "",
     },
-    //validationSchema: validationSchema,
-    //validateOnBlur: false,
-    //validateOnChange: false,
     onSubmit: async (values) => {
       setLoading(true);
-      setError("");
+      setErrorMessage("");
       try {
         await signIn(values.email, values.password);
         navigate("/");
       } catch (err) {
-        setError("Incorrect email or password");
+        setErrorMessage("Incorrect email or password. Try again.");
       } finally {
         setLoading(false);
       }
@@ -67,9 +55,9 @@ const SignIn: React.FC = () => {
             alt="PostBot_X"
             onClick={() => navigate("/")}
           />
-          {error && (
-            <ErrorMessage variant="body2">{error}
-              <IconButton size="small" onClick={() => setError(undefined)} edge="end">
+          {errorMessage && (
+            <ErrorMessage variant="body2">{errorMessage}
+              <IconButton size="small" onClick={() => setErrorMessage(undefined)} edge="end">
                 <Close fontSize="small" sx={{color:"#b1b5ac"}}/>
               </IconButton>
             </ErrorMessage>
@@ -86,8 +74,6 @@ const SignIn: React.FC = () => {
               value={formik.values.email}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              //error={formik.submitCount > 0 && Boolean(formik.errors.email)}
-              //helperText={formik.touched.email && formik.errors.email}
               required
             />
             <StyledTextField
@@ -99,8 +85,6 @@ const SignIn: React.FC = () => {
               value={formik.values.password}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              //error={formik.submitCount > 0 && Boolean(formik.errors.password)}
-              //helperText={formik.touched.password && formik.errors.password}
               required
               InputProps={{
                 endAdornment: (
