@@ -15,19 +15,19 @@ export const useAutomatedAPICalls = () => {
         cancelToken,
       });
       return response.data;
-    } catch (error : any) {
+    } catch (error: any) {
       const errors = error?.response?.data?.errors;
-    
+
       if (errors) {
-        const firstErrorKey = Object.keys(errors)[0]; 
-        const firstError = errors[firstErrorKey]?.[0]; 
-  
+        const firstErrorKey = Object.keys(errors)[0];
+        const firstError = errors[firstErrorKey]?.[0];
+
         if (firstError) {
-          snackbar.error(firstError); 
+          snackbar.error(firstError);
         }
-      } else {
-        snackbar.error(error?.message); 
-      }
+        }else {
+        snackbar.error(error?.message);
+        }
       throw error;
     }
   };
@@ -41,19 +41,19 @@ export const useAutomatedAPICalls = () => {
         cancelToken,
       });
       return response.data;
-    } catch (error : any) {
+    } catch (error: any) {
       const errors = error?.response?.data?.errors;
-    
+
       if (errors) {
-        const firstErrorKey = Object.keys(errors)[0]; 
-        const firstError = errors[firstErrorKey]?.[0]; 
-  
+        const firstErrorKey = Object.keys(errors)[0];
+        const firstError = errors[firstErrorKey]?.[0];
+
         if (firstError) {
-          snackbar.error(firstError); 
+          snackbar.error(firstError);
         }
-      } else {
-        snackbar.error(error?.message); 
-      }
+        } else {
+        snackbar.error(error?.message);
+        }
       throw error;
     }
   };
@@ -65,7 +65,7 @@ export const useAutomatedAPICalls = () => {
     try {
       const data = await automatedTestWrite(payload, cancelToken);
       return data;
-    } catch (error : any) {
+    } catch (error: any) {
       throw error;
     }
   };
@@ -77,7 +77,7 @@ export const useAutomatedAPICalls = () => {
     try {
       const data = await automatedTestRead(payload, cancelToken);
       return data;
-    } catch (error : any) {
+    } catch (error: any) {
       throw error;
     }
   };

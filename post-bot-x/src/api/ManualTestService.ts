@@ -24,9 +24,9 @@ export const useManualAPICalls = () => {
         if (firstError) {
           snackbar.error(firstError); 
         }
-      } else {
+        } else {
         snackbar.error(error?.message); 
-      }
+        }
       throw error;
     }
   };
@@ -49,9 +49,9 @@ export const useManualAPICalls = () => {
         if (firstError) {
           snackbar.error(firstError); 
         }
-      } else {
+        } else {
         snackbar.error(error?.message); 
-      }
+        }
       throw error;
     }
   };
