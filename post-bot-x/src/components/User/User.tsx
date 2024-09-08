@@ -123,11 +123,11 @@ const User: React.FC<UserPorps> = ({ isAnonymousUser }) => {
                   sx={{
                     textTransform: "capitalize",
                     color: "#FFFFFF",
-                    backgroundColor: "#FFFFFF10",
+                    backgroundColor: "#FFFFFF33",
                     textAlign: "left",
                     px: 2,
                     "&:hover": {
-                      backgroundColor: "#FFFFFF30",
+                      backgroundColor: "#FFFFFF50",
                     },
                   }}
                 >
