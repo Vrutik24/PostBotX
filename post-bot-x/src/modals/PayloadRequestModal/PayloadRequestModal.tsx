@@ -49,7 +49,7 @@ const PayloadRequestModal = ({
     },
     enableReinitialize: true,
     onSubmit: async (values) => {
-      formik.setFieldValue(`payload.${requestModal.index}`, values.payload);
+      formik.setFieldValue(`manualPayload.${requestModal.index}`, values.payload);
       setRequestmodal({
         ...requestModal,
         request: payloadRequestFormik.values.payload,
@@ -165,8 +165,10 @@ const PayloadRequestModal = ({
                   border: "none",
                 },
               }}
-              onClick={() =>
-                setRequestmodal({ ...requestModal, isOpen: false })
+              onClick={() => {
+                setRequestmodal({ ...requestModal, isOpen: false });
+                formik.setFieldValue(`manualPayload.${requestModal.index}`, requestModal.request);
+              }
               }
             >
               Cancel
