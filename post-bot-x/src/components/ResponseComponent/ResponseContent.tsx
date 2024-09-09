@@ -45,7 +45,7 @@ const ResponseComponent: React.FC<ResponseComponentProps> = ({
     const element = document.getElementById("response-content");
     if (!element) return;
     const canvas = await html2canvas(element, {
-      scale: 2, 
+      scale: 2,
     });
 
     const imgData = canvas.toDataURL("image/jpeg", 0.5);
@@ -54,36 +54,67 @@ const ResponseComponent: React.FC<ResponseComponentProps> = ({
     const pdf = new jsPDF({
       orientation: "portrait",
       unit: "px",
-      format: [canvas.width*0.8 , canvas.height],
+      format: [canvas.width * 0.8 + 60, canvas.height + 160],
     });
 
-    // Adjust the width and height to fit the PDF properly
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+    // Add post_botX image at the top of the PDF (adjust coordinates as needed)
+    const postBotXImage = new Image();
+    postBotXImage.src = post_botX;
 
-    pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
-    pdf.save("TestResults.pdf");
-    setIsDownloading(false);
+    postBotXImage.onload = function () {
+      const padding = 30;
+      const imgWidth = 100;
+      const imgHeight = 100;
+      const imgX = padding; // Left-align the image with padding
+      const textX = imgX + imgWidth + 20; // Position text next to the image with some spacing
+
+      pdf.addImage(postBotXImage, "PNG", imgX, padding, imgWidth, imgHeight); // Adjusted y-coordinate for padding
+
+      // Add styled text
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(50);
+      pdf.setTextColor(76, 175, 80);
+      const text = "PostBotX";
+      const letterSpacing = 4;
+
+      let xOffset = textX;
+      for (let i = 0; i < text.length; i++) {
+        pdf.text(text[i], xOffset, padding + 20 + imgHeight / 2); // Center text vertically with the image
+        xOffset += pdf.getTextWidth(text[i]) + letterSpacing;
+      }
+
+      // Add the rest of the content below the image and text
+      const contentY = imgHeight + padding + 30; // Adjusted y-coordinate for padding
+      const pdfWidth = pdf.internal.pageSize.getWidth() - 2 * padding; // Adjusted for padding
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      pdf.addImage(imgData, "JPEG", padding, contentY, pdfWidth, pdfHeight); // Adjusted y-coordinate and added padding
+
+      // Save the PDF
+      pdf.save("TestResults.pdf");
+      setIsDownloading(false);
+    };
   };
-  
+
   const parseTime = (timeString: string): string => {
-    const [hours, minutes, seconds] = timeString.split(':');
-    
-    const [secs, millis] = seconds.split('.');
-  
-    const totalSeconds = (parseInt(hours) || 0) * 3600 
-                       + (parseInt(minutes) || 0) * 60 
-                       + (parseInt(secs) || 0);
-  
+    const [hours, minutes, seconds] = timeString.split(":");
+
+    const [secs, millis] = seconds.split(".");
+
+    const totalSeconds =
+      (parseInt(hours) || 0) * 3600 +
+      (parseInt(minutes) || 0) * 60 +
+      (parseInt(secs) || 0);
+
     const totalMilliseconds = totalSeconds * 1000 + (parseInt(millis) || 0);
     const formattedMilliseconds = totalMilliseconds.toString().slice(0, 3);
-  
-    console.log(totalMilliseconds, totalSeconds);
-    
+
     if (totalSeconds < 1) {
       return `${formattedMilliseconds}ms`;
     } else {
-      const formattedSeconds = (totalSeconds + (parseInt(millis) || 0) / 10000000).toFixed(2);
+      const formattedSeconds = (
+        totalSeconds +
+        (parseInt(millis) || 0) / 10000000
+      ).toFixed(2);
       return `${formattedSeconds}s`;
     }
   };
@@ -97,6 +128,7 @@ const ResponseComponent: React.FC<ResponseComponentProps> = ({
         sx={{
           color: "white",
           borderRadius: "8px",
+          marginBottom: "40px",
           backgroundColor: "#4CAF50",
           "&:hover": {
             backgroundColor: "darkgreen",
@@ -108,16 +140,12 @@ const ResponseComponent: React.FC<ResponseComponentProps> = ({
         }}
       >
         {isDownLoading ? (
-              <CircularProgress size={24} sx={{ color: "white" }} />
-            ) : (
-              "Download Report"
-            )}
+          <CircularProgress size={24} sx={{ color: "white" }} />
+        ) : (
+          "Download Report"
+        )}
       </Button>
       <div className="response-content" id="response-content">
-        <Box display="flex" alignItems="center" gap={1} sx={{ margin: 2 }}>
-          <img src={post_botX} alt="Post Bot X" style={{ maxWidth: "50px" }} />
-          <Title>PostBotX</Title>
-        </Box>
         {flattenedResults?.map((result: any, index: number) => (
           <div key={index} className="test-result-card">
             <div className="result-row">
