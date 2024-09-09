@@ -51,3 +51,30 @@ Instructions on how to install and set up the project.
 - Download Test Reports
 - Collaborative testing
 
+## Comprehensive Feature Guide
+
+### Error Analysis
+Error Analysis helps you to diagnose and understand issues by providing detailed insights into test failures.
+
+**Key Benefits:**
+- Comprehensive error reporting with detailes.
+- Helps you to identify root causes and potential fixes.
+  
+
+
+### Download Test Reports
+The ability to download Test Reports allows you to generate and export detailed reports of your test analyses. These reports include test results, execution details, and any errors or issues encountered.
+
+**Key Benefits:**
+- Easy export of test results for offline review and record-keeping.
+- Shareable reports for stakeholders and team members.
+
+  
+
+### Collaborative Testing
+Collaborative Testing enables you to share API collections and test scenarios with other users. This feature supports teamwork by allowing multiple users to work on the same project, exchange feedback, and collaborate on test development.
+
+**Key Benefits:**
+- Seamless sharing of test collections with team members.
+- Improved collaboration and feedback loops.
+- Enhanced productivity with shared test resources and knowledge.
