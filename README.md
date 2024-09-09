@@ -53,8 +53,170 @@ Instructions on how to install and set up the project.
 
 ## Comprehensive Feature Guide
 
-### Error Analysis
-Error Analysis helps you to diagnose and understand issues by providing detailed insights into test failures.
+### 1. Automated Testing (AI Enabled)
+Our AI-powered automated testing accelerates the process of testing GET, POST, PUT, PATCH, and DELETE APIs. It intelligently generates both query parameters and payloads, covering positive and negative scenarios. This ensures comprehensive testing, drastically reducing manual effort while delivering thorough and efficient results
+
+#### <h3><u>•  Automated Testing of Post/Put API Call</u></h3>
+---
+#### Configuring JSON Payloads for API Testing
+You can input a JSON payload and use the **Configure JSON Object** button to generate a configured JSON object that will serve as the payload for your API calls as you can see in below image. Each field of this configured object includes:
+
+- **Data Type**: Defines the type of data for each field.
+- **Behavior Directive**: Specifies whether the value is fixed or randomized.
+- **Value**: Ideally a positive value to enhance payload generation quality.
+- **Validation**: (Optional) Adds validation rules for each field.
+
+This configured JSON object acts as a template for generating test payloads, enabling structured and efficient API testing.
+
+Example Payload
+
+```bash
+    {
+    "userId": 1,
+    "id": 1,
+    "title": "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
+    "body": "quia et suscipit\nsuscipit recusandae consequuntur expedita et cum\nreprehenderit molestiae ut ut quas totam\nnostrum rerum est autem sunt rem eveniet architecto"
+  }
+```
+<br/>
+
+Example Url
+
+```bash
+    https://jsonplaceholder.typicode.com/posts
+```
+
+
+![image](https://github.com/user-attachments/assets/1b4949e6-db59-4e90-a292-36629e22abd4)
+
+### API Request Testing
+
+As you can see in above image, to test the API request, follow these steps:
+
+1. **Select API Type**:
+   - Choose the appropriate API type for your request.
+
+2. **Provide URL**:
+   - Enter the URL for the API endpoint.
+
+3. **Generate Configured Payload**:
+   - Generate Configured Json object.
+
+4. **Add Headers**:
+   - Specify the necessary headers for the API request, such as:
+     - `Authorization`
+     - `Content-Type`
+
+5. **Send Request**:
+   - Click on the **Send** button to test the API.
+
+Once the initial payload is configured and submitted, the AI model will automatically generate multiple payloads to cover a wide range of scenarios, including both positive and negative cases. The responses for all these generated payloads will be provided for review.
+
+#### <h3><u>•  Automated Testing of Get/Delete API Call</u></h3>
+---
+
+AI model creates a spectrum of test scenarios by dynamically generating multiple values for each query parameter, ensuring a comprehensive assessment of API behavior
+
+Example Url
+
+```bash
+    https://jsonplaceholder.typicode.com/posts
+```
+
+![image](https://github.com/user-attachments/assets/1a3eda16-b221-45bc-8f03-91310572e97f)
+
+### API Request Testing
+
+As you can see in above image, to test the API request, follow these steps:
+
+1. **Select API Type**:
+   - Choose the appropriate API type for your request.
+
+2. **Provide URL**:
+   - Enter the URL for the API endpoint.
+
+3. **Add Headers**:
+   - Specify the necessary headers for the API request, such as:
+     - `Authorization`
+     - `Content-Type`
+
+4. **Add QueryParameters**:
+   - array of query parameters, each with a key and a single value (value must be positve case for better testing of api):
+
+5. **Send Request**:
+   - Click on the **Send** button to test the API.
+
+
+### 2. Manual Testing
+
+#### <h3><u>•  Manual Testing of Post/Put API Call</u></h3>
+---
+
+This feature lets users run customized tests on their **POST** and **PUT** APIs by providing multiple payloads, which the app uses to test the API. The details include:
+
+Example Url
+
+```bash
+    https://jsonplaceholder.typicode.com/posts
+```
+
+![image](https://github.com/user-attachments/assets/626a448d-311c-47d8-b194-0d58b832a0f9)
+
+### API Request Testing
+
+1. **Select API Type**:
+   - Choose the appropriate API type for your request.
+
+2. **Provide URL**:
+   - Enter the URL for the API endpoint.
+
+3. **Add Headers**:
+   - Specify the necessary headers for the API request, such as:
+     - `Authorization`
+     - `Content-Type`
+
+3. **Payload**:
+   - Provide an array of Json oblect (Multiple payloads as shown in above image).
+
+5. **Send Request**:
+   - Click on the **Send** button to test the API.
+
+
+#### <h3><u>•  Manual Testing of Get/Delete API Call</u></h3>
+---
+
+The Manual Testing feature in our API Testing UI enhances the testing capabilities for Get/Delete APIs by allowing users to provide multiple values for each query parameter. This empowers users to perform thorough and customized assessments of their APIs under diverse conditions.
+
+Example Url
+
+```bash
+    https://jsonplaceholder.typicode.com/posts
+```
+
+![image](https://github.com/user-attachments/assets/767ccb81-7a1f-4b17-8d8b-0fadcb00a30a)
+
+### API Request Testing
+
+1. **Select API Type**:
+   - Choose the appropriate API type for your request.
+
+2. **Provide URL**:
+   - Enter the URL for the API endpoint.
+
+3. **Add Headers**:
+   - Specify the necessary headers for the API request, such as:
+     - `Authorization`
+     - `Content-Type`
+
+4. **Add QueryParameters**:
+   - Provide an array of query parameters, each with a key and a multiple value.
+
+5. **Send Request**:
+   - Click on the **Send** button to test the API.
+
+
+### 3. Error Analysis
+  Error Analysis helps you to diagnose and understand issues by providing detailed insights into test failures.
 
 **Key Benefits:**
 - Comprehensive error reporting with detailes.
@@ -62,8 +224,8 @@ Error Analysis helps you to diagnose and understand issues by providing detailed
   
 
 
-### Download Test Reports
-The ability to download Test Reports allows you to generate and export detailed reports of your test analyses. These reports include test results, execution details, and any errors or issues encountered.
+### 4. Download Test Reports
+  The ability to download Test Reports allows you to generate and export detailed reports of your test analyses. These reports include test results, execution details, and any errors or issues encountered.
 
 **Key Benefits:**
 - Easy export of test results for offline review and record-keeping.
@@ -71,8 +233,8 @@ The ability to download Test Reports allows you to generate and export detailed 
 
   
 
-### Collaborative Testing
-Collaborative Testing enables you to share API collections and test scenarios with other users. This feature supports teamwork by allowing multiple users to work on the same project, exchange feedback, and collaborate on test development.
+### 5. Collaborative Testing
+  Collaborative Testing enables you to share API collections and test scenarios with other users. This feature supports teamwork by allowing multiple users to work on the same project, exchange feedback, and collaborate on test development.
 
 **Key Benefits:**
 - Seamless sharing of test collections with team members.
