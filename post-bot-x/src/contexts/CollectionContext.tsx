@@ -112,33 +112,7 @@ export const CollectionContextProvider: React.FC<
       collectionId,
       createdOn: new Date(),
     });
-
-    // Add a default request to the newly created collection
-    const createAPIPayload: CreateAPI = {
-      collectionId: collectionId,
-      apiType: "Get",
-      isAutomated: false,
-      url: "",
-      configuredPayload: "",
-      headers: [
-        {
-          key: "",
-          value: "",
-          isChecked: false,
-        },
-      ],
-      queryParameters: [
-        {
-          key: "",
-          value: [""],
-          isChecked: false,
-        },
-      ],
-      createdById: userId,
-      createdOn: new Date(),
-    };
-    await addDoc(collection(firestore, "API"), createAPIPayload);
-
+    
     const collectionSnapshot = await getDocs(
       collection(firestore, "Collection")
     );
