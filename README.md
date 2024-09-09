@@ -5,18 +5,29 @@ This software offers a combination of AI-enabled API testing and manual testing 
 ## Table of Contents
 
 - Installation
-- Usage
 
 ## Installation
 
 Instructions on how to install and set up the project.
 
-```bash
-# Clone the repository
-git clone https://github.com/Vrutik24/PostBotX.git
+1. **Clone the repository**:
+    ```bash
+    git clone https://github.com/Vrutik24/PostBotX.git
+    ```
 
-# Navigate to the project directory
-cd post-bot-x
+2. **Navigate to the project directory**:
+    ```bash
+    cd post-bot-x
+    ```
 
-# Install dependencies
-npm install
+3. **Install dependencies**:
+    ```bash
+    npm install
+    ```
+
+4. **Run the project**:
+    ```bash
+    npm start
+    ```
+
+5. **Open your browser** and go to `http://localhost:3000` to see the project in action.
