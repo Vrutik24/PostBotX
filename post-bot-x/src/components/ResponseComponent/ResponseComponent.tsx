@@ -65,28 +65,32 @@ const ResponseComponent: React.FC<{
         bottom: 0,
         left: 0,
         right: 0,
-        height: `${Math.max(height, 20)}px`,
-        overflow: height > 20 ? "auto" : "hidden",
-        border: "1px solid gray",
+        height: `${Math.max(height, 40)}px`,
+        overflow: height > 150 ? "auto" : "hidden",
         borderRadius: "4px 4px 0 0",
-        backgroundColor: "white",
+        backgroundColor: "#151414",
       }}
     >
-      <div
-        style={{
+      <Box
+        component="div"
+        sx={{
           position: "sticky",
           top: 0,
           left: 0,
           right: 0,
           zIndex: 1,
-          marginBottom: 20,
+          marginBottom: 2,
+          borderTop: "1px solid #3a3939",
+          "&:hover": {
+            borderTop: "2px solid #4CAF5080", // Change borderTop color on hover
+          },
         }}
       >
         <Box
           onMouseDown={handleMouseDown}
           sx={{
-            backgroundColor: "white",
-            height: "20px",
+            backgroundColor: "#151414",
+            height: "40px",
             cursor: "row-resize",
             position: "relative",
             top: 0,
@@ -96,21 +100,21 @@ const ResponseComponent: React.FC<{
             justifyContent: "center",
           }}
         >
-          <DragHandle sx={{ color: "black", fontSize: 20 }} />
+          <DragHandle sx={{ color: "#4CAF50", fontSize: 20 }} />
           <IconButton
             onClick={() => setIsVisible(false)}
             sx={{
               position: "absolute",
               top: 10,
-              right: 0,
+              right: 10,
               zIndex: 2,
               visibility: height > 50 ? "visible" : "hidden",
             }}
           >
-            <CloseIcon />
+            <CloseIcon sx={{ color: "#FFFFFF" }} />
           </IconButton>
         </Box>
-      </div>
+      </Box>
       {response ? (
         <ResponseContent testResults={response} />
       ) : (
