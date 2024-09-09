@@ -1,9 +1,10 @@
-import { MouseEvent, useMemo } from "react";
+import { MouseEvent, useMemo, useState } from "react";
 import { MoreHorizRounded } from "@mui/icons-material";
 import { Box, IconButton, Tooltip, Typography } from "@mui/material";
 import { API } from "../../../types";
 import getAPIColor from "../../../utils/GetAPIColor";
 import { useAPITestFormikContext } from "../../../contexts/APITestFormikContext";
+import UnSavedAPIChangesModal from "../../../modals/UnSavedChangesModal/UnSavedAPIChangesModal";
 
 interface APIRequestsBoxProps {
   apiRequest: API;
@@ -26,6 +27,11 @@ const APIRequestsBox = ({
     apiName,
     loadingAPIData,
   } = useAPITestFormikContext();
+  const [unSavedChangesModalOpen, setUnSaveChangesModalOpen] =
+    useState<boolean>(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState<boolean>(
+    formik.dirty
+  );
   const apiTypeColor = getAPIColor(apiRequest.apiType);
 
   const displayedName = useMemo(() => {
@@ -39,102 +45,137 @@ const APIRequestsBox = ({
     }
   }, [loadingAPIData, selectedAPIId, apiRequest.id, apiName, apiRequest.name]);
 
-  return (
-    <Box
-      display="flex"
-      alignItems="center"
-      justifyContent={"space-between"}
-      p="6px"
-      pl="46px"
-      my={1}
-      key={apiRequest.id + colId}
-      borderRadius="4px"
-      position="relative"
-      onContextMenu={onMenuOpen}
-      tabIndex={0}
-      onClick={() => {
-        setSelectedAPIId(apiRequest.id);
-        setCurrentCollectionId(colId ? colId : "");
-      }}
-      data-api-open={apiRequest.id == selectedAPIId}
-      data-api-id={apiRequest.id}
-      sx={{
-        backgroundColor:
-          apiRequest.id == selectedAPIId
-            ? "rgba(255, 255, 255, 0.1)"
-            : apiRequest.id === selectedAPIId && anchorEl
-            ? "rgb(29 28 28)"
-            : "transparent",
-        cursor: "pointer",
-        "&:hover, &[data-api-open='true']": {
-          backgroundColor: "rgb(29 28 28)",
-        },
-        "&:hover .collection-actions, &[data-api-open='true'] .collection-actions":
-          {
-            display: "flex",
-          },
-        color: "#fff",
-        gap: 2,
-        fontSize: "8px",
-      }}
-    >
-      <Box display={"flex"} alignItems={"center"} gap={"10px"}>
-        <Typography
-          color={apiTypeColor}
-          fontSize={"14px"}
-          sx={{ textTransform: "uppercase", pr: 1 }}
-        >
-          {apiRequest.apiType}
-        </Typography>
-        {displayedName?.length > 18 ? (
-          <Tooltip
-            title={displayedName}
-            componentsProps={{
-              tooltip: {
-                sx: {
-                  backgroundColor: "gray",
-                  fontSize: "13px",
-                  color: "white",
-                },
-              },
-            }}
-          >
-            <Typography fontSize={"16px"}>
-              {displayedName.substring(0, 18) + "..."}
-            </Typography>
-          </Tooltip>
-        ) : (
-          <Typography fontSize={"16px"}>{displayedName}</Typography>
-        )}
-      </Box>
+  // console.log("apiRequest", apiRequest.id);
+  // console.log(selectedAPIId, "selectedAPIId");
 
+  const handleCloseModal = () => {
+    setUnSaveChangesModalOpen(false);
+    setHasUnsavedChanges(false);
+    setSelectedAPIId(selectedAPIId || "");
+  };
+
+  const leaveUndavedChanges = () => {
+    setUnSaveChangesModalOpen(false);
+    setHasUnsavedChanges(false);
+    setSelectedAPIId(apiRequest.id);
+  };
+
+  console.log("formik", formik);
+
+  const handleApiClick = (newApiId: string) => {
+    console.log(selectedAPIId, "selectedAPIId handleApiClick");
+    console.log(newApiId, "newApiId handleApiClick");
+    console.log(formik.dirty);
+    if (selectedAPIId !== newApiId && formik.dirty) {
+      setUnSaveChangesModalOpen(true);
+    } else {
+      setSelectedAPIId(newApiId);
+      setCurrentCollectionId(colId ? colId : "");
+    }
+  };
+
+  return (
+    <>
       <Box
-        className="collection-actions"
-        display="none"
-        position="absolute"
-        right={0}
-        top={0}
-        bottom={0}
+        display="flex"
         alignItems="center"
-        pr={1}
-        gap={1}
-      >
-        <IconButton
-          size="small"
-          sx={{
-            color: "rgba(255, 255, 255, 0.5)",
-            "&:hover": {
-              backgroundColor: "rgba(255, 255, 255, 0.1)",
-              borderRadius: "8px",
+        justifyContent={"space-between"}
+        p="6px"
+        pl="46px"
+        my={1}
+        key={apiRequest.id + colId}
+        borderRadius="4px"
+        position="relative"
+        onContextMenu={onMenuOpen}
+        tabIndex={0}
+        onClick={() => {
+          handleApiClick(apiRequest.id);
+        }}
+        // onClick={() => {
+        //   setSelectedAPIId(apiRequest.id);
+        //   setCurrentCollectionId(colId ? colId : "");
+        // }}
+        data-api-open={apiRequest.id == selectedAPIId}
+        data-api-id={apiRequest.id}
+        sx={{
+          backgroundColor:
+            apiRequest.id == selectedAPIId
+              ? "rgba(255, 255, 255, 0.1)"
+              : apiRequest.id === selectedAPIId && anchorEl
+              ? "rgb(29 28 28)"
+              : "transparent",
+          cursor: "pointer",
+          "&:hover, &[data-api-open='true']": {
+            backgroundColor: "rgb(29 28 28)",
+          },
+          "&:hover .collection-actions, &[data-api-open='true'] .collection-actions":
+            {
+              display: "flex",
             },
-            "&[data-api-open='true']": { color: "white" },
-          }}
-          onClick={onMenuOpen}
+          color: "#fff",
+          gap: 2,
+          fontSize: "8px",
+        }}
+      >
+        <Box display={"flex"} alignItems={"center"} gap={"10px"}>
+          <Typography
+            color={apiTypeColor}
+            fontSize={"14px"}
+            sx={{ textTransform: "uppercase", pr: 1 }}
+          >
+            {apiRequest.apiType}
+          </Typography>
+          {displayedName?.length > 18 ? (
+            <Tooltip
+              title={displayedName}
+              componentsProps={{
+                tooltip: {
+                  sx: {
+                    backgroundColor: "gray",
+                    fontSize: "13px",
+                    color: "white",
+                  },
+                },
+              }}
+            >
+              <Typography fontSize={"16px"}>
+                {displayedName.substring(0, 18) + "..."}
+              </Typography>
+            </Tooltip>
+          ) : (
+            <Typography fontSize={"16px"}>{displayedName}</Typography>
+          )}
+        </Box>
+
+        <Box
+          className="collection-actions"
+          display="none"
+          position="absolute"
+          right={0}
+          top={0}
+          bottom={0}
+          alignItems="center"
+          pr={1}
+          gap={1}
         >
-          <MoreHorizRounded sx={{ fontSize: "20px" }} />
-        </IconButton>
+          <IconButton
+            size="small"
+            sx={{
+              color: "rgba(255, 255, 255, 0.5)",
+              "&:hover": {
+                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                borderRadius: "8px",
+              },
+              "&[data-api-open='true']": { color: "white" },
+            }}
+            onClick={onMenuOpen}
+          >
+            <MoreHorizRounded sx={{ fontSize: "20px" }} />
+          </IconButton>
+        </Box>
       </Box>
-    </Box>
+      <UnSavedAPIChangesModal isOpen = {unSavedChangesModalOpen} onClose={handleCloseModal} onLeave={leaveUndavedChanges}/>
+    </>
   );
 };
 
