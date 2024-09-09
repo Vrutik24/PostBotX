@@ -63,7 +63,7 @@ You can input a JSON payload and use the **Configure JSON Object** button to gen
 
 - **Data Type**: Defines the type of data for each field.
 - **Behavior Directive**: Specifies whether the value is fixed or randomized.
-- **Value**: Ideally a positive value to enhance payload generation quality.
+- **Value**: Ideally a positive example value to enhance payload generation quality.
 - **Validation**: (Optional) Adds validation rules for each field.
 
 This configured JSON object acts as a template for generating test payloads, enabling structured and efficient API testing.
@@ -176,7 +176,7 @@ Example Url
      - `Content-Type`
 
 3. **Payload**:
-   - Provide an array of Json oblect (Multiple payloads as shown in above image).
+   - Provide an array of Json object (Multiple payloads as shown in above image).
 
 5. **Send Request**:
    - Click on the **Send** button to test the API.
@@ -231,7 +231,6 @@ Example Url
 - Easy export of test results for offline review and record-keeping.
 - Shareable reports for stakeholders and team members.
 
-  
 
 ### 5. Collaborative Testing
   Collaborative Testing enables you to share API collections and test scenarios with other users. This feature supports teamwork by allowing multiple users to work on the same project, exchange feedback, and collaborate on test development.
