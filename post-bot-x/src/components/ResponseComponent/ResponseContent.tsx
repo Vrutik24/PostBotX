@@ -65,6 +65,28 @@ const ResponseComponent: React.FC<ResponseComponentProps> = ({
     pdf.save("TestResults.pdf");
     setIsDownloading(false);
   };
+  
+  const parseTime = (timeString: string): string => {
+    const [hours, minutes, seconds] = timeString.split(':');
+    
+    const [secs, millis] = seconds.split('.');
+  
+    const totalSeconds = (parseInt(hours) || 0) * 3600 
+                       + (parseInt(minutes) || 0) * 60 
+                       + (parseInt(secs) || 0);
+  
+    const totalMilliseconds = totalSeconds * 1000 + (parseInt(millis) || 0);
+    const formattedMilliseconds = totalMilliseconds.toString().slice(0, 3);
+  
+    console.log(totalMilliseconds, totalSeconds);
+    
+    if (totalSeconds < 1) {
+      return `${formattedMilliseconds}ms`;
+    } else {
+      const formattedSeconds = (totalSeconds + (parseInt(millis) || 0) / 10000000).toFixed(2);
+      return `${formattedSeconds}s`;
+    }
+  };
 
   return (
     <div className="response-container">
@@ -128,7 +150,7 @@ const ResponseComponent: React.FC<ResponseComponentProps> = ({
             </div>
             <div className="result-row">
               <strong>Time:</strong>
-              <p>{result.time}</p>
+              <p>{parseTime(result.time)}</p>
             </div>
           </div>
         ))}
