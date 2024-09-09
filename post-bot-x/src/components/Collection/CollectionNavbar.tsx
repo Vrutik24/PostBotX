@@ -35,8 +35,7 @@ import {
   LibraryAddOutlined,
   ShareRounded,
   ContentCopyOutlined,
-  LastPage,
-  FirstPage,
+  Menu as MenuIcon,
 } from "@mui/icons-material";
 import ConfirmationModal from "../../modals/CollectionModal/ConfirmationModal";
 import HeadersModal from "../../modals/CollectionModal/HeadersModal";
@@ -427,7 +426,11 @@ const CollectionNavbar = () => {
       >
         <Box>
           <Tooltip
-            title={isNavbarCollapsed ? "Expand Navbar" : "Collapse Navbar"}
+            title={
+              isNavbarCollapsed
+                ? "Expand Collection Menu"
+                : "Collapse Collection Menu"
+            }
             enterDelay={800}
             enterNextDelay={800}
           >
@@ -436,11 +439,7 @@ const CollectionNavbar = () => {
               sx={{ color: "gray", width: "100%" }}
               size="small"
             >
-              {isNavbarCollapsed ? (
-                <LastPage fontSize="medium" />
-              ) : (
-                <FirstPage fontSize="medium" />
-              )}
+              <MenuIcon fontSize="medium" />
             </IconButton>
           </Tooltip>
         </Box>
