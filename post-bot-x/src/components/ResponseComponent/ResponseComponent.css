@@ -27,7 +27,7 @@
   margin-bottom: 10px;
 }
 
-.result-row strong {
+.result-row span {
   flex: 1;
 }
 

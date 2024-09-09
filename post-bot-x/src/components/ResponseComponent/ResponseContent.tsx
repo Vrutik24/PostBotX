@@ -149,19 +149,19 @@ const ResponseComponent: React.FC<ResponseComponentProps> = ({
         {flattenedResults?.map((result: any, index: number) => (
           <div key={index} className="test-result-card">
             <div className="result-row">
-              <strong>Test Data:</strong>
+              <span>Test Data:</span>
               <pre>{result.testData}</pre>
             </div>
             <div className="result-row">
-              <strong>Description:</strong>
+              <span>Description:</span>
               <p>{result.description}</p>
             </div>
             <div className="result-row">
-              <strong>Status Code:</strong>
+              <span>Status Code:</span>
               <p>{result.statusCode}</p>
             </div>
             <div className="result-row">
-              <strong>Response Content:</strong>
+              <span>Response Content:</span>
               <pre>
                 {isJSON(result.responseContent)
                   ? JSON.stringify(JSON.parse(result.responseContent), null, 2)
@@ -169,15 +169,15 @@ const ResponseComponent: React.FC<ResponseComponentProps> = ({
               </pre>
             </div>
             <div className="result-row">
-              <strong>Is Successful:</strong>
+              <span>Is Successful:</span>
               <p>{result.isSuccessful ? "Yes" : "No"}</p>
             </div>
             <div className="result-row">
-              <strong>Error Analysis:</strong>
+              <span>Error Analysis:</span>
               <p>{result.errorAnalysis}</p>
             </div>
             <div className="result-row">
-              <strong>Time:</strong>
+              <span>Time:</span>
               <p>{parseTime(result.time)}</p>
             </div>
           </div>

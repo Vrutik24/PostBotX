@@ -67,6 +67,16 @@ const ResponseComponent: React.FC<{
         right: 0,
         height: `${Math.max(height, 40)}px`,
         overflow: height > 150 ? "auto" : "hidden",
+        "&::-webkit-scrollbar": {
+          width: "4px",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          backgroundColor: "gray",
+          borderRadius: "4px",
+        },
+        "&::-webkit-scrollbar-thumb:hover": {
+          backgroundColor: "#555",
+        },
         borderRadius: "4px 4px 0 0",
         backgroundColor: "#151414",
       }}
