@@ -71,6 +71,10 @@ const APITestFormikProvider: React.FC<{ children: ReactNode }> = ({
     try {
       const collectionList = await getCollections();
       collectionList ? setCollections(collectionList) : setCollections([]);
+      if(!collectionList || collectionList.length==0)
+      {
+        setCurrentCollection(undefined);
+      }
     } catch (error) {
       console.error("Failed to fetch collections:", error);
     }
