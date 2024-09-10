@@ -8,7 +8,7 @@ import {
   IconButton,
 } from "@mui/material";
 import { useAPITestFormikContext } from "../../contexts/APITestFormikContext";
-import { Close, Height } from "@mui/icons-material";
+import CloseIcon from "@mui/icons-material/Close";
 import { useFormik } from "formik";
 
 interface RequestModal {
@@ -27,8 +27,7 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 700,
-  maxHeight: '100vh',
+  width: 400,
   bgcolor: "rgb(29 28 28)",
   color: "#FFFFFF",
   boxShadow: 24,
@@ -49,7 +48,10 @@ const PayloadRequestModal = ({
     },
     enableReinitialize: true,
     onSubmit: async (values) => {
-      formik.setFieldValue(`manualPayload.${requestModal.index}`, values.payload);
+      formik.setFieldValue(
+        `manualPayload.${requestModal.index}`,
+        values.payload
+      );
       setRequestmodal({
         ...requestModal,
         request: payloadRequestFormik.values.payload,
@@ -71,25 +73,15 @@ const PayloadRequestModal = ({
           isOpen: false,
         })
       }
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
-        <Box
-          display={"flex"}
-          flexDirection={"column"}
-          gap={"20px"}
-          position={"relative"}
-          height={"100%"}
-        >
+        <form onSubmit={payloadRequestFormik.handleSubmit}>
           <Box
             display={"flex"}
             alignItems={"center"}
             justifyContent={"space-between"}
           >
-            <Typography id="modal-modal-title" variant="h5" component="h2">
-              Request Modal
-            </Typography>
+            <Typography>Request Modal</Typography>
             <IconButton
               onClick={() =>
                 setRequestmodal({
@@ -105,15 +97,21 @@ const PayloadRequestModal = ({
                 borderRadius: "8px",
               }}
             >
-              <Close fontSize="small" />
+              <CloseIcon fontSize="small" />
             </IconButton>
           </Box>
           <TextField
+            placeholder='{
+                              "id": 1,
+                              "name": "Alice",
+                              "age": 28 
+                           }'
             multiline
             minRows={4}
             maxRows={20}
             variant="outlined"
             fullWidth
+            margin="normal"
             id="payload"
             name="payload"
             value={payloadRequestFormik.values.payload}
@@ -123,43 +121,26 @@ const PayloadRequestModal = ({
             sx={{
               "& .MuiInputBase-input": {
                 color: "white",
-                fontSize: "14px",
-                fontWeight: "100",
-                letterSpacing: "2px",
-                opacity: 1,
               },
               "& .MuiOutlinedInput-root": {
                 "& fieldset": {
-                  borderColor: "transparent",
+                  border: "1px solid #2b2b2b",
+                  borderRadius: "8px",
                 },
-                "&:hover fieldset": {
-                  borderColor: "transparent",
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: "transparent",
+                "&:hover:not(.Mui-focused) fieldset": {
+                  borderColor: "#2b2b2b",
                 },
               },
-              overflowY: "auto",
-              mt:'10px',
-              mb: '40px'
             }}
           />
-          <Box
-            display={"flex"}
-            justifyContent={"flex-end"}
-            alignItems={"center"}
-            gap={"10px"}
-            position={"absolute"}
-            bottom={0}
-            width={"100%"}
-          >
+          <Box sx={{ display: "flex", justifyContent: "space-between", mt: 2 }}>
             <Button
               variant="outlined"
               sx={{
                 color: "white",
                 borderRadius: "8px",
                 border: "none",
-                backgroundColor: "rgb(29 28 28)",
+                backgroundColor: "#2b2b2b",
                 "&:hover": {
                   backgroundColor: "rgba(255, 255, 255, 0.2)",
                   border: "none",
@@ -167,9 +148,11 @@ const PayloadRequestModal = ({
               }}
               onClick={() => {
                 setRequestmodal({ ...requestModal, isOpen: false });
-                formik.setFieldValue(`manualPayload.${requestModal.index}`, requestModal.request);
-              }
-              }
+                formik.setFieldValue(
+                  `manualPayload.${requestModal.index}`,
+                  requestModal.request
+                );
+              }}
             >
               Cancel
             </Button>
@@ -178,17 +161,22 @@ const PayloadRequestModal = ({
               sx={{
                 color: "white",
                 borderRadius: "8px",
-                backgroundColor:"rgb(29 28 28)",
+                backgroundColor: "#4CAF50",
                 "&:hover": {
-                  backgroundColor: "rgba(255, 255, 255, 0.2)",
+                  backgroundColor: "darkgreen",
+                },
+                "&.Mui-disabled": {
+                  backgroundColor: "#252525",
+                  color: "#FFFFFF50",
                 },
               }}
+              disabled={Boolean(payloadRequestFormik.errors.payload)}
               onClick={() => payloadRequestFormik.handleSubmit()}
             >
               Save
             </Button>
           </Box>
-        </Box>
+        </form>
       </Box>
     </Modal>
   );

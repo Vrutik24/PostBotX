@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Box, IconButton } from "@mui/material";
+import { Avatar, Box, IconButton, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import post_botX from "../../assets/PostBot_X_image.png";
 import ResponseContent from "./ResponseContent";
@@ -65,28 +65,42 @@ const ResponseComponent: React.FC<{
         bottom: 0,
         left: 0,
         right: 0,
-        height: `${Math.max(height, 20)}px`,
-        overflow: height > 20 ? "auto" : "hidden",
-        border: "1px solid gray",
+        height: `${Math.max(height, 40)}px`,
+        overflow: height > 150 ? "auto" : "hidden",
+        "&::-webkit-scrollbar": {
+          width: "4px",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          backgroundColor: "gray",
+          borderRadius: "4px",
+        },
+        "&::-webkit-scrollbar-thumb:hover": {
+          backgroundColor: "#555",
+        },
         borderRadius: "4px 4px 0 0",
-        backgroundColor: "white",
+        backgroundColor: "#151414",
       }}
     >
-      <div
-        style={{
+      <Box
+        component="div"
+        sx={{
           position: "sticky",
           top: 0,
           left: 0,
           right: 0,
           zIndex: 1,
-          marginBottom: 20,
+          marginBottom: 2,
+          borderTop: "1px solid #3a3939",
+          "&:hover": {
+            borderTop: "2px solid #4CAF5080", // Change borderTop color on hover
+          },
         }}
       >
         <Box
           onMouseDown={handleMouseDown}
           sx={{
-            backgroundColor: "white",
-            height: "20px",
+            backgroundColor: "#151414",
+            height: "40px",
             cursor: "row-resize",
             position: "relative",
             top: 0,
@@ -96,40 +110,40 @@ const ResponseComponent: React.FC<{
             justifyContent: "center",
           }}
         >
-          <DragHandle sx={{ color: "black", fontSize: 20 }} />
+          <DragHandle sx={{ color: "#4CAF50", fontSize: 20 }} />
           <IconButton
             onClick={() => setIsVisible(false)}
             sx={{
               position: "absolute",
               top: 10,
-              right: 0,
+              right: 10,
               zIndex: 2,
               visibility: height > 50 ? "visible" : "hidden",
             }}
           >
-            <CloseIcon />
+            <CloseIcon sx={{ color: "#FFFFFF" }} />
           </IconButton>
         </Box>
-      </div>
+      </Box>
       {response ? (
         <ResponseContent testResults={response} />
       ) : (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "100%",
-          }}
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          height="100%"
         >
-          <img
+          <Avatar
             src={post_botX}
-            alt=""
-            style={{ maxWidth: "100px", marginBottom: "10px" }}
+            alt="PostBotX"
+            sx={{ width: 100, height: 100, marginBottom: 2 }}
           />
-          <p>Click Send to Get Response</p>
-        </div>
+          <Typography variant="body1" sx={{ color: "#FFFFFF99" }}>
+            Click Send to Get Response
+          </Typography>
+        </Box>
       )}
     </Box>
   );

@@ -11,7 +11,6 @@ export const APITestingPage = styled(Box)(({ theme }) => ({
 
 export const ContentBox = styled(Box)(({ theme }) => ({
   height: "calc(100% - 50px)",
-  //width: "100%",
   display: "flex",
   flexDirection: "column",
   gap: "20px",
@@ -23,15 +22,11 @@ export const CollectionInfoBox = styled(Box)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  //margin: '30px auto 0px',
   color: "white",
 }));
 
 export const HeaderContentBox = styled(Box)(({ theme }) => ({
   width: "100%",
-  //margin: "20px auto 20px",
-  //marginLeft: 'auto',
-  //marginRight:'auto',
   height: "50px",
   padding: "5px",
   backgroundColor: "#151414",
@@ -49,7 +44,6 @@ export const BodyContentBox = styled(Box)(({ theme }) => ({
   border: "none",
   borderRadius: "10px",
   padding: "5px",
-  //margin: "0px auto 20px",
   overflowY: "auto",
   "&::-webkit-scrollbar": {
     width: "4px",

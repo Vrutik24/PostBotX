@@ -211,97 +211,182 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
   return (
     <APITestingPage>
       <ContentBox>
-        <CollectionInfoBox>
+        {!currentCollection ? (
           <Box
-            display={"flex"}
-            alignItems={"center"}
-            gap={"10px"}
-            width={"60%"}
+            display="flex"
+            flexDirection="column"
+            alignItems="center"
+            justifyContent="center"
+            height="100vh"
+            textAlign="center"
+            sx={{ backgroundColor: "#151414", borderRadius: "10px" }}
           >
-            <Typography sx={{ color: "gray" }}>
-              {currentCollection?.name || "Collection"}
+            <Typography variant="body1" color="#535a53" gutterBottom>
+              {`Select an API request to get started!`}
             </Typography>
-            <Typography>/</Typography>
-            <>
-              {isEditingAPIName ? (
-                <OutlinedInput
-                  autoFocus
-                  inputRef={inputRef}
-                  value={apiName}
-                  sx={{ color: "white", height: "40px" }}
-                  onChange={(e) => setAPIName(e.target.value)}
-                  onBlur={handleAPINameBlur}
-                />
-              ) : (
-                <Typography
-                  onClick={handleAPINameFocus}
-                  sx={{
-                    color: "white",
-                    cursor: "pointer",
-                    padding: "8px",
-                    border: "1px solid transparent",
-                  }}
-                >
-                  {apiName}
-                </Typography>
-              )}
-            </>
+            <Typography variant="body1" color="#535a53" gutterBottom>
+              {`Use the list on the left, or press the 'Add Collection' button in the left navigation\nto add a new collection.`}
+            </Typography>
           </Box>
-          <Box display={"flex"} alignItems={"center"} gap={"10px"}>
-            <Box display="flex" alignItems={"center"} gap={"20px"}>
-              <Button
-                variant="contained"
-                sx={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "2px",
-                  backgroundColor: "#151414",
-                  color: "white",
-                  width: "100px",
-                  margin: "0 10px",
-                  "&:hover": {
-                    backgroundColor: "#4CAF50",
-                  },
-                  "&.Mui-disabled": {
-                    color: "gray",
-                  },
-                }}
-                endIcon={
-                  isUpdatingAPI ? (
-                    <CircularProgress size={12} sx={{ color: "white" }} />
-                  ) : (
-                    <IconButton sx={{ color: "white" }}>
-                      <Save fontSize="small" />
-                    </IconButton>
-                  )
-                }
-                disabled={isUpdatingAPI}
-                onClick={() => updateAPIById()}
+        ) : (
+          <>
+            <CollectionInfoBox>
+              <Box
+                display={"flex"}
+                alignItems={"center"}
+                gap={"10px"}
+                width={"60%"}
               >
-                Save
-              </Button>
-            </Box>
-            <FormControl sx={{ width: "150px" }}>
+                <Typography sx={{ color: "gray" }}>
+                  {currentCollection?.name || "Collection"}
+                </Typography>
+                <Typography>/</Typography>
+                <>
+                  {isEditingAPIName ? (
+                    <OutlinedInput
+                      autoFocus
+                      inputRef={inputRef}
+                      value={apiName}
+                      sx={{ color: "white", height: "40px" }}
+                      onChange={(e) => setAPIName(e.target.value)}
+                      onBlur={handleAPINameBlur}
+                    />
+                  ) : (
+                    <Typography
+                      onClick={handleAPINameFocus}
+                      sx={{
+                        color: "white",
+                        cursor: "pointer",
+                        padding: "8px",
+                        border: "1px solid transparent",
+                      }}
+                    >
+                      {apiName}
+                    </Typography>
+                  )}
+                </>
+              </Box>
+              <Box display={"flex"} alignItems={"center"} gap={"10px"}>
+                <Box display="flex" alignItems={"center"} gap={"20px"}>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "2px",
+                      backgroundColor: "#151414",
+                      color: "white",
+                      width: "100px",
+                      margin: "0 10px",
+                      "&:hover": {
+                        backgroundColor: "#4CAF50",
+                      },
+                      "&.Mui-disabled": {
+                        color: "gray",
+                      },
+                      fontSize: "16px",
+                      textTransform: "capitalize",
+                    }}
+                    endIcon={
+                      isUpdatingAPI ? (
+                        <CircularProgress size={12} sx={{ color: "white" }} />
+                      ) : (
+                        <IconButton sx={{ color: "white" }}>
+                          <Save fontSize="small" />
+                        </IconButton>
+                      )
+                    }
+                    disabled={isUpdatingAPI}
+                    onClick={() => updateAPIById()}
+                  >
+                    Save
+                  </Button>
+                </Box>
+                <FormControl sx={{ width: "150px" }}>
+                  <Select
+                    value={testingMethod}
+                    sx={{
+                      color: "white",
+                      border: "none",
+                      height: "50px",
+                      backgroundColor: "#151414",
+                      borderRadius: "4px",
+                      paddingLeft: "10px",
+                      "& .MuiSelect-icon": {
+                        color: "white",
+                      },
+                      "& .MuiOutlinedInput-notchedOutline": {
+                        border: "none",
+                      },
+                      "&:hover .MuiOutlinedInput-notchedOutline": {
+                        border: "none",
+                      },
+                      "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
+                        border: "none",
+                      },
+                    }}
+                    MenuProps={{
+                      PaperProps: {
+                        sx: {
+                          backgroundColor: "#252525",
+                          color: "white",
+                          width: "150px",
+                          "& .MuiMenu-list": {
+                            padding: 0,
+                          },
+                        },
+                      },
+                    }}
+                    onChange={handleChange}
+                  >
+                    {TestingTypeList.map((testingType: string) => (
+                      <MenuItem
+                        key={testingType}
+                        value={testingType}
+                        sx={{
+                          margin: "10px",
+                          padding: "10px",
+                          borderRadius: "4px",
+                          "&:hover": {
+                            backgroundColor: "#383737",
+                            color: "white",
+                          },
+                          "&.Mui-selected, &.Mui-selected:hover, &.Mui-focusVisible":
+                            {
+                              backgroundColor: "#4CAF50",
+                              color: "black",
+                            },
+                          "&.MuiButtonBase-root": {
+                            "&.Mui-selected, &.Mui-selected:hover": {
+                              backgroundColor: "#4CAF50", // Ensure this matches the above color
+                            },
+                          },
+                        }}
+                      >
+                        {testingType}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            </CollectionInfoBox>
+            <HeaderContentBox>
               <Select
-                value={testingMethod}
+                id="apiType"
+                name="apiType"
+                value={formik.values.apiType}
                 sx={{
-                  color: "white",
-                  border: "none",
-                  height: "50px",
-                  backgroundColor: "#151414",
-                  borderRadius: "4px",
-                  paddingLeft: "10px",
-                  "& .MuiSelect-icon": {
-                    color: "white",
-                  },
+                  color: apiTypeColor,
+                  borderColor: "transparent",
+                  textTransform: "uppercase",
                   "& .MuiOutlinedInput-notchedOutline": {
-                    border: "none",
+                    borderColor: "transparent",
                   },
                   "&:hover .MuiOutlinedInput-notchedOutline": {
-                    border: "none",
+                    borderColor: "transparent",
                   },
                   "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                    border: "none",
+                    borderColor: "transparent",
                   },
                 }}
                 MenuProps={{
@@ -309,187 +394,126 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
                     sx: {
                       backgroundColor: "#252525",
                       color: "white",
-                      width: "150px",
-                      "& .MuiMenu-list": {
-                        padding: 0,
-                      },
                     },
                   },
                 }}
-                onChange={handleChange}
+                onChange={formik.handleChange}
+                IconComponent={(props) => (
+                  <ArrowDropDown sx={{ color: apiTypeColor }} />
+                )}
               >
-                {TestingTypeList.map((testingType: string) => (
+                {RequestTypeList.map((requestType: any) => (
                   <MenuItem
-                    key={testingType}
-                    value={testingType}
+                    key={requestType.name}
+                    value={requestType.name}
                     sx={{
+                      color: requestType.color,
                       margin: "10px",
-                      padding: "10px",
                       borderRadius: "4px",
+                      textTransform: "uppercase",
                       "&:hover": {
-                        backgroundColor: "#383737",
-                        color: "white",
+                        backgroundColor: "#38373790",
                       },
                       "&.Mui-selected, &.Mui-selected:hover, &.Mui-focusVisible":
                         {
-                          backgroundColor: "#4CAF50",
-                          color: "black",
+                          backgroundColor: "#383737",
                         },
                       "&.MuiButtonBase-root": {
                         "&.Mui-selected, &.Mui-selected:hover": {
-                          backgroundColor: "#4CAF50", // Ensure this matches the above color
+                          backgroundColor: "#383737",
                         },
                       },
                     }}
                   >
-                    {testingType}
+                    {requestType.name}
                   </MenuItem>
                 ))}
               </Select>
-            </FormControl>
-          </Box>
-        </CollectionInfoBox>
-        <HeaderContentBox>
-          <Select
-            id="apiType"
-            name="apiType"
-            value={formik.values.apiType}
-            sx={{
-              color: apiTypeColor,
-              borderColor: "transparent",
-              textTransform: "uppercase",
-              "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "transparent",
-              },
-              "&:hover .MuiOutlinedInput-notchedOutline": {
-                borderColor: "transparent",
-              },
-              "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                borderColor: "transparent",
-              },
-            }}
-            MenuProps={{
-              PaperProps: {
-                sx: {
-                  backgroundColor: "#252525",
-                  color: "white",
-                },
-              },
-            }}
-            onChange={formik.handleChange}
-            IconComponent={(props) => (
-              <ArrowDropDown sx={{ color: apiTypeColor }} />
-            )}
-          >
-            {RequestTypeList.map((requestType: any) => (
-              <MenuItem
-                key={requestType.name}
-                value={requestType.name}
+              <Divider
+                orientation="vertical"
+                flexItem
+                sx={{ backgroundColor: "white", opacity: 0.3 }}
+              />
+              <TextField
+                id="url"
+                name="url"
+                placeholder="Enter api url"
+                value={formik.values.url}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                fullWidth
                 sx={{
-                  color: requestType.color,
-                  margin: "10px",
-                  borderRadius: "4px",
-                  textTransform: "uppercase",
-                  "&:hover": {
-                    backgroundColor: "#38373790",
+                  "& .MuiInputBase-input": {
+                    color: "white",
+                    letterSpacing: "1px",
                   },
-                  "&.Mui-selected, &.Mui-selected:hover, &.Mui-focusVisible": {
-                    backgroundColor: "#383737",
-                  },
-                  "&.MuiButtonBase-root": {
-                    "&.Mui-selected, &.Mui-selected:hover": {
-                      backgroundColor: "#383737",
+                  "& .MuiOutlinedInput-root": {
+                    "& fieldset": {
+                      borderColor: "transparent",
+                    },
+                    "&:hover fieldset": {
+                      borderColor: "transparent",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "transparent",
                     },
                   },
                 }}
-              >
-                {requestType.name}
-              </MenuItem>
-            ))}
-          </Select>
-          <Divider
-            orientation="vertical"
-            flexItem
-            sx={{ backgroundColor: "white", opacity: 0.3 }}
-          />
-          <TextField
-            id="url"
-            name="url"
-            placeholder="Enter api url"
-            value={formik.values.url}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            fullWidth
-            sx={{
-              "& .MuiInputBase-input": {
-                color: "white",
-                letterSpacing: "1px",
-              },
-              "& .MuiOutlinedInput-root": {
-                "& fieldset": {
-                  borderColor: "transparent",
-                },
-                "&:hover fieldset": {
-                  borderColor: "transparent",
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: "transparent",
-                },
-              },
-            }}
-          />
-          {isTestingAPI ? (
-            <Button
-              sx={{
-                backgroundColor: "rgba(255, 255, 255, 0.1)",
-                color: "white",
-                width: "fit-content",
-                paddingX: "20px",
-                margin: "0 10px",
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                "&:hover": {
-                  backgroundColor: "rgba(255, 255, 255, 0.2)",
-                },
-              }}
-              onClick={() => {
-                cancelRequest();
-              }}
-              endIcon={<CancelScheduleSend />}
-            >
-              Cancel
-            </Button>
-          ) : (
-            <Button
-              sx={{
-                backgroundColor: "#4CAF50",
-                color: "white",
-                width: "100px",
-                paddingX: "40px",
-                margin: "0 10px",
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                "&:hover": {
-                  backgroundColor: "darkgreen",
-                },
-                "&.Mui-disabled": {
-                  color: "green",
-                },
-              }}
-              onClick={() => {
-                testApi();
-              }}
-              endIcon={<Send />}
-            >
-              Send
-            </Button>
-          )}
-        </HeaderContentBox>
-        <BodyContentBox>
-          <APITestingBody />
-        </BodyContentBox>
+              />
+              {isTestingAPI ? (
+                <Button
+                  sx={{
+                    backgroundColor: "rgba(255, 255, 255, 0.1)",
+                    color: "white",
+                    width: "fit-content",
+                    paddingX: "20px",
+                    margin: "0 10px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                    "&:hover": {
+                      backgroundColor: "rgba(255, 255, 255, 0.2)",
+                    },
+                  }}
+                  onClick={() => {
+                    cancelRequest();
+                  }}
+                  endIcon={<CancelScheduleSend />}
+                >
+                  Cancel
+                </Button>
+              ) : (
+                <Button
+                  sx={{
+                    backgroundColor: "#4CAF50",
+                    color: "white",
+                    width: "100px",
+                    paddingX: "40px",
+                    margin: "0 10px",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                    "&:hover": {
+                      backgroundColor: "darkgreen",
+                    },
+                    "&.Mui-disabled": {
+                      color: "green",
+                    },
+                  }}
+                  onClick={() => {
+                    testApi();
+                  }}
+                  endIcon={<Send />}
+                >
+                  Send
+                </Button>
+              )}
+            </HeaderContentBox>
+            <BodyContentBox>
+              <APITestingBody />
+            </BodyContentBox>
+          </>
+        )}
       </ContentBox>
 
       {isVisible && (
