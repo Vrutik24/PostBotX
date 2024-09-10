@@ -43,7 +43,13 @@ import Notification from "../Notification/Notification";
 import { useAuth } from "../../contexts/AuthContext";
 import User from "../User/User";
 
-const CollectionNavbar = () => {
+interface CollectionNavbarProps {
+  setIsResponseVisible: (isVisible: boolean) => void;
+}
+
+const CollectionNavbar: React.FC<CollectionNavbarProps> = ({
+  setIsResponseVisible,
+}) => {
   const navigateTo = useNavigate();
 
   const {
@@ -52,8 +58,7 @@ const CollectionNavbar = () => {
     deleteCollection,
     shareCollection,
   } = useCollection();
-  const { createAPI, deleteApiById, updateAPIName } =
-    useAPI();
+  const { createAPI, deleteApiById, updateAPIName } = useAPI();
   const {
     fetchCollections,
     fetchRequestsForCollections,
@@ -459,6 +464,7 @@ const CollectionNavbar = () => {
                           colId={collection.id}
                           anchorEl={apiAnchorEl}
                           onMenuOpen={(e) => handleAPIMenuOpen(e, request)}
+                          setIsResponseVisible={setIsResponseVisible}
                         />
                       ))}
                   </Box>
