@@ -154,7 +154,7 @@ const ManualParamsComponent = () => {
             }}
           >
             <TableCell
-              sx={{ borderBottom: "none", width: "24px", verticalAlign: "top" }}
+              sx={{ borderBottom: "none", verticalAlign: "top", width: "24px" }}
             >
               <Checkbox
                 checked={

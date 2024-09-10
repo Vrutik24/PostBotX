@@ -48,9 +48,19 @@ const ManualJsonBody = () => {
   };
 
   return (
-    <Box>
+    <Box sx={{ paddingRight: "20px" }}>
       {formik.values.manualPayload.map((payload: string, index: number) => (
-        <Box key={index} display={"flex"} gap={"40px"} marginTop={"30px"}>
+        <Box
+          key={index}
+          display="flex"
+          sx={{
+            gap: "40px",
+            marginTop: "30px",
+            "&:hover .delete-button": {
+              visibility: "visible",
+            },
+          }}
+        >
           <Typography color={"gray"} width={"200px"}>
             Request {index + 1}
           </Typography>
@@ -85,13 +95,13 @@ const ManualJsonBody = () => {
                 },
                 "& .MuiOutlinedInput-root": {
                   "& fieldset": {
-                    borderColor: "gray",
+                    borderColor: "#2b2b2b",
                   },
                   "&:hover fieldset": {
-                    borderColor: "gray",
+                    borderColor: "#2b2b2b",
                   },
                   "&.Mui-focused fieldset": {
-                    borderColor: "gray",
+                    borderColor: "#2b2b2b",
                   },
                 },
                 overflowY: "auto",
@@ -109,11 +119,11 @@ const ManualJsonBody = () => {
                     }}
                   >
                     <IconButton
-                      sx={{ color: "white" }}
+                      sx={{ color: "gray" }}
                       size="small"
                       onClick={() => viewAndEditRequest(index, payload)}
                     >
-                      <Edit />
+                      <Edit fontSize="small" />
                     </IconButton>
                   </InputAdornment>
                 ),
@@ -139,11 +149,20 @@ const ManualJsonBody = () => {
           </Box>
           {formik.values.manualPayload.length > 1 && (
             <IconButton
-              sx={{ color: "gray" }}
+              className="delete-button"
+              sx={{
+                color: "gray",
+                boxShadow: "none",
+                alignSelf: "flex-start",
+                visibility: "hidden",
+                "&:hover": {
+                  boxShadow: "none", // Remove box shadow on hover
+                },
+              }}
               size="small"
               onClick={() => deleteJsonBody(index)}
             >
-              <Delete />
+              <Delete fontSize="small" />
             </IconButton>
           )}
         </Box>
