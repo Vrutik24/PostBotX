@@ -10,6 +10,7 @@ interface APIRequestsBoxProps {
   onMenuOpen: (event: MouseEvent<HTMLElement>) => void;
   colId?: string;
   anchorEl?: HTMLElement;
+  setIsResponseVisible: (isVisible: boolean) => void;
 }
 
 const APIRequestsBox = ({
@@ -17,6 +18,7 @@ const APIRequestsBox = ({
   onMenuOpen,
   colId,
   anchorEl,
+  setIsResponseVisible,
 }: APIRequestsBoxProps) => {
   const {
     formik,
@@ -55,6 +57,7 @@ const APIRequestsBox = ({
       onClick={() => {
         setSelectedAPIId(apiRequest.id);
         setCurrentCollectionId(colId ? colId : "");
+        setIsResponseVisible(false);
       }}
       data-api-open={apiRequest.id == selectedAPIId}
       data-api-id={apiRequest.id}

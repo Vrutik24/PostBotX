@@ -10,7 +10,7 @@ const ApiTesting = () => {
   return (
     <APITestFormikProvider>
       <Box display={"flex"}>
-        <CollectionNavbar />
+        <CollectionNavbar setIsResponseVisible={setIsVisible} />
         <AutomatedTesting isVisible={isVisible} setIsVisible={setIsVisible} />
       </Box>
     </APITestFormikProvider>
