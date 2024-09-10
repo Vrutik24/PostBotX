@@ -94,11 +94,10 @@ const CollectionNavbar: React.FC<CollectionNavbarProps> = ({
 
   useEffect(() => {
     const fetchCollectionAsync = async () => {
-      await fetchCollections();
-      setIsFetchingCollection(false);
+    fetchCollections();
     };
     fetchCollectionAsync();
-  }, []);
+  }, [collections]);
 
   const createAPIRequest = async (collectionId: string, id?: string) => {
     setAPIActionLoading(true);
@@ -133,38 +132,6 @@ const CollectionNavbar: React.FC<CollectionNavbarProps> = ({
       setAPIActionLoading(false);
     }
   };
-
-  useEffect(() => {
-    const createDraftCollection = async () => {
-      if (
-        !isFetchingCollection &&
-        !isDraftCollectionCreated &&
-        (collections === null || collections.length === 0)
-      ) {
-        try {
-          setIsDraftCollectionCreated(true);
-          const newCollection = await createCollection("Draft");
-          await createAPIRequest(newCollection.collectionId, newCollection.id);
-          await fetchCollections();
-          newCollection.id && setCurrentCollectionId(newCollection.id);
-        } catch (error: any) {
-          console.log(error.message);
-        }
-      }
-    };
-    createDraftCollection();
-  }, [
-    collectionsWithRequests,
-    collections,
-    fetchCollections,
-    createAPI,
-    createCollection,
-    isFetchingCollection,
-    setCurrentCollectionId,
-    setSelectedAPIId,
-    isDraftCollectionCreated,
-  ]);
-
   const createDuplicateAPIRequest = async (selectedAPI: API | undefined) => {
     handleAPIMenuClose();
     setAPIActionLoading(true);

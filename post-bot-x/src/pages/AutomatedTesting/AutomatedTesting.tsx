@@ -461,27 +461,30 @@ const AutomatedTesting: React.FC<AutomatedTestingProps> = ({
                 }}
               />
               {isTestingAPI ? (
-                <Button
-                  sx={{
-                    backgroundColor: "rgba(255, 255, 255, 0.1)",
-                    color: "white",
-                    width: "fit-content",
-                    paddingX: "20px",
-                    margin: "0 10px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                    "&:hover": {
-                      backgroundColor: "rgba(255, 255, 255, 0.2)",
-                    },
-                  }}
-                  onClick={() => {
-                    cancelRequest();
-                  }}
-                  endIcon={<CancelScheduleSend />}
-                >
-                  Cancel
-                </Button>
+                <Box display={'flex'} alignItems={'center'} gap={'10px'}>
+                  <CircularProgress sx={{color: 'lightgray'}} size={20}/>
+                  <Button
+                    sx={{
+                      backgroundColor: "rgba(255, 255, 255, 0.1)",
+                      color: "white",
+                      width: "fit-content",
+                      paddingX: "20px",
+                      margin: "0 10px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      "&:hover": {
+                        backgroundColor: "rgba(255, 255, 255, 0.2)",
+                      },
+                    }}
+                    onClick={() => {
+                      cancelRequest();
+                    }}
+                    endIcon={<CancelScheduleSend />}
+                  >
+                    Cancel
+                  </Button>
+                </Box>
               ) : (
                 <Button
                   sx={{
