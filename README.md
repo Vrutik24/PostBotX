@@ -250,11 +250,11 @@ Example Report:
 - Improved collaboration and feedback loops.
 - Enhanced productivity with shared test resources and knowledge.
 
-You can share collection from here,
+User can share collection from here,
 
 ![image](https://github.com/user-attachments/assets/496088db-f949-47f3-9c06-4aa04a32c7c5)
 
-User will receive notifications for collection acceptance or denial, which can be viewed from both the Home page and the API Testing page as shown below.
+User will receive notifications for collection acceptance or denial, which can be viewed on the Home page (top right) or the API Testing page (bottom left).
 
 ![image](https://github.com/user-attachments/assets/b66952c6-9665-489f-ae14-c6ffddc28cfe)
 
