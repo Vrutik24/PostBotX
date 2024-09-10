@@ -48,20 +48,20 @@ export const MainButton = styled(Button)(({ theme }) => ({
 }));
 
 export const Description = styled(Typography)(({ theme }) => ({
-  color: "#535a53", // Grey for description
+  color: "#455a53",
   fontSize: "22px",
   textAlign: "center",
   marginTop: "30px",
-  maxWidth: "100%", // Ensure it fits within the container
+  maxWidth: "100%",
   lineHeight: "1.5",
 }));
 
 // Feature Page
 
 export const FeaturePage = styled(Box)(({ theme }) => ({
-  height: "calc(100vh - 100px)", // Adjust height to fit within viewport
-  width: "100%", // Changed from 100vw to 100%
-  backgroundColor: "#151414", // Dark background
+  height: "calc(100vh - 100px)",
+  width: "100%",
+  backgroundColor: "#151414",
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
@@ -85,8 +85,7 @@ export const FeatureContentPaper = styled(Paper)(({ theme }) => ({
   gap: "10px",
   alignItems: "center",
   justifyContent: "center",
-  backgroundColor: "#151414", // Dark background for feature cards
-  border: `3px solid #4CAF50`, // Light green border
-  color: "#4CAF50", // Light green text
-  padding: "20px",
+  backgroundColor: "#1d1c1c",
+  color: "#4CAF50",
+  padding: "50px",
 }));

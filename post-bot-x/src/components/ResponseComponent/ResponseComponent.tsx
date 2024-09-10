@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Box, IconButton } from "@mui/material";
+import { Avatar, Box, IconButton, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import post_botX from "../../assets/PostBot_X_image.png";
 import ResponseContent from "./ResponseContent";
@@ -128,22 +128,22 @@ const ResponseComponent: React.FC<{
       {response ? (
         <ResponseContent testResults={response} />
       ) : (
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            height: "100%",
-          }}
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          height="100%"
         >
-          <img
+          <Avatar
             src={post_botX}
-            alt=""
-            style={{ maxWidth: "100px", marginBottom: "10px" }}
+            alt="PostBotX"
+            sx={{ width: 100, height: 100, marginBottom: 2 }}
           />
-          <p>Click Send to Get Response</p>
-        </div>
+          <Typography variant="body1" sx={{ color: "#FFFFFF99" }}>
+            Click Send to Get Response
+          </Typography>
+        </Box>
       )}
     </Box>
   );

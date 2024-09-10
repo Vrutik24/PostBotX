@@ -57,7 +57,7 @@ const Home = () => {
               API Testing
             </Typography>
             <Typography
-              color={"#fff"} // White for feature text
+              color={"#455a53"}
               sx={{ paddingX: "20px", textAlign: "center" }}
             >
               AI enabled API Testing
@@ -68,7 +68,7 @@ const Home = () => {
               Error Analysis
             </Typography>
             <Typography
-              color={"#fff"} // White for feature text
+              color={"#455a53"}
               sx={{ paddingX: "20px", textAlign: "center" }}
             >
               Detailed analysis of errors found in API Testing
@@ -79,7 +79,7 @@ const Home = () => {
               Report Generation
             </Typography>
             <Typography
-              color={"#fff"} // White for feature text
+              color={"#455a53"}
               sx={{ paddingX: "20px", textAlign: "center" }}
             >
               Generates comprehensive API Testing result reports.
