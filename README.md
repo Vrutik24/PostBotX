@@ -113,6 +113,12 @@ As you can see in above image, to test the API request, follow these steps:
 
 Once the initial payload is configured and submitted, the AI model will automatically generate multiple payloads to cover a wide range of scenarios, including both positive and negative cases. The responses for all these generated payloads will be provided for review.
 
+You will be able to see response in Draggable Component like this:
+
+![image](https://github.com/user-attachments/assets/48f3093d-b0b3-4e40-90e4-8a2720c9d2da)
+
+
+
 #### <h3><u>•  Automated Testing of Get/Delete API Call</u></h3>
 ---
 
@@ -232,6 +238,9 @@ Example Url
 - Easy export of test results for offline review and record-keeping.
 - Shareable reports for stakeholders and team members.
 
+Example Report:
+
+[Download the Report](./post-bot-x/src/assets/Post_API_Report.pdf)
 
 ### 5. Collaborative Testing
   Collaborative Testing enables you to share API collections and test scenarios with other users. This feature supports teamwork by allowing multiple users to work on the same project, exchange feedback, and collaborate on test development. Additionally, we have given a notification feature which gives you the authority to accept or deny shared collections, ensuring full control over the collaboration process.
@@ -244,6 +253,12 @@ Example Url
 You can share collection from here,
 
 ![image](https://github.com/user-attachments/assets/496088db-f949-47f3-9c06-4aa04a32c7c5)
+
+User will receive notifications for collection acceptance or denial, which can be viewed from both the Home page and the API Testing page as shown below.
+
+![image](https://github.com/user-attachments/assets/b66952c6-9665-489f-ae14-c6ffddc28cfe)
+
+![image](https://github.com/user-attachments/assets/e81f3c35-4a34-429e-90b8-7432c22ddde1)
 
 
 ### 6. Anonymous Data Persistence
