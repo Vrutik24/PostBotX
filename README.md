@@ -50,6 +50,7 @@ Instructions on how to install and set up the project.
 - Error Analysis
 - Download Test Reports
 - Collaborative testing
+- Anonymous Data Persistence
 
 ## Comprehensive Feature Guide
 
@@ -233,9 +234,24 @@ Example Url
 
 
 ### 5. Collaborative Testing
-  Collaborative Testing enables you to share API collections and test scenarios with other users. This feature supports teamwork by allowing multiple users to work on the same project, exchange feedback, and collaborate on test development.
+  Collaborative Testing enables you to share API collections and test scenarios with other users. This feature supports teamwork by allowing multiple users to work on the same project, exchange feedback, and collaborate on test development. Additionally, we have given a notification feature which gives you the authority to accept or deny shared collections, ensuring full control over the collaboration process.
 
 **Key Benefits:**
 - Seamless sharing of test collections with team members.
 - Improved collaboration and feedback loops.
 - Enhanced productivity with shared test resources and knowledge.
+
+You can share collection from here,
+
+![image](https://github.com/user-attachments/assets/496088db-f949-47f3-9c06-4aa04a32c7c5)
+
+
+### 6. Anonymous Data Persistence
+  Even if you haven’t created an account, any collections or APIs you add will be stored under an anonymous user profile. Once you sign up and log in, all the data you previously created will automatically be associated with your new account, ensuring a seamless transition.
+
+**Key Benefits:**
+- Start building collections and APIs without needing to register or log in.
+- All data created as an anonymous user is preserved and linked once you sign in, preventing data loss.
+- Continue working on your APIs and collections without disruption, whether you're logged in or not.
+- Eliminate the need to re-create data after registration, saving time and effort
+
